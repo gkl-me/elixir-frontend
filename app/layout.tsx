@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Work_Sans } from "next/font/google";
 import "./globals.css";
+import ReduxProvider from "./providers/ReduxProviders";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const workSans = Work_Sans({
@@ -10,7 +12,7 @@ const workSans = Work_Sans({
 
 
 export const metadata: Metadata = {
-  title: "Elixir",
+  title: "Elixir | Project Management Tool",
   description: "Automated Project Management Tool", 
 };
 
@@ -32,7 +34,10 @@ export default function RootLayout({
       } 
 
       >
+        <Toaster/>
+        <ReduxProvider>
         {children}
+        </ReduxProvider>
       </body>
     </html>
   );
