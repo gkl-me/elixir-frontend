@@ -7,5 +7,5 @@ export const userApi = createApi({
     reducerPath:"userApi",
     baseQuery:axiosBaseQuery(userAxios),
     tagTypes:["user"],
-    endpoints: () => ({})
+    endpoints: () => ({}),
 })

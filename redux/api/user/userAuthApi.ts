@@ -6,12 +6,20 @@ export const userAuthApi = userApi.injectEndpoints({
             query: (data) => ({
                 url: '/login',
                 method: 'POST',
-                body:data
+                body:data,
             }),
-            invalidatesTags:['user']
+            invalidatesTags:['user'],
+        }),
+        getUser: builder.query({
+            query: () => ({
+                url: '/user',
+                method: 'GET',
+            }),
+            providesTags:['user'],
+            keepUnusedDataFor:30
         })
     })
 })
 
 
-export const {useLoginMutation} = userAuthApi
+export const {useLoginMutation,useGetUserQuery} = userAuthApi

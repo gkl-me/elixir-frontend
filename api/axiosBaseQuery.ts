@@ -12,14 +12,11 @@ export const axiosBaseQuery =
   async ({ url, method, data, params }) => {
     try {
       const response = await axiosInstance({ url, method, data, params });
-      return { data: response.data };
+      return { data:response };
     } catch (error) {
-      const axiosError = error as AxiosError;
+      const axiosError = error as AxiosError<{message:string}>;
       return {
-        error: {
-          status: axiosError.response?.status || 500,
-          data: axiosError.response?.data || axiosError.message,
-        },
+        error:  axiosError.response?.data?.message
       };
     }
   };

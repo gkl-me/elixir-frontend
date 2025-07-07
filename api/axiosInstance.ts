@@ -1,3 +1,4 @@
+import { API_ROUTES } from '@/constants/config'
 import axios from 'axios'
 
 
@@ -6,18 +7,6 @@ const createAxiosInstance = (baseURL:string) => {
         baseURL,
         withCredentials : true,
     })
-
-
-    instance.interceptors.request.use(
-        (config) => {
-            const token = localStorage.getItem('accessToken')
-            if(token){
-                config.headers['Authorization'] = `Bearer ${token}`
-            }
-            return config
-        },
-        (error) => Promise.reject(error)
-    )
 
     instance.interceptors.response.use(
         response => response.data,
@@ -30,4 +19,5 @@ const createAxiosInstance = (baseURL:string) => {
 }
 
 
-export const userAxios = createAxiosInstance('http://localhost:5000/api/v1/user')
+export const userAxios = createAxiosInstance(API_ROUTES.user)
+export const adminAxios = createAxiosInstance(API_ROUTES.admin)
