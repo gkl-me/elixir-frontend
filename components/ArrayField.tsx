@@ -32,7 +32,9 @@ export default function ArrayField<T extends z.ZodType>({
                     name={`${field.name as string}.${index}`}
                     render={({field:fieldProps}) => (
                         <FormItem>
-                            <Input disabled={isLoading} type={field.type} placeholder={field.placeholder} {...fieldProps}/>
+                            <Input 
+                            className="bg-blueDark border-0"
+                             disabled={isLoading} type={field.type} placeholder={field.placeholder} {...fieldProps}/>
                             <FormMessage/>
                         </FormItem>
                     )}

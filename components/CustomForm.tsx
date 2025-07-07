@@ -76,6 +76,7 @@ export default function CustomForm<T extends z.ZodType>({
                                 <FormLabel>{field.label}</FormLabel>
                                 <FormControl>
                                     <Input
+                                        className="bg-blueDark border-0"
                                         disabled={isLoading}
                                         type={field.type}
                                         placeholder={field.placeholder || field.label}
@@ -89,7 +90,7 @@ export default function CustomForm<T extends z.ZodType>({
                 )
 
             })}
-            <Button type="submit" disabled={isLoading}>{buttonText}</Button>
+            <Button variant={'light'} type="submit" disabled={isLoading}> {isLoading ? 'Loading': `${buttonText}` }</Button>
           </form>
         </Form>
       )

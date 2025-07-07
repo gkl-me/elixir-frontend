@@ -28,21 +28,25 @@ export default function PasswordField<T extends z.ZodType>({
             render={({field:fieldProps}) => (
                 <FormItem>
                     <FormLabel>{field.label}</FormLabel>
+                    <div className="relative">
                     <FormControl>
                         <Input 
+                            className="bg-blueDark border-0"
                             disabled={isLoading}
                             type={showPassword ? 'text':'password'}
                             placeholder={field.placeholder||field.label}
                             {...fieldProps}
-                        />
+                            />
                     </FormControl>
-                        <Button type='button' size={'sm'}
+                        <Button className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-white"
+                            tabIndex={-1} type="button" variant={'ghost'} size={'sm'}
                             onClick={() => {
                                 setShowPassword(p => !p)
                             }}
-                        >
+                            >
                             {showPassword?<EyeOff size={18}/> : <Eye size={18}/>}
                         </Button>
+                    </div>
                 </FormItem>
             )}
         />

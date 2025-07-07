@@ -16,11 +16,11 @@ export default function LandingHeader() {
             <Image src={"/elixir-logo.svg"} alt="elixir-logo" width={25} height={2}  />
             <h1 className="text-xl font-semibold">Elixir</h1>
         </div>
-        <div className="md:flex space-x-4 hidden ">
+        <div className="md:flex lg:space-x-6 md:text-sm lg:text-lg md:space-x-3 hidden ">
             <Link href={"#features"}><p>Features</p></Link>
             <Link href={"#automation"}><p>Automation</p></Link>
             <Link href={"#pricing"}><p>Pricing</p></Link>
-            <Link href={"#contact"}><p>Contact Us</p></Link>
+            <Link href={"#contact"}><p>About Us</p></Link>
             
         </div> 
         <div className="flex items-center space-x-4">

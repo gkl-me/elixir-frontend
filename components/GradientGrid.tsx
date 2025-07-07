@@ -1,7 +1,7 @@
 // components/GradientWithGrid.js
 export default function GradientWithGrid({ children }:{children:React.ReactNode}) {
     return (
-      <div className="relative h-screen">
+      <div className="relative h-screen min-w-[320px]">
         {/* Radial Gradient Background */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_1%,_#4B2070_0%,_#040A1D_100%)]"></div>
 
