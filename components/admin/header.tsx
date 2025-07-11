@@ -1,27 +1,43 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
+import { useAdminLogoutMutation } from "@/redux/api/admin/adminAuthApi";
+import { useRouter } from "next/navigation";
+import { useDispatch, } from "react-redux";
+import {logout} from "@/redux/slices/adminSlice";
+import { LogOut, User } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 export function Header() {
-  return (
-    <header className="sticky top-0 z-50 w-full border-b border-purpleDark">
+
+  const [triggerLogout] = useAdminLogoutMutation() 
+    const router = useRouter()
+    const dispatch = useDispatch()
+
+    const adminLogout = async () => {
+        try {
+            const res = await triggerLogout({}).unwrap()
+            dispatch(logout())
+            toast.success(res.message)
+            router.push('/admin/login')
+            router.refresh()
+        } catch (error) {
+            toast.error(error as string)
+        }
+    }
+
+    return (
+      <header className="sticky top-0 z-50 w-full bg-navyDark/95 backdrop-blur-md border-b border-white/10 px-6 py-1 flex items-center justify-between shadow-lg">
       <div className="container flex h-16 items-center justify-between px-6">
         {/* Logo and Brand */}
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-              <span className="font-bold text-sm">A</span>
-            </div>
-            <span className="font-semibold text-xl">Admin Panel</span>
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-br from-purple to-purpleDark rounded-xl flex items-center justify-center shadow-lg">
+            <span className="text-white font-bold text-lg">E</span>
+          </div>
+          <div>
+            <h1 className="text-white font-bold text-xl">Elixir</h1>
+            <p className="text-purple text-sm font-medium">Admin Portal</p>
           </div>
         </div>
 
@@ -29,28 +45,25 @@ export function Header() {
         <div className="flex items-center space-x-4">
           {/* User Menu */}
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar className="h-10 w-10 bg-black">
-                  <AvatarFallback className="bg-black">JD</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">John Doe</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    john.doe@company.com
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="text-white hover:bg-white/10 space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-purple to-purpleDark rounded-lg flex items-center justify-center">
+                <User size={16} />
+              </div>
+              <span className="hidden sm:inline font-medium">Admin</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-navy/95 backdrop-blur-md border-white/10 shadow-xl">
+            <DropdownMenuItem className="text-white hover:bg-white/10 hover:text-white focus:bg-white/10 cursor-pointer"
+              onClick={() => {
+                adminLogout()
+              }}
+            >
+              <LogOut size={16} className="mr-2" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         </div>
       </div>
     </header>

@@ -1,11 +1,11 @@
 'use client'
 
-
-
 export default function AdminDashboard(){
 
+    
+
     return(
-        <div>
+        <div className="h-[400vh]">
             dashboard
         </div>
     )

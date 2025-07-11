@@ -23,7 +23,8 @@ export interface CustomFormProps<T extends z.ZodType>{
         type?:string,
         options?:{value:string,label:string}[],
         isArray?:boolean,
-        placeholder?:string
+        placeholder?:string,
+        disabled?:boolean
     }[],
     onSubmit:(values:z.infer<T>) => Promise<void>
     buttonText:string,
@@ -77,7 +78,7 @@ export default function CustomForm<T extends z.ZodType>({
                                 <FormControl>
                                     <Input
                                         className="bg-blueDark border-0"
-                                        disabled={isLoading}
+                                        disabled={field.disabled}
                                         type={field.type}
                                         placeholder={field.placeholder || field.label}
                                         {...fieldProps}

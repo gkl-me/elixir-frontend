@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -11,46 +10,62 @@ import {
   ChevronLeft,
   ChevronRight,
   BarChart3,
-  Settings,
-  HelpCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { setCollapsed } from "@/redux/slices/adminSlice";
+import { useEffect } from "react";
 
-interface SidebarProps {
-  className?: string;
-}
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: Home },
-  { name: "Users", href: "/users", icon: Users },
-  { name: "Plans", href: "/plans", icon: CreditCard },
+  { name: "Dashboard", href: "/admin/dashboard", icon: Home },
+  { name: "Users", href: "/admin/users", icon: Users },
+  { name: "Plans", href: "/admin/plans", icon: CreditCard },
   { name: "Company", href: "/company", icon: Building2 },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
 ];
-    
 
-export function Sidebar({ className }: SidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+
+export function Sidebar() {
   const pathname = usePathname();
+  const isCollapsed= useSelector((state:RootState) => state.admin.isCollapsed)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    function handleResize(){
+      if(window.innerWidth < 700){
+        dispatch(setCollapsed(true))
+      }else{
+        dispatch(setCollapsed(false))
+      }
+    }
+
+    window.addEventListener('resize',handleResize)
+
+    return () => {
+      window.removeEventListener('resize',handleResize)
+    }
+
+  },[])
 
   return (
     <aside 
       className={cn(
-        "sticky top-16 h-[calc(100vh-4rem)] bg-card border-r transition-all duration-300",
+        "sticky top-16 bg-navyDark h-[calc(100vh-4rem)] border-r border-white/10 transition-all duration-300",
         isCollapsed ? "w-16" : "w-64",
-        className
       )}
     >
       <div className="flex h-full flex-col">
         {/* Toggle Button */}
-        <div className="flex items-center justify-end p-4 pb-2">
+        <div className="flex items-center justify-end p-4 pb-2 ">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="h-8 w-8"
+            onClick={() => dispatch(setCollapsed(!isCollapsed))}
+            className="h-8 w-8 bg-gradient-to-r from-purple to-purpleDark text-white shadow-lg shadow-purple/25"
           >
             {isCollapsed ? (
               <ChevronRight className="h-4 w-4" />
@@ -69,10 +84,10 @@ export function Sidebar({ className }: SidebarProps) {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground",
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                   isActive
-                    ? "bg-accent text-accent-foreground shadow-sm"
-                    : "text-muted-foreground",
+                    ? "bg-gradient-to-r from-purple to-purpleDark text-white shadow-lg shadow-purple/25"
+                    : " hover:bg-white/5 text-white hover:text-white",
                   isCollapsed && "justify-center px-0"
                 )}
               >
@@ -88,7 +103,6 @@ export function Sidebar({ className }: SidebarProps) {
         <div className="px-4">
           <Separator />
         </div>
-
       </div>
     </aside>
   );
