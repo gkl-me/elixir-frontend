@@ -2,26 +2,13 @@ import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Check } from "lucide-react"
 import { Badge } from "../ui/badge"
-
-export enum PlanType  {
-    'Free'="Free",
-    'Pro'='Pro',
-    'Enterprice'='Enterprise'
-}
-
-export interface PlanCardProps{
-    id?:string
-    name:PlanType,
-    price:number,
-    limits:{
-        maxProjects:number,
-        maxTeams:number
-        maxUsersPerTeam:number
-    },
-    stripePriceId?:string,
-    stripeProductId?:string,
-    isActive:boolean,
-}
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Switch } from "../ui/switch"
+import { useEditPlanMutation } from "@/redux/api/admin/adminPlan"
+import { toast } from "sonner"
+import { PlanCardProps } from "@/types/IPlan"
+import EditPlanForm from "./EditPlanForm"
+import { useState } from "react"
 
 
 export default function PlanCard({
@@ -32,12 +19,32 @@ export default function PlanCard({
     isActive
 }:PlanCardProps){
 
+  const [localStatus,setLocalStatus] = useState(isActive)
+  const [editPlan] = useEditPlanMutation()
+
+  const handleUpdate = async (id:string,data:{isActive:boolean}) => {
+    setLocalStatus(p => !p)
+    try {
+      await editPlan({data,id}).unwrap()
+    } catch (error) {
+      toast.error(error as string)
+      setLocalStatus(p => !p)
+    }
+  }
 
     return(
         
         <div className="">
-          <Card key={id} className="bg-navy border-blueDark relative overflow-hidden">
+          <Card key={id} className="bg-navy relative overflow-hidden border border-purpleDark">
             <CardHeader className="text-center">
+              <div className="text-white top-2 right-2 absolute">
+               <Switch className="data-[state=checked]:bg-purple data-[state=unchecked]:bg-blueDark"
+                  checked={localStatus}
+                  onCheckedChange={() => {
+                    handleUpdate(id,{isActive:!isActive})
+                  }}
+               />
+              </div>
               <CardTitle className="text-white text-xl">{name}</CardTitle>
               <div className="flex items-center justify-center">
                 <span className="text-3xl font-bold text-white">{price/100}$</span>
@@ -73,19 +80,66 @@ export default function PlanCard({
                 </div>
                 <div className="flex justify-between items-center text-sm mt-2">
                   <span className="text-gray-400">Status</span>
-                  <Badge className="bg-green-600">
-                    {isActive?'Active':'Inactive'}
+                  <Badge className={`${localStatus?"bg-green-600":"bg-red-600"}`}>
+                    {localStatus?'Active':'Inactive'}
                   </Badge>
                 </div>
               </div>
-              
-              <Button variant="outline" className="w-full border-purple text-purple hover:bg-purple hover:text-white">
-                Edit Plan
-              </Button>
+              <EditCardModal 
+                name={name}
+                price={price}
+                limits={limits}
+                id={id}
+              />
             </CardContent>
           </Card>
       </div>
     )
+}
+
+
+function EditCardModal({
+  id,
+  name,
+  price,
+  limits
+}:Partial<PlanCardProps>){
+
+  const [openModal,setOpenModal] = useState(false)
+
+  return(
+    <Dialog open={openModal} onOpenChange={setOpenModal}>
+  <DialogTrigger asChild>
+    <Button
+      variant="outline"
+      className="w-full border-purple text-purple hover:bg-purple hover:text-white"
+    >
+      Edit Plan
+    </Button>
+  </DialogTrigger>
+
+  <DialogContent
+    className="bg-navy border border-purpleDark p-6 sm:max-w-xl w-full rounded-xl shadow-lg"
+  >
+    <DialogHeader className="mb-4">
+      <DialogTitle className="text-white text-2xl font-semibold">
+        Edit Plan Info
+      </DialogTitle>
+    </DialogHeader>
+
+    <div className="w-full space-y-6">
+      <EditPlanForm
+        id={id}
+        name={name}
+        price={price}
+        limits={limits}
+        onSuccess={() => setOpenModal(false)}
+      />
+    </div>
+  </DialogContent>
+</Dialog>
+
+  )
 }
 
 

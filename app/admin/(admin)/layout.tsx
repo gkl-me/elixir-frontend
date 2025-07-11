@@ -1,5 +1,7 @@
 import { adminAxios } from "@/api/axiosInstance";
-import { AdminRoutes } from "@/constants/adminRoutes";
+import { Header } from "@/components/admin/header";
+import { Sidebar } from "@/components/admin/sidebar";
+import { ADMIN_ROUTES } from "@/constants/adminRoutes";
 import { AxiosError } from "axios";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -21,15 +23,19 @@ export default async function ProtectedLayout({
 
     try {
         
-        await adminAxios.get(AdminRoutes.ME,{
+        await adminAxios.get(ADMIN_ROUTES.ME,{
             headers:{
                 Cookie:cookieHeader
             }
         })
         return (
-            <>
-            {children}
-            </>
+            <div className="min-h-screen bg-gradient-to-br from-navyDark via-navy to-blueDark">
+            <Header/>
+            <div className="flex ">
+                <Sidebar/>
+                {children}
+            </div>
+            </div>
         )
 
     } catch (error) {

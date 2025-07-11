@@ -1,4 +1,5 @@
-import { AdminRoutes } from "@/constants/adminRoutes";
+
+import { ADMIN_ROUTES } from "@/constants/adminRoutes";
 import { adminApi } from "./adminApi";
 
 
@@ -6,7 +7,7 @@ export const adminAuthApi = adminApi.injectEndpoints({
     endpoints:(builder) => ({
         adminLogin:builder.mutation({
             query:(data) => ({
-                url:AdminRoutes.LOGIN,
+                url:ADMIN_ROUTES.LOGIN,
                 method:'POST',
                 data:data
             }),
@@ -14,13 +15,20 @@ export const adminAuthApi = adminApi.injectEndpoints({
         }),
         adminMe:builder.query({
             query:() => ({
-                url:AdminRoutes.ME,
+                url:ADMIN_ROUTES.ME,
                 method:'GET'
             }),
             providesTags:['admin']
+        }),
+        adminLogout:builder.mutation({
+            query:() => ({
+                url:ADMIN_ROUTES.LOGOUT,
+                method:'POST'
+            }),
+            invalidatesTags:['admin']
         })
     })
 })
 
 
-export const {useAdminMeQuery,useAdminLoginMutation} = adminAuthApi
+export const {useAdminMeQuery,useAdminLoginMutation,useAdminLogoutMutation} = adminAuthApi

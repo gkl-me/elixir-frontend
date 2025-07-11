@@ -6,6 +6,6 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 export const adminApi = createApi({
     reducerPath:'adminApi',
     baseQuery:axiosBaseQuery(adminAxios),
-    tagTypes:['admin'],
+    tagTypes:['admin','plans'],
     endpoints:() => ({})
 })

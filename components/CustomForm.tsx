@@ -18,7 +18,7 @@ export interface CustomFormProps<T extends z.ZodType>{
     schema:T,
     defaultValues:z.infer<T>,
     fields:{
-        name:keyof z.infer<T>,
+        name:Path<z.infer<T>>,
         label:string,
         type?:string,
         options?:{value:string,label:string}[],
@@ -47,6 +47,7 @@ export default function CustomForm<T extends z.ZodType>({
         defaultValues,
     })
     
+    const nameValue = form.watch("name" as Path<z.infer<T>>)
     
     async function handleSubmit(values:z.infer<T>){
             await onSubmit(values)
@@ -56,6 +57,9 @@ export default function CustomForm<T extends z.ZodType>({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
             {fields.map((field) => {
+
+                const isPriceDisabled = field.name === 'price' && nameValue == 'Free'
+
                 if(field.isArray){
                     return <ArrayField key={field.name as string} field={field} form={form} isLoading={isLoading}/>
                 }
@@ -78,7 +82,7 @@ export default function CustomForm<T extends z.ZodType>({
                                 <FormControl>
                                     <Input
                                         className="bg-blueDark border-0"
-                                        disabled={field.disabled}
+                                        disabled={field.disabled || isPriceDisabled}
                                         type={field.type}
                                         placeholder={field.placeholder || field.label}
                                         {...fieldProps}

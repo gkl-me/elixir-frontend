@@ -1,4 +1,5 @@
 import { adminAxios } from "@/api/axiosInstance";
+import { ADMIN_ROUTES } from "@/constants/adminRoutes";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -18,7 +19,7 @@ export default async function LoginLayout({
 
     try {
         
-        await adminAxios.get('/me',{
+        await adminAxios.get(ADMIN_ROUTES.ME,{
             headers:{
                 Cookie:cookieHeader
             }

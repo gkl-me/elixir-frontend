@@ -3,9 +3,11 @@
 import CustomForm, { CustomFormProps } from "@/components/CustomForm";
 import GradientWithGrid from "@/components/GradientGrid";
 import { useAdminLoginMutation } from "@/redux/api/admin/adminAuthApi";
+import { setAdmin } from "@/redux/slices/adminSlice";
 import { AdminLoginSchema } from "@/validator/admin/AdminAuthSchema";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import z from 'zod'
 
@@ -30,6 +32,7 @@ export default function LoginPage() {
   const error = searchParams.get('error')
   const [login,{isLoading}] = useAdminLoginMutation()
   const router = useRouter()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if(error){
@@ -47,6 +50,7 @@ export default function LoginPage() {
     try {
       const res = await login(data).unwrap()
       console.log(res)
+      dispatch(setAdmin(res.data))
       toast.success(res.message)
       router.push('/admin/dashboard')
     } catch (error) {
