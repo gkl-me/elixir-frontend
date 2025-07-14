@@ -1,11 +1,11 @@
-import { EditFormFields, PlanCardProps } from "@/types/IPlan"
+import { UpdateFormFields, PlanCardProps } from "@/types/IPlan"
 import CustomForm from "../CustomForm"
-import { EditPlanSchema, EditPlanType } from "@/validator/admin/PlanSchema"
-import { useEditPlanMutation } from "@/redux/api/admin/adminPlan"
+import { UpdatePlanSchema, UpdatePlanType } from "@/validator/admin/PlanSchema"
+import {  useUpdatePlanMutation } from "@/redux/api/admin/adminPlan"
 import { toast } from "sonner"
 
 
-function EditPlanForm({
+function UpdatePlanForm({
     id,
     name,
     price,
@@ -13,12 +13,12 @@ function EditPlanForm({
     onSuccess
 }:Partial<PlanCardProps> & {onSuccess:() => void}) {
 
-    const [editPlan] = useEditPlanMutation()
+    const [updatePlan] = useUpdatePlanMutation()
 
-    const handleUpdatePlan = async (data:EditPlanType) => {
+    const handleUpdatePlan = async (data:UpdatePlanType) => {
         onSuccess()
         try {
-            const res = await editPlan({data,id})
+            const res = await updatePlan({data,id})
             toast.success(res.data.message)
         } catch (error) {
             toast.error(error as string)
@@ -27,18 +27,18 @@ function EditPlanForm({
 
   return (
     <CustomForm
-        buttonText="Edit Plan"
+        buttonText="Update Plan"
         defaultValues={{
             name:name,
             price:price ? price/100 : 0,
             limits:limits
         }}
-        fields={EditFormFields}
+        fields={UpdateFormFields}
         isLoading={false}
-        schema={EditPlanSchema}
+        schema={UpdatePlanSchema}
         onSubmit={handleUpdatePlan}
     />
   )
 }
 
-export default EditPlanForm
+export default UpdatePlanForm

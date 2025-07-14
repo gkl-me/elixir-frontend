@@ -11,7 +11,7 @@ export const adminPlanApi = adminApi.injectEndpoints({
             }),
            providesTags:['plans'] 
         }),
-        editPlan:builder.mutation({
+        updatePlan:builder.mutation({
             query:({data,id}) => ({
                 url:ADMIN_ROUTES.PLANS + `/${id}`,
                 method:'PATCH',
@@ -22,4 +22,4 @@ export const adminPlanApi = adminApi.injectEndpoints({
     })
 })
 
-export const {usePlansQuery,useEditPlanMutation} = adminPlanApi
+export const {usePlansQuery,useUpdatePlanMutation} = adminPlanApi

@@ -1,5 +1,5 @@
 import { CustomFormProps } from "@/components/CustomForm"
-import { EditPlanSchema } from "@/validator/admin/PlanSchema"
+import { UpdatePlanSchema } from "@/validator/admin/PlanSchema"
 
 
 export enum PlanType  {
@@ -23,7 +23,7 @@ export interface PlanCardProps{
 }
 
 
-export const EditFormFields:CustomFormProps<typeof EditPlanSchema>['fields'] =[
+export const UpdateFormFields:CustomFormProps<typeof UpdatePlanSchema>['fields'] =[
     {
         name:'name',
         label:'Name',

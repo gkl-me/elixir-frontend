@@ -11,5 +11,5 @@ export const CreatePlanSchema =  z.object({
     isActive:z.boolean()
 })
 
-export const EditPlanSchema = CreatePlanSchema.partial()
-export type EditPlanType = z.infer<typeof EditPlanSchema>
+export const UpdatePlanSchema = CreatePlanSchema.partial()
+export type UpdatePlanType = z.infer<typeof UpdatePlanSchema>

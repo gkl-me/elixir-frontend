@@ -4,10 +4,10 @@ import { Check } from "lucide-react"
 import { Badge } from "../ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Switch } from "../ui/switch"
-import { useEditPlanMutation } from "@/redux/api/admin/adminPlan"
+import { useUpdatePlanMutation } from "@/redux/api/admin/adminPlan"
 import { toast } from "sonner"
 import { PlanCardProps } from "@/types/IPlan"
-import EditPlanForm from "./EditPlanForm"
+import UpdatePlanForm from "./UpdatePlanForm"
 import { useState } from "react"
 
 
@@ -20,12 +20,12 @@ export default function PlanCard({
 }:PlanCardProps){
 
   const [localStatus,setLocalStatus] = useState(isActive)
-  const [editPlan] = useEditPlanMutation()
+  const [updatePlan] = useUpdatePlanMutation()
 
-  const handleUpdate = async (id:string,data:{isActive:boolean}) => {
+  const handleToggle = async (id:string,data:{isActive:boolean}) => {
     setLocalStatus(p => !p)
     try {
-      await editPlan({data,id}).unwrap()
+      await updatePlan({data,id}).unwrap()
     } catch (error) {
       toast.error(error as string)
       setLocalStatus(p => !p)
@@ -41,7 +41,7 @@ export default function PlanCard({
                <Switch className="data-[state=checked]:bg-purple data-[state=unchecked]:bg-blueDark"
                   checked={localStatus}
                   onCheckedChange={() => {
-                    handleUpdate(id,{isActive:!isActive})
+                    handleToggle(id,{isActive:!isActive})
                   }}
                />
               </div>
@@ -85,7 +85,7 @@ export default function PlanCard({
                   </Badge>
                 </div>
               </div>
-              <EditCardModal 
+              <UpdateCardModal 
                 name={name}
                 price={price}
                 limits={limits}
@@ -98,7 +98,7 @@ export default function PlanCard({
 }
 
 
-function EditCardModal({
+function UpdateCardModal({
   id,
   name,
   price,
@@ -114,7 +114,7 @@ function EditCardModal({
       variant="outline"
       className="w-full border-purple text-purple hover:bg-purple hover:text-white"
     >
-      Edit Plan
+      Update Plan
     </Button>
   </DialogTrigger>
 
@@ -123,12 +123,12 @@ function EditCardModal({
   >
     <DialogHeader className="mb-4">
       <DialogTitle className="text-white text-2xl font-semibold">
-        Edit Plan Info
+        Update Plan Info
       </DialogTitle>
     </DialogHeader>
 
     <div className="w-full space-y-6">
-      <EditPlanForm
+      <UpdatePlanForm
         id={id}
         name={name}
         price={price}
