@@ -1,17 +1,38 @@
+import { ADMIN_ROUTES } from '@/constants/adminRoutes'
 import { API_ROUTES } from '@/constants/config'
+import { USER_ROUTES } from '@/constants/userRoutes'
 import axios from 'axios'
 
 
-const createAxiosInstance = (baseURL:string) => {
+const createAxiosInstance = (baseURL:string,type:'admin'|'user') => {
     const instance = axios.create({
         baseURL,
         withCredentials : true,
     })
 
+    //refresh token logic
     instance.interceptors.response.use(
         response => response.data,
-        error => {
-            throw error
+        async (error) => {
+            const originalRequest = error.config
+
+            if(error.response?.status == 401 && !originalRequest._retry){
+                originalRequest._retry = true
+
+                try {
+
+                    const refreshUrl = type === 'admin' ? ADMIN_ROUTES.REFRESH :  USER_ROUTES.REFRESH
+                    await axios.post(API_ROUTES.admin+refreshUrl,{},{
+                        withCredentials:true
+                    })
+
+                    return instance(originalRequest)
+                } catch (error) {
+                    throw error
+                }
+            }
+
+            return Promise.reject(error)
         }
     )
 
@@ -19,5 +40,5 @@ const createAxiosInstance = (baseURL:string) => {
 }
 
 
-export const userAxios = createAxiosInstance(API_ROUTES.user)
-export const adminAxios = createAxiosInstance(API_ROUTES.admin)
+export const adminAxios = createAxiosInstance(API_ROUTES.admin,'admin')
+export const userAxios = createAxiosInstance(API_ROUTES.user,'user')

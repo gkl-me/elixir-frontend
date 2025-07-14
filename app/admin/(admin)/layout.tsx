@@ -1,33 +1,37 @@
-import { adminAxios } from "@/api/axiosInstance";
+'use client'
+
 import { Header } from "@/components/admin/header";
 import { Sidebar } from "@/components/admin/sidebar";
 import { ADMIN_ROUTES } from "@/constants/adminRoutes";
-import { AxiosError } from "axios";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import React from "react";
+import useAdminAuth from "@/hooks/useAdminAuth";
+import { adminLogout } from "@/redux/slices/adminSlice";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner";
 
-export default async function ProtectedLayout({
+export default function ProtectedLayout({
     children
 }:{children:React.ReactNode}){
 
-    const cookieStore = await cookies();
+    const {isAuth,isLoading,error} = useAdminAuth()
+    const router  = useRouter()
+    const dispatch = useDispatch()
 
-  // Manually convert cookies to header string
-  const cookieHeader = cookieStore
-    .getAll()
-    .map(({ name, value }:{name:string,value:string}) => `${name}=${value}`)
-    .join('; ');
 
-    let errorMessage = "";
+    useEffect(() => {
+        if(!isAuth && !isLoading){
+            //redirect to login page
+            router.replace(ADMIN_ROUTES.ADMIN+ADMIN_ROUTES.LOGIN)
+            dispatch(adminLogout())
+            toast.error(error as string)
+        }
+    },[isAuth,isLoading,dispatch,error,router])
 
-    try {
-        
-        await adminAxios.get(ADMIN_ROUTES.ME,{
-            headers:{
-                Cookie:cookieHeader
-            }
-        })
+    if(isLoading || !isAuth) {
+        return null
+    }
+
         return (
             <div className="min-h-screen bg-gradient-to-br from-navyDark via-navy to-blueDark">
             <Header/>
@@ -37,13 +41,4 @@ export default async function ProtectedLayout({
             </div>
             </div>
         )
-
-    } catch (error) {
-        console.log(error)
-        if(error instanceof AxiosError){
-            errorMessage = error.response?.data?.message
-        }
-    }
-    
-    redirect(`/admin/login?error=${errorMessage}`)
 }

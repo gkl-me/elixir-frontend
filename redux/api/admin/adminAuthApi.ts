@@ -31,4 +31,4 @@ export const adminAuthApi = adminApi.injectEndpoints({
 })
 
 
-export const {useAdminMeQuery,useAdminLoginMutation,useAdminLogoutMutation} = adminAuthApi
+export const {useLazyAdminMeQuery,useAdminLoginMutation,useAdminLogoutMutation} = adminAuthApi

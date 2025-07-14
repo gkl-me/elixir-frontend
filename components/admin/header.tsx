@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { useAdminLogoutMutation } from "@/redux/api/admin/adminAuthApi";
 import { useRouter } from "next/navigation";
 import { useDispatch, } from "react-redux";
-import {logout} from "@/redux/slices/adminSlice";
+import {adminLogout} from "@/redux/slices/adminSlice";
 import { LogOut, User } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
@@ -15,10 +15,10 @@ export function Header() {
     const router = useRouter()
     const dispatch = useDispatch()
 
-    const adminLogout = async () => {
+    const handleLogout = async () => {
         try {
             const res = await triggerLogout({}).unwrap()
-            dispatch(logout())
+            dispatch(adminLogout())
             toast.success(res.message)
             router.push('/admin/login')
             router.refresh()
@@ -56,7 +56,7 @@ export function Header() {
           <DropdownMenuContent align="end" className="bg-navy/95 backdrop-blur-md border-white/10 shadow-xl">
             <DropdownMenuItem className="text-white hover:bg-white/10 hover:text-white focus:bg-white/10 cursor-pointer"
               onClick={() => {
-                adminLogout()
+                handleLogout()
               }}
             >
               <LogOut size={16} className="mr-2" />

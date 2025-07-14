@@ -1,43 +1,37 @@
-import { adminAxios } from "@/api/axiosInstance";
-import { ADMIN_ROUTES } from "@/constants/adminRoutes";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import React from "react";
+'use client'
 
-export default async function LoginLayout({
+import { ADMIN_ROUTES } from '@/constants/adminRoutes'
+import useAdminAuth from '@/hooks/useAdminAuth'
+import { useRouter } from 'next/navigation'
+import React, { useEffect } from 'react'
+
+function Layout({
     children
-}:{children:React.ReactNode}){
+}:{
+    children:React.ReactNode
+}) {
 
-    const cookieStore = await cookies();
-    let loggedIn = false
 
-  // Manually convert cookies to header string
-  const cookieHeader = cookieStore
-    .getAll()
-    .map(({ name, value }:{name:string,value:string}) => `${name}=${value}`)
-    .join('; ');
+    //check if admin is authenicated
 
-    try {
-        
-        await adminAxios.get(ADMIN_ROUTES.ME,{
-            headers:{
-                Cookie:cookieHeader
-            }
-        })
-        loggedIn = true
-        
-    } catch (error) {
-        loggedIn= false
-        console.log(error)
+    const {isAuth,isLoading} = useAdminAuth()
+    const router = useRouter()
+
+    useEffect(() => {
+        if(isAuth && !isLoading){
+            router.replace(ADMIN_ROUTES.ADMIN+ADMIN_ROUTES.DASHBOARD)
+        }
+    },[router,isAuth,isLoading])
+
+    if(isLoading || isAuth){
+        return null
     }
-    
-    if(loggedIn){
-         redirect('/admin/dashboard')
-    }
-    
-    return (
-        <>
+
+  return (
+    <>
         {children}
-        </>
-    )
+    </>
+  )
 }
+
+export default Layout

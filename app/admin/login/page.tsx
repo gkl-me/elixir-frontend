@@ -2,11 +2,11 @@
 
 import CustomForm, { CustomFormProps } from "@/components/CustomForm";
 import GradientWithGrid from "@/components/GradientGrid";
+import { ADMIN_ROUTES } from "@/constants/adminRoutes";
 import { useAdminLoginMutation } from "@/redux/api/admin/adminAuthApi";
 import { setAdmin } from "@/redux/slices/adminSlice";
 import { AdminLoginSchema } from "@/validator/admin/AdminAuthSchema";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import z from 'zod'
@@ -28,33 +28,19 @@ const fields:CustomFormProps<typeof AdminLoginSchema>['fields'] = [
 
 export default function LoginPage() {
 
-  const searchParams = useSearchParams()
-  const error = searchParams.get('error')
   const [login,{isLoading}] = useAdminLoginMutation()
   const router = useRouter()
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    if(error){
-      toast.error(error)
-      const params = new URLSearchParams(window.location.search)
-      params.delete('error')
-      const newUrl = window.location.pathname + params.toString()
-      router.replace(newUrl,{scroll:false})
-    }
-      
-  },[searchParams,router])
 
 
   const handleLogin = async (data:z.infer<typeof AdminLoginSchema>) => {
     try {
       const res = await login(data).unwrap()
-      console.log(res)
       dispatch(setAdmin(res.data))
       toast.success(res.message)
-      router.push('/admin/dashboard')
+      router.push(ADMIN_ROUTES.ADMIN+ADMIN_ROUTES.DASHBOARD)
     } catch (error) {
-      console.log(error)
       toast.error(error as string)
     }
   } 

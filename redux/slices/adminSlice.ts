@@ -5,7 +5,7 @@ const initialState = {
     id:"",
     name:"",
     email:"",
-    isCollapsed:false
+    isCollapsed:false,
 }
 
 const adminSlice = createSlice({
@@ -17,7 +17,7 @@ const adminSlice = createSlice({
             state.name = action.payload.name
             state.email = action.payload.email
         },
-        logout:(state) => {
+        adminLogout:(state) => {
             state.id = ""
             state.name = ""
             state.email = ""
@@ -29,5 +29,5 @@ const adminSlice = createSlice({
     }
 })
 
-export const {setAdmin,logout,setCollapsed} = adminSlice.actions
+export const {setAdmin,adminLogout,setCollapsed} = adminSlice.actions
 export default adminSlice.reducer

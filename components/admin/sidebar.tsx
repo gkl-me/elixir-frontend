@@ -49,7 +49,7 @@ export function Sidebar() {
       window.removeEventListener('resize',handleResize)
     }
 
-  },[])
+  },[dispatch])
 
   return (
     <aside 
