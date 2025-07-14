@@ -34,7 +34,7 @@ export default function RootLayout({
       } 
 
       >
-        <Toaster/>
+        <Toaster richColors={false} toastOptions={{}}/>
         <ReduxProvider>
         {children}
         </ReduxProvider>

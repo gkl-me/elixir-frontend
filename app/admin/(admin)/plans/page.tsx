@@ -1,8 +1,9 @@
 'use client'
 
 import PlanCardSkeleton from "@/components/admin/cardSkeleton"
-import PlanCard, { PlanCardProps } from "@/components/admin/planCard"
+import PlanCard  from "@/components/admin/planCard"
 import { usePlansQuery } from "@/redux/api/admin/adminPlan"
+import { PlanCardProps } from "@/types/IPlan"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
@@ -14,7 +15,7 @@ export default function AdminPlans(){
         if(isError && error){
             toast.error(error as string )
         }
-    },[])
+    },[isError,error])
 
     if(isLoading){
         return <div className="mx-auto mt-20">
