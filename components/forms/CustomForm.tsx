@@ -30,6 +30,7 @@ export interface CustomFormProps<T extends z.ZodType>{
     onSubmit:(values:z.infer<T>) => Promise<void>
     buttonText:string,
     isLoading: boolean,
+    className?:string
 }
 
 
@@ -40,6 +41,7 @@ export default function CustomForm<T extends z.ZodType>({
     onSubmit,
     buttonText,
     isLoading,
+    className
 }:CustomFormProps<T>){
 
     
@@ -56,7 +58,7 @@ export default function CustomForm<T extends z.ZodType>({
 
     return (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className={`${className??""} space-y-2`}>
             {fields.map((field) => {
 
                 const isPriceDisabled = field.name === 'price' && nameValue == 'Free'

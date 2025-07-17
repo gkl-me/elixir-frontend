@@ -6,6 +6,7 @@ import { UserLoginSchema } from '@/validator/user/UserAuthSchema'
 import { z } from 'zod'
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from 'react-icons/fa';
+import Image from 'next/image'
 
 const fields:CustomFormProps<typeof UserLoginSchema>['fields'] = [
     {
@@ -29,9 +30,16 @@ function LoginForm() {
 
     return (
       <div className="mx-auto mt-20 w-4/5 md:w-full max-w-md p-4 md:p-8 rounded-2xl shadow-lg bg-navy text-white">
-        <h2 className="text-3xl font-bold text-center mb-8 text-purple">
-          Welcome Back
-        </h2>
+        <div className='flex justify-center align-middle text-center gap-3'>
+                <Image
+                    src='./elixir-logo.svg'
+                    height={25}
+                    width={25}
+                    alt='logo'
+                    className='mb-8 md:6'
+                />
+                <h2 className="text-xl md:text-2xl font-semibold text-center mb-8">Welcome Back</h2>
+                </div>
 
         <CustomForm
           buttonText="Login"
