@@ -3,9 +3,9 @@
 import {TypeOf, z} from 'zod'
 import { CustomFormProps } from './CustomForm'
 import { FieldArray, FieldValues, Path, useFieldArray, useForm } from 'react-hook-form'
-import { FormField, FormItem, FormLabel, FormMessage } from './ui/form'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
+import { FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
 import { Plus, Trash } from 'lucide-react'
 
 export default function ArrayField<T extends z.ZodType>({

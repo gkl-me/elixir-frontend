@@ -1,8 +1,9 @@
 import { UpdateFormFields, PlanCardProps } from "@/types/IPlan"
-import CustomForm from "../CustomForm"
+import CustomForm from "../forms/CustomForm"
 import { UpdatePlanSchema, UpdatePlanType } from "@/validator/admin/PlanSchema"
 import {  useUpdatePlanMutation } from "@/redux/api/admin/adminPlan"
 import { toast } from "sonner"
+import { AxiosErrorHandler } from "@/lib/errorHandler"
 
 
 function UpdatePlanForm({
@@ -21,7 +22,9 @@ function UpdatePlanForm({
             const res = await updatePlan({data,id})
             toast.success(res.data.message)
         } catch (error) {
-            toast.error(error as string)
+            const err = AxiosErrorHandler(error)
+            console.log(err)
+            toast.error(err)
         }
     }
 

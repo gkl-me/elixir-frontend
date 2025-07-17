@@ -1,13 +1,16 @@
 "use client";
 
 import { toast } from "sonner";
-import { Button } from "../ui/button";
+
 import { useAdminLogoutMutation } from "@/redux/api/admin/adminAuthApi";
 import { useRouter } from "next/navigation";
 import { useDispatch, } from "react-redux";
 import {adminLogout} from "@/redux/slices/adminSlice";
 import { LogOut, User } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { ADMIN_ROUTES } from "@/constants/adminRoutes";
+import { adminApi } from "@/redux/api/admin/adminApi";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
 
@@ -18,10 +21,10 @@ export function Header() {
     const handleLogout = async () => {
         try {
             const res = await triggerLogout({}).unwrap()
+            dispatch(adminApi.util.resetApiState())
             dispatch(adminLogout())
             toast.success(res.message)
-            router.push('/admin/login')
-            router.refresh()
+            router.replace(ADMIN_ROUTES.ADMIN+ADMIN_ROUTES.LOGIN)
         } catch (error) {
             toast.error(error as string)
         }

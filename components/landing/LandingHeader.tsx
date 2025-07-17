@@ -1,9 +1,10 @@
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Menu } from "lucide-react";
 import Image from "next/image";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "./ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
+import { USER_ROUTES } from "@/constants/userRoutes";
 
 export default function LandingHeader() {
 
@@ -24,7 +25,9 @@ export default function LandingHeader() {
             
         </div> 
         <div className="flex items-center space-x-4">
+            <Link href={USER_ROUTES.LOGIN}>
             <Button className="hidden md:block" variant={"light"}>Login</Button>
+            </Link>
             <DropdownMenu>
                 <DropdownMenuTrigger>
             <Menu size={24} className="block md:hidden"/>
@@ -35,7 +38,9 @@ export default function LandingHeader() {
                     <DropdownMenuItem><Link href={"#pricing"}><p>Pricing</p></Link></DropdownMenuItem>
                     <DropdownMenuItem><Link href={"#contact"}><p>Contact Us</p></Link></DropdownMenuItem>
                     <DropdownMenuItem>
+                        <Link href={USER_ROUTES.LOGIN}>
                         <Button className="w-full" variant={"light"}>Login</Button>
+                        </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

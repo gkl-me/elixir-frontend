@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import { PlanCardProps } from "@/types/IPlan"
 import UpdatePlanForm from "./UpdatePlanForm"
 import { useState } from "react"
+import { AxiosErrorHandler } from "@/lib/errorHandler"
 
 
 export default function PlanCard({
@@ -27,7 +28,8 @@ export default function PlanCard({
     try {
       await updatePlan({data,id}).unwrap()
     } catch (error) {
-      toast.error(error as string)
+      const err  = AxiosErrorHandler(error)
+      toast.error(err)
       setLocalStatus(p => !p)
     }
   }

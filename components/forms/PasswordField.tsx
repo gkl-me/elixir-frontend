@@ -3,9 +3,9 @@
 import { Path, useForm } from "react-hook-form"
 import { CustomFormProps } from "./CustomForm"
 import { useState } from "react"
-import { FormControl, FormField, FormItem, FormLabel } from "./ui/form"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
+import { FormControl, FormField, FormItem, FormLabel } from "../ui/form"
+import { Input } from "../ui/input"
+import { Button } from "../ui/button"
 import { Eye, EyeOff } from "lucide-react"
 import { z } from "zod"
 

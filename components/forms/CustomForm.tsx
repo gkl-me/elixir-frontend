@@ -3,12 +3,12 @@
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Path, useForm} from'react-hook-form'
 import {z} from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
+import { Input } from '../ui/input'
+import { Button } from '../ui/button'
 import ArrayField from './ArrayField'
-import PasswordField from './PasswordField'
-import SelectField from './SelectField'
+import PasswordField from '../forms/PasswordField'
+import SelectField from '../forms/SelectField'
 
 
 
@@ -24,7 +24,8 @@ export interface CustomFormProps<T extends z.ZodType>{
         options?:{value:string,label:string}[],
         isArray?:boolean,
         placeholder?:string,
-        disabled?:boolean
+        disabled?:boolean,
+        confirmPassword?:boolean
     }[],
     onSubmit:(values:z.infer<T>) => Promise<void>
     buttonText:string,
@@ -81,6 +82,7 @@ export default function CustomForm<T extends z.ZodType>({
                                 <FormLabel>{field.label}</FormLabel>
                                 <FormControl>
                                     <Input
+                                        autoComplete='off'
                                         className="bg-blueDark border-0"
                                         disabled={field.disabled || isPriceDisabled}
                                         type={field.type}
@@ -95,7 +97,7 @@ export default function CustomForm<T extends z.ZodType>({
                 )
 
             })}
-            <Button variant={'light'} type="submit" disabled={isLoading}> {isLoading ? 'Loading': `${buttonText}` }</Button>
+            <Button className='w-full' variant={'light'} type="submit" disabled={isLoading}> {isLoading ? 'Loading': `${buttonText}` }</Button>
           </form>
         </Form>
       )

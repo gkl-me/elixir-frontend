@@ -2,8 +2,8 @@
 
 import { Path, useForm } from "react-hook-form";
 import { CustomFormProps } from "./CustomForm";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { z } from "zod";
 
 export default function SelectField<T extends z.ZodType>({
