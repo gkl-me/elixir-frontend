@@ -1,8 +1,9 @@
 "use client";
 
-import CustomForm, { CustomFormProps } from "@/components/CustomForm";
-import GradientWithGrid from "@/components/GradientGrid";
+import CustomForm, { CustomFormProps } from "@/components/forms/CustomForm";
+import GradientWithGrid from "@/components/landing/GradientGrid";
 import { ADMIN_ROUTES } from "@/constants/adminRoutes";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { useAdminLoginMutation } from "@/redux/api/admin/adminAuthApi";
 import { setAdmin } from "@/redux/slices/adminSlice";
 import { AdminLoginSchema } from "@/validator/admin/AdminAuthSchema";
@@ -41,7 +42,8 @@ export default function LoginPage() {
       toast.success(res.message)
       router.push(ADMIN_ROUTES.ADMIN+ADMIN_ROUTES.DASHBOARD)
     } catch (error) {
-      toast.error(error as string)
+      const err = AxiosErrorHandler(error)
+      toast.error(err)
     }
   } 
 

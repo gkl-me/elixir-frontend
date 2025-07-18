@@ -23,7 +23,6 @@ function UpdatePlanForm({
             toast.success(res.data.message)
         } catch (error) {
             const err = AxiosErrorHandler(error)
-            console.log(err)
             toast.error(err)
         }
     }

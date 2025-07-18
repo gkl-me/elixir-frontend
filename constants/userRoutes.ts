@@ -1,4 +1,7 @@
 
 export enum USER_ROUTES{
-    REFRESH='/refresh'
+    USER='/user',
+    REFRESH='/refresh',
+    REGISTER='/register',
+    LOGIN='/login'
 }
