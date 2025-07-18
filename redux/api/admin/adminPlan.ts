@@ -9,7 +9,7 @@ export const adminPlanApi = adminApi.injectEndpoints({
                 url:ADMIN_ROUTES.PLANS,
                 method:'GET',
             }),
-           providesTags:['plans'] 
+           providesTags:['plans']
         }),
         updatePlan:builder.mutation({
             query:({data,id}) => ({
@@ -22,4 +22,4 @@ export const adminPlanApi = adminApi.injectEndpoints({
     })
 })
 
-export const {usePlansQuery,useUpdatePlanMutation} = adminPlanApi
+export const {useLazyPlansQuery,useUpdatePlanMutation} = adminPlanApi

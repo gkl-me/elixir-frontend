@@ -6,6 +6,7 @@ const initialState = {
     name:"",
     email:"",
     isCollapsed:false,
+    isAuth:false
 }
 
 const adminSlice = createSlice({
@@ -16,11 +17,13 @@ const adminSlice = createSlice({
             state.id = action.payload.id
             state.name = action.payload.name
             state.email = action.payload.email
+            state.isAuth = true
         },
         adminLogout:(state) => {
             state.id = ""
             state.name = ""
             state.email = ""
+            state.isAuth = false
         },
         setCollapsed:(state,action) => {
             state.isCollapsed = action.payload 

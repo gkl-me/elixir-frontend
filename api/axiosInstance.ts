@@ -1,5 +1,5 @@
 import { ADMIN_ROUTES } from '@/constants/adminRoutes'
-import { API_ROUTES } from '@/constants/config'
+import { API_BASE_URL, API_ROUTES } from '@/constants/config'
 import { USER_ROUTES } from '@/constants/userRoutes'
 import axios from 'axios'
 
@@ -21,14 +21,14 @@ const createAxiosInstance = (baseURL:string,type:'admin'|'user') => {
 
                 try {
 
-                    const refreshUrl = type === 'admin' ? ADMIN_ROUTES.REFRESH :  USER_ROUTES.REFRESH
-                    await axios.post(API_ROUTES.admin+refreshUrl,{},{
+                    const refreshUrl = type === 'admin' ? ADMIN_ROUTES.ADMIN+ADMIN_ROUTES.REFRESH :  USER_ROUTES.USER+USER_ROUTES.REFRESH
+                    await axios.post(API_BASE_URL+refreshUrl,{},{
                         withCredentials:true
                     })
 
                     return instance(originalRequest)
                 } catch (error) {
-                    throw error
+                    return Promise.reject(error)
                 }
             }
 

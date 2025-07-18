@@ -11,7 +11,8 @@ export const adminAuthApi = adminApi.injectEndpoints({
                 method:'POST',
                 data:data
             }),
-            invalidatesTags:['admin']
+            invalidatesTags:['admin'],
+            
         }),
         adminMe:builder.query({
             query:() => ({
