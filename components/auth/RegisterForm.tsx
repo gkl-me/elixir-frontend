@@ -8,6 +8,10 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from 'react-icons/fa';
 import { USER_ROUTES } from '@/constants/userRoutes'
 import Image from 'next/image'
+import { toast } from 'sonner'
+import { AxiosErrorHandler } from '@/lib/errorHandler'
+import { useRegisterMutation } from '@/redux/api/auth/authApi'
+import { useRouter } from 'next/navigation'
 
 const fields:CustomFormProps<typeof UserRegisterSchema>['fields'] = [
     {
@@ -35,8 +39,18 @@ const fields:CustomFormProps<typeof UserRegisterSchema>['fields'] = [
 
 function RegisterForm() {
 
+      const [register,{isLoading}] = useRegisterMutation()
+      const router = useRouter()
+
     const handleLogin = async(data:z.infer<typeof UserRegisterSchema>) => {
-        console.log(data)
+        try {
+          const res = await register(data).unwrap()
+          console.log(res)
+          router.replace('/login')
+          toast.success(res.message)
+        } catch (error) {
+          toast.error(AxiosErrorHandler(error))
+        }
     }
 
     return (
@@ -63,7 +77,7 @@ function RegisterForm() {
           fields={fields}
           onSubmit={handleLogin}
           schema={UserRegisterSchema}
-          isLoading={false}
+          isLoading={isLoading}
         />
 
         <div className="my-6 flex items-center justify-between text-gray-400">

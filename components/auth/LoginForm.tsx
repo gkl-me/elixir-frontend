@@ -3,10 +3,13 @@
 import React from 'react'
 import CustomForm, { CustomFormProps } from '../forms/CustomForm'
 import { UserLoginSchema } from '@/validator/user/UserAuthSchema'
-import { z } from 'zod'
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from 'react-icons/fa';
 import Image from 'next/image'
+import useLogin from '@/hooks/auth/useLogin'
+import { toast } from 'sonner';
+import { AxiosErrorHandler } from '@/lib/errorHandler';
+import { signIn } from 'next-auth/react';
 
 const fields:CustomFormProps<typeof UserLoginSchema>['fields'] = [
     {
@@ -24,9 +27,19 @@ const fields:CustomFormProps<typeof UserLoginSchema>['fields'] = [
 
 function LoginForm() {
 
-    const handleLogin = async(data:z.infer<typeof UserLoginSchema>) => {
-        console.log(data)
+  const {handleLogin, isLoading } = useLogin()
+
+  const handleGoogleLogin = async () => {
+    try {
+
+      signIn('google',{
+        callbackUrl:'/verify/google'
+      })
+
+    } catch (error) {
+      toast.error(AxiosErrorHandler(error))
     }
+  }
 
     return (
       <div className="mx-auto mt-20 w-4/5 md:w-full max-w-md p-4 md:p-8 rounded-2xl shadow-lg bg-navy text-white">
@@ -50,7 +63,7 @@ function LoginForm() {
           fields={fields}
           onSubmit={handleLogin}
           schema={UserLoginSchema}
-          isLoading={false}
+          isLoading={isLoading}
         />
 
         <div className="my-6 flex items-center justify-between text-gray-400">
@@ -62,6 +75,7 @@ function LoginForm() {
         <div className="flex flex-col gap-3">
           <button
             className="flex items-center justify-center gap-3 border border-gray-600 hover:bg-blueDark transition py-2 rounded-md"
+            onClick={handleGoogleLogin}
           >
             <FcGoogle className="text-xl" />
             <span className="text-sm font-medium text-white">
@@ -82,7 +96,7 @@ function LoginForm() {
         <p className="text-center text-sm text-gray-400 mt-6">
           Don’t have an account?{' '}
           <a href="/register" className="text-purple hover:underline">
-            Sign up
+            Register
           </a>
         </p>
       </div>

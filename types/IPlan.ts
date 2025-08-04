@@ -1,4 +1,4 @@
-import { CustomFormProps } from "@/components/CustomForm"
+import { CustomFormProps } from "@/components/forms/CustomForm"
 import { UpdatePlanSchema } from "@/validator/admin/PlanSchema"
 
 

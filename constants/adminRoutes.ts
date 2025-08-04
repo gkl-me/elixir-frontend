@@ -7,5 +7,6 @@ export enum ADMIN_ROUTES {
     PLANS='/plans',
     ME='/me',
     LOGOUT='/logout',
-    REFRESH='/refresh'
+    REFRESH='/refresh',
+    USERS='/users'
 }
