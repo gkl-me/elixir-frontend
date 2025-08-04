@@ -11,6 +11,6 @@ export const adminApi = createApi({
         'admin',
         (api) => api.dispatch(handleAdminLogout())
     ),
-    tagTypes:['admin','plans'],
+    tagTypes:['admin','plans','users'],
     endpoints:() => ({})
 })

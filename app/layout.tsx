@@ -3,6 +3,7 @@ import { Work_Sans } from "next/font/google";
 import "./globals.css";
 import ReduxProvider from "./providers/ReduxProviders";
 import { Toaster } from "@/components/ui/sonner";
+import SessionProviderWrapper from "./providers/SessionProviderWrapper";
 
 
 const workSans = Work_Sans({
@@ -35,9 +36,11 @@ export default function RootLayout({
 
       >
         <Toaster richColors={false} toastOptions={{}}/>
+        <SessionProviderWrapper>
         <ReduxProvider>
         {children}
         </ReduxProvider>
+        </SessionProviderWrapper>
       </body>
     </html>
   );
