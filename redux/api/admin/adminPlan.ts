@@ -22,4 +22,4 @@ export const adminPlanApi = adminApi.injectEndpoints({
     })
 })
 
-export const {useLazyPlansQuery,useUpdatePlanMutation} = adminPlanApi
+export const {usePlansQuery,useUpdatePlanMutation} = adminPlanApi
