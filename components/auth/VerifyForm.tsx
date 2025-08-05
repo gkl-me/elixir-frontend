@@ -14,7 +14,8 @@ export default function VerifyForm({token}:{token:string}){
     const [triggerVerify] = useLazyVerifyQuery()
     const router = useRouter()
 
-    const handleVerify = async () => {
+    useEffect(() => {
+            const handleVerify = async () => {
         try {
 
             const res = await triggerVerify({token}).unwrap()
@@ -27,10 +28,8 @@ export default function VerifyForm({token}:{token:string}){
             toast.error(AxiosErrorHandler(error))
         }
     }
-
-    useEffect(() => {
         handleVerify()
-    },[])
+    },[router,token,triggerVerify])
 
     return(
         <div className="min-h-screen w-full bg-[radial-gradient(circle_at_50%_1%,_#4B2070_0%,_#040A1D_100%)] flex items-center justify-center px-4">

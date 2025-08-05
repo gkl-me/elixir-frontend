@@ -10,5 +10,7 @@ export enum USER_ROUTES{
     ONBOARDING='/onboarding',
     GOOGLE='/google-auth',
     GOOGLE_VERIFY='/verify/google',
-    SUBSCRIPTION='/subscription'
+    SUBSCRIPTION='/subscription',
+    WORKSPACE='/workspace',
+    LOGOUT='/logout'
 }

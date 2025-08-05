@@ -25,7 +25,7 @@ export default function PlanForm(){
             }
         }
         check()
-    },[])
+    },[triggerGetAvailablePlans])
 
     return (
         <div className="flex gap-10">

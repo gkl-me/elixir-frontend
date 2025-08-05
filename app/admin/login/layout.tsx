@@ -22,7 +22,7 @@ function Layout({
     }else{
       setCheck(true)
     }
-  },[])
+  },[isAuth,router])
 
   if(!check) return null
 
