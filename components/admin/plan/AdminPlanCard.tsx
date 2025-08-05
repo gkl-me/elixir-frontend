@@ -1,9 +1,9 @@
-import { Button } from "../ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { Button } from "../../ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card"
 import { Check } from "lucide-react"
-import { Badge } from "../ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { Switch } from "../ui/switch"
+import { Badge } from "../../ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/dialog"
+import { Switch } from "../../ui/switch"
 import { useUpdatePlanMutation } from "@/redux/api/admin/adminPlan"
 import { toast } from "sonner"
 import { PlanCardProps } from "@/types/IPlan"
@@ -12,7 +12,7 @@ import { useState } from "react"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
 
 
-export default function PlanCard({
+export default function AdminPlanCard({
     id,
     name,
     price,

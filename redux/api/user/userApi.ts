@@ -10,6 +10,6 @@ export const userApi = createApi({
         'user',
         (api) => api.dispatch("hello")
     ),
-    tagTypes:["user"],
+    tagTypes:["user",'plans','subscription'],
     endpoints: () => ({}),
 })

@@ -1,35 +1,44 @@
 'use client'
 
+import { USER_ROUTES } from "@/constants/userRoutes"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
 import { useGoogleAuthMutation } from "@/redux/api/auth/authApi"
+import { setUser } from "@/redux/slices/userSlice"
 import { signOut, useSession } from "next-auth/react"
 import { useEffect } from "react"
+import { useDispatch } from "react-redux"
 import { toast } from "sonner"
 
 function VerifyGoogle() {
 
     const {data:session,status} = useSession()
     const [googleAuth] = useGoogleAuthMutation() 
+    const dispatch = useDispatch()
 
     useEffect(() => {
         (async () => {
-            try {
+            
+            if(status=='authenticated'){
+                
+            try { 
                 const res = await googleAuth({
                     name:session?.user.name,
                     email:session?.user.email,
                     googleId:session?.user.googleId,
                     image:session?.user.image
                 })
-
-                console.log(res)
+                
+                dispatch(setUser(res.data.data))
                 signOut({
-                    callbackUrl:'/dashboard'
-                })
+                        callbackUrl:USER_ROUTES.ONBOARDING
+                    })
             } catch (error) {
                 signOut({
-                    callbackUrl:'/login'
-                })
-                toast.error(AxiosErrorHandler(error))
+                        callbackUrl:USER_ROUTES.LOGIN
+                    })
+                    console.log(error)
+                    toast.error(AxiosErrorHandler(error))
+                }
             }
         })()
     },[session,status,googleAuth])

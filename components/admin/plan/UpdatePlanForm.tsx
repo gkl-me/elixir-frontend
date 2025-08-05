@@ -1,5 +1,5 @@
 import { UpdateFormFields, PlanCardProps } from "@/types/IPlan"
-import CustomForm from "../forms/CustomForm"
+import CustomForm from "../../forms/CustomForm"
 import { UpdatePlanSchema, UpdatePlanType } from "@/validator/admin/PlanSchema"
 import {  useUpdatePlanMutation } from "@/redux/api/admin/adminPlan"
 import { toast } from "sonner"
