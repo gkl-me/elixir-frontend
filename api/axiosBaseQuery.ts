@@ -1,7 +1,6 @@
 import { BaseQueryApi, BaseQueryFn } from "@reduxjs/toolkit/query";
 import { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 
-
 export const axiosBaseQuery =
   ( axiosInstance: AxiosInstance,
     type:'admin' | 'user',
@@ -19,16 +18,16 @@ export const axiosBaseQuery =
       return { data:response };
     } catch (error) {
       const axiosError = error as AxiosError<{message:string}>
-      if(axiosError.status == 401){
+      if(axiosError.status == 401 || axiosError.status == 403){
         if(type === 'admin'){
-          //admin logout initialised
           onLogout(api)
         }else{
-          //user logout initialised
+          onLogout(api)
         }
       }
+      console.log(error)
       return {
-        error:  axiosError
+        error:  AxiosError
       };
     }
   };

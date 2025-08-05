@@ -1,22 +1,31 @@
 'use client'
 
+import { useAuth } from "@/hooks/auth/useAuth"
+import { AxiosErrorHandler } from "@/lib/errorHandler"
 import { useFindSubscriptionQuery } from "@/redux/api/subscription/userSubscriptionApi"
 import { RootState } from "@/redux/store"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
+import { toast } from "sonner"
 
 
 
-export default function OnboardingLayout({children}:{children:React.ReactNode}){
+export default function Layout({children}:{children:React.ReactNode}){
 
   const {id} = useSelector((state:RootState) => state.user)
-  const {data,isLoading,isFetching} = useFindSubscriptionQuery({userId:id})
-  const router = useRouter()
+  const router = useRouter() 
+  const check = useAuth()
+  const {data,isLoading,isFetching,isError,error} = useFindSubscriptionQuery({userId:id||""})
+  
+   useEffect(() => {
+    if (isError && error) {
+      toast.error(AxiosErrorHandler(error))
+    }
+  }, [isError, error])
 
   useEffect(() => {
-
-    if(!isLoading){
+    if(!isLoading && check){
       const status = data?.data?.subscriptionStatus || null
       switch (status){
         case 'incomplete':
@@ -29,9 +38,9 @@ export default function OnboardingLayout({children}:{children:React.ReactNode}){
               router.push('/onboarding')
             }
     }
-  },[isLoading])
+  },[isLoading,router,data,check])
 
-  if(isLoading && isFetching && !data){
+  if(  !check ||isLoading || isFetching ){
     return null
   }
 

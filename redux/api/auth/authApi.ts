@@ -31,9 +31,16 @@ export const AuthApi = userApi.injectEndpoints({
                 method:'POST',
                 data:data
             })
+        }),
+        logoutUser:builder.mutation({
+            query:() => ({
+                url:USER_ROUTES.LOGOUT,
+                method:'POST',
+            }),
+            invalidatesTags:['user','plans','subscription']
         })
     })
 })
 
 
-export const {useLoginMutation,useRegisterMutation,useLazyVerifyQuery,useGoogleAuthMutation} = AuthApi
+export const {useLoginMutation,useRegisterMutation,useLazyVerifyQuery,useGoogleAuthMutation,useLogoutUserMutation} = AuthApi

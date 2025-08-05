@@ -77,7 +77,7 @@ export function DataTable<TData,TValue>({
       })()
 
       //need to do rtk call and unwrap to check the data
-    },[pageIndex,pageSize,globalFilter,statusFilter,sorting,isLoading,isFetching])
+    },[pageIndex,pageSize,globalFilter,statusFilter,sorting,isLoading,isFetching,fetchData])
 
     const table = useReactTable({
         data,

@@ -41,7 +41,7 @@ function VerifyGoogle() {
                 }
             }
         })()
-    },[session,status,googleAuth])
+    },[session,status,googleAuth,dispatch])
 
   return (
      <div className="flex items-center justify-center h-screen">
