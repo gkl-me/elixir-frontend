@@ -10,6 +10,7 @@ import useLogin from '@/hooks/auth/useLogin'
 import { toast } from 'sonner';
 import { AxiosErrorHandler } from '@/lib/errorHandler';
 import { signIn } from 'next-auth/react';
+import { USER_ROUTES } from '@/constants/userRoutes';
 
 const fields:CustomFormProps<typeof UserLoginSchema>['fields'] = [
     {
@@ -33,7 +34,7 @@ function LoginForm() {
     try {
 
       signIn('google',{
-        callbackUrl:'/verify/google'
+        callbackUrl:USER_ROUTES.GOOGLE_VERIFY
       })
 
     } catch (error) {

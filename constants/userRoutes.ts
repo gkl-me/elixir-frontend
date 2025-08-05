@@ -6,7 +6,9 @@ export enum USER_ROUTES{
     LOGIN='/login',
     VERIFY='/verify',
     PLANS='/plans',
-    SUBSCRIBE='/subscribe',
+    SUBSCRIBE='/subscription/start',
     ONBOARDING='/onboarding',
-    GOOGLE='/google-auth'
+    GOOGLE='/google-auth',
+    GOOGLE_VERIFY='/verify/google',
+    SUBSCRIPTION='/subscription'
 }

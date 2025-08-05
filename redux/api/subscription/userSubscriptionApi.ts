@@ -1,4 +1,4 @@
-import { userApi } from "./userApi";
+import { userApi } from "../user/userApi";
 import { USER_ROUTES } from "@/constants/userRoutes";
 
 
@@ -11,9 +11,16 @@ export const userSubscriptionApi = userApi.injectEndpoints({
                 data:data
             }),
             invalidatesTags:['subscription']
+        }),
+        findSubscription:builder.query({
+            query:({userId}) => ({
+                url:`/${userId}`+USER_ROUTES.SUBSCRIPTION,
+                method:'GET',
+            }),
+            providesTags:['subscription']
         })
     })
 })
 
 
-export const {useSubscribeMutation} = userSubscriptionApi
+export const {useSubscribeMutation,useFindSubscriptionQuery} = userSubscriptionApi

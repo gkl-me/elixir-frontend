@@ -1,5 +1,6 @@
 'use client'
 
+import { USER_ROUTES } from "@/constants/userRoutes"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
 import { useGoogleAuthMutation } from "@/redux/api/auth/authApi"
 import { signOut, useSession } from "next-auth/react"
@@ -23,11 +24,11 @@ function VerifyGoogle() {
 
                 console.log(res)
                 signOut({
-                    callbackUrl:'/dashboard'
+                    callbackUrl:USER_ROUTES.ONBOARDING
                 })
             } catch (error) {
                 signOut({
-                    callbackUrl:'/login'
+                    callbackUrl:USER_ROUTES.LOGIN
                 })
                 toast.error(AxiosErrorHandler(error))
             }

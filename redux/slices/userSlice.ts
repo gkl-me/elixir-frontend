@@ -6,7 +6,7 @@ const initialState = {
     name:"",
     email:"",
     subscriptionId:"",
-    subscriptionStatus:""
+    subscriptionStatus:"",
 }
 
 const useSlice = createSlice({

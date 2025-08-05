@@ -3,9 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Button } from "../ui/button"
 import { useSelector } from "react-redux"
 import { RootState } from "@/redux/store"
-import { useSubscribeMutation } from "@/redux/api/user/userSubscriptionApi"
+import { useSubscribeMutation } from "@/redux/api/subscription/userSubscriptionApi"
 import { toast } from "sonner"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
+import RegisterCompany from "../company/RegisterCompanyModal"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 
 export interface PlanCardProps{
@@ -25,19 +28,33 @@ export default function PlanCard({
     price,
     limits,
 }:PlanCardProps){
+  
+  const [openModal,setOpenModal] = useState(false)
 
   const user = useSelector((state:RootState) => state.user)
   const [subscribe] = useSubscribeMutation()
+  const router = useRouter()
 
   const handleSubscribe = async (id:string,userId:string) => {
     try {
-
       const res = await subscribe({planId:id,userId}).unwrap()
-      console.log(res.data)
-      window.location.href = res.data.checkoutUrl
+
+      if(name=='Free' && !res.data.checkoutUrl){
+        router.push('/workspace')
+      }else{
+        window.location.href = res.data.checkoutUrl
+      }
     } catch (error) {
       console.log(error)
       toast.error(AxiosErrorHandler(error))
+    }
+  }
+
+  const onSelect = async () => {
+    if(name=='Enterprice'){
+      setOpenModal(true)
+    }else{
+      await handleSubscribe(id,user.id)
     }
   }
 
@@ -79,11 +96,15 @@ export default function PlanCard({
               </div>
               <Button className="w-full"
               onClick={() => {
-                handleSubscribe(id,user.id)
+                onSelect()
               }}
               variant={'light'}>Select</Button>
             </CardContent>
           </Card>
+          <RegisterCompany
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          />
       </div>
     )
 }
