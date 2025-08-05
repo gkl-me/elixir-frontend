@@ -1,9 +1,9 @@
+import RetryCheck from "@/components/subscription/RetryCheck";
 
 export default function Page(){
     return (
         <div>
-            retry option
-            
+            <RetryCheck/>
         </div>
     )
 }
