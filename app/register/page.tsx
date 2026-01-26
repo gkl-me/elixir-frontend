@@ -7,36 +7,21 @@ import { useState, useTransition } from "react"
 import { ArrowLeft, Github, Mail } from "lucide-react"
 import { z } from "zod"
 import { CustomForm } from "@/components/form/CustomForm"
-import { ADMIN_CLIENT_ROUTES, AUTH_CLIENT_ROUTES, USER_CLIENT_ROUTES } from "@/constants/clientRoutes"
 import { PasswordInput } from "@/components/ui/password-input"
-import { LoginSchema } from "@/validator/AuthSchema"
-import { loginAction } from "../actions/auth.action"
-import {  toastHandler } from "@/lib/toastHandler"
-import { useAuthStore } from "@/store/useAuthStore"
-import { useRouter } from "next/navigation"
+import {  registerAction } from "../actions/auth.action"
+import { RegisterSchema } from "@/validator/AuthSchema"
+import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes"
+import { toastHandler } from "@/lib/toastHandler"
 
-export default function LoginPage() {
 
-  const login = useAuthStore((s) => s.login)
-
+export default function SignupPage() {
   const [showEmail, setShowEmail] = useState(false)
   const [isPending,startTransition] = useTransition()
-  const router = useRouter()
 
-  const onSubmit = (data: z.infer<typeof LoginSchema>) => {
+  const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
     startTransition(async () => {
-      const res = await loginAction(data)
-      login(res.accessToken)
-      if(res.role=='superAdmin'){
-        router.replace(ADMIN_CLIENT_ROUTES.DASHBOARD)
-      }else{
-        router.replace(USER_CLIENT_ROUTES.ONBOARDING)
-      }
-
-      toastHandler({
-        success:res.success,
-        message:res.message
-      })
+      const res = await registerAction(data)
+      toastHandler(res)
     })
   }
 
@@ -56,7 +41,7 @@ export default function LoginPage() {
             />
           </div>
           <h1 className="text-3xl font-bold text-white">Elixir</h1>
-          <h2 className="text-xl font-medium text-gray-200">Login to Elixir</h2>
+          <h2 className="text-xl font-medium text-gray-200">Create an account</h2>
         </div>
 
         <div className="w-full space-y-4 bg-navy/50 p-8 rounded-xl border border-blueDark backdrop-blur-sm">
@@ -64,14 +49,13 @@ export default function LoginPage() {
             <>
               <Button
                 variant="dark"
-                className="w-full"
-                onClick={() => {}}
+                className="w-full bg-purple hover:bg-purple/90 h-10 text-base"
               >
                 <span className="mr-2">G</span> Continue with Google
               </Button>
               <Button
                 variant="white"
-                onClick={() => {}}
+                className="w-full  h-10 text-base"
               >
                 <Github className="mr-2 h-4 w-4" /> Continue with GitHub
               </Button>
@@ -96,10 +80,15 @@ export default function LoginPage() {
           ) : (
             <div className="animate-in slide-in-from-right-8 fade-in duration-300">
               <CustomForm
-                schema={LoginSchema}
+                schema={RegisterSchema}
                 onSubmit={onSubmit}
-                submitText={isPending?"Loading...":"Login"}
+                submitText={isPending?"Registering...":"Create Account"}
                 fields={[
+                  {
+                    name: "name",
+                    label: "Full Name",
+                    placeholder: "John Doe",
+                  },
                   {
                     name: "email",
                     label: "Email",
@@ -110,21 +99,25 @@ export default function LoginPage() {
                     name: "password",
                     label: "Password",
                     component:PasswordInput,
-                    placeholder: "*************",
-                  },
+                    placeholder: "************",
+                  },{
+                    name:'confirmPassword',
+                    label:"Confirm Password",
+                    component:PasswordInput,
+                    placeholder:"*************"
+                  }
                 ]}
                 defaultValues={{
+                  name:"",
                   email:"",
-                  password:""
+                  password:"",
+                  confirmPassword:""
                 }}
                 disabled={isPending}
               />
-              <div className="flex justify-end mb-4 mt-2">
-                 <Link href={AUTH_CLIENT_ROUTES.FORGOT_PASSWORD} className="text-xs text-purple hover:text-purple-400">Forgot password?</Link>
-              </div>
               <Button
                 variant="light"
-                className="w-full hover:text-white mt-2"
+                className="w-full text-gray-400 hover:text-white mt-2"
                 onClick={() => setShowEmail(false)}
               >
                 <ArrowLeft/> Back to options
@@ -134,12 +127,12 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center text-sm text-gray-400">
-          Don&apos;t have an account?{" "}
+          Already have an account?{" "}
           <Link
-            href={AUTH_CLIENT_ROUTES.REGISTER}
+            href={AUTH_CLIENT_ROUTES.LOGIN}
             className="text-white hover:underline font-medium"
           >
-            Signup
+            Login
           </Link>
         </div>
       </div>

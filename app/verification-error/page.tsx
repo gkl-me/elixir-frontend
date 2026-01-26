@@ -1,26 +1,28 @@
 "use client"
 
-import { USER_ROUTES } from "@/constants/userRoutes"
-import { AlertTriangle, Loader2 } from "lucide-react"
+import { AlertTriangle, ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useTransition } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { useSearchParams } from "next/navigation"
-import { resendVerificationEmail } from "../api/actions/auth.action"
+import { resendVerifyEmail } from "../actions/auth.action"
+import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes"
+import {  toastHandler } from "@/lib/toastHandler"
 
 export default function VerificationErrorPage() {
-  const [isLoading, setIsLoading] = useState(false)
   const params = useSearchParams()
   const email = params.get('email')
+  const [isPending,startTransition] = useTransition()
 
-  const handleResendEmail = async () => {
-    setIsLoading(true)
+  const handleResendEmail = () => {
     if(!email){
-      toast.error("Email not found")
+      toast.error("Email not found try to login again")
     }
-    await resendVerificationEmail(email)
-    setIsLoading(false)
+    startTransition(async () => {
+      const res = await resendVerifyEmail(email)
+      toastHandler(res)
+    })
   }
 
   return (
@@ -56,9 +58,9 @@ export default function VerificationErrorPage() {
                 variant="default"
                 className="w-full bg-purple hover:bg-purple/90 h-10 text-base"
                 onClick={handleResendEmail}
-                disabled={isLoading}
+                disabled={isPending}
              >
-                {isLoading ? (
+                {isPending ? (
                     <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Sending...
@@ -69,10 +71,10 @@ export default function VerificationErrorPage() {
              </Button>
 
              <Link 
-                href={USER_ROUTES.LOGIN}
+                href={AUTH_CLIENT_ROUTES.LOGIN}
                 className="flex w-full items-center justify-center rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
              >
-                Back to Login
+                <ArrowLeft/> Back to Login
              </Link>
           </div>
 

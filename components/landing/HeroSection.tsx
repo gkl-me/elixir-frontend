@@ -1,7 +1,7 @@
 import { Button } from "../ui/button"
 import CodeDesign from "./CodeDesign"
 import Link from "next/link"
-import { AUTH_ROUTES } from "@/constants/authRoutes"
+import { AUTH_ROUTES } from "@/constants/apiRoutes"
 
 export default function HeroSection() {
     return (

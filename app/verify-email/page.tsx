@@ -1,6 +1,6 @@
 "use client"
 
-import { USER_ROUTES } from "@/constants/userRoutes"
+import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes"
 import { Mail } from "lucide-react"
 import Link from "next/link"
 
@@ -36,7 +36,7 @@ export default function VerifyEmailPage() {
 
           <div className="w-full pt-2">
              <Link 
-                href={USER_ROUTES.LOGIN}
+                href={AUTH_CLIENT_ROUTES.LOGIN}
                 className="flex w-full items-center justify-center rounded-lg bg-white/10 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/20"
              >
                 Back to Login

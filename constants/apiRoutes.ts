@@ -19,12 +19,3 @@ export const AUTH_API_ROUTES = {
     RESET_PASSWORD:'/reset-password',
     
 }
-
-
-export const AUTH_CLIENT_ROUTES = {
-    LOGIN:'/login',
-    REGISTER:'/register',
-    VERIFY_EMAIL:'/verify-email',
-    
-
-}
