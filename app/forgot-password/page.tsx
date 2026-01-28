@@ -1,25 +1,41 @@
 "use client"
 
-import { USER_ROUTES } from "@/constants/userRoutes";
 import Image from "next/image";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { z } from "zod";
 import { CustomForm } from "@/components/form/CustomForm";
+import { AUTH_CLIENT_ROUTES, } from "@/constants/clientRoutes";
+import { useTransition } from "react";
+import { forgotPasswordAction } from "../actions/auth.action";
+import { useOtpStore } from "@/store/useOtpStore";
+import { toastHandler } from "@/lib/toastHandler";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
 })
 
 export default function ForgotPasswordPage() {
-//   const router = useRouter();
+  const router = useRouter();
+  const [isPending,startTransition] = useTransition()
+  const setOtp = useOtpStore((s) => s.setOtp)
 
   const onSubmit = (data: z.infer<typeof forgotPasswordSchema>) => {
-    console.log("Forgot Password Data:", data)
-    // Add API call logic here
-    // Redirect to OTP page passing email (in real app, use query param or context)
-    // router.push(USER_ROUTES.VERIFY_OTP);
+
+    startTransition(async() =>{
+
+      //call forgot password action
+      const res = await forgotPasswordAction(data.email)
+      //set email and expiresAt
+      toastHandler({success:res.success,message:res.message,error:res.error})
+      if(res.success){
+        setOtp(res.email,res.expiresAt)
+        //redirect to verify otp page
+        router.replace(AUTH_CLIENT_ROUTES.VERIFY_OTP)
+        
+      }
+    })
   };
 
   return (
@@ -42,7 +58,7 @@ export default function ForgotPasswordPage() {
             <CustomForm
                 schema={forgotPasswordSchema}
                 onSubmit={onSubmit}
-                submitText="Send Code"
+                submitText={isPending?"Loading....":"Submit"}
                 fields={[
                     {
                         name: "email",
@@ -51,11 +67,15 @@ export default function ForgotPasswordPage() {
                         placeholder: "name@example.com",
                     }
                 ]}
+                defaultValues={{
+                  email:""
+                }}
+                disabled={isPending}
             />
         </div>
 
          <div className="text-center text-sm text-gray-400">
-            <Link href={USER_ROUTES.LOGIN} className="text-white hover:underline font-medium flex items-center justify-center gap-2">
+            <Link href={AUTH_CLIENT_ROUTES.LOGIN} className="text-white hover:underline font-medium flex items-center justify-center gap-2">
               <ArrowLeft size={16} /> Back to Login
             </Link>
           </div>

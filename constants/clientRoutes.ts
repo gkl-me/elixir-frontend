@@ -12,7 +12,9 @@ export const AUTH_CLIENT_ROUTES = {
     VERIFY_EMAIL:'/verify-email',
     
     FORGOT_PASSWORD:'/forgot-password',
-    VERIFY_ERROR:'/verification-error'
+    VERIFY_ERROR:'/verification-error',
+    VERIFY_OTP:'/verify-otp',
+    RESET_PASSWORD:'/reset-password'
 }
 
 

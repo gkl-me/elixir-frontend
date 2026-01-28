@@ -25,3 +25,8 @@ export const RegisterSchema = z.object({
     message:"Password do not match",
     path:["confirmPassword"]
 }) 
+
+
+export const otpSchema = z.object({
+  otp: z.string().length(4, "Please enter a valid 4-digit code").regex(/^\d+$/, "OTP must be numbers only"),
+})

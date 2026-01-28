@@ -1,6 +1,6 @@
 "use client"
 
-import { USER_ROUTES } from "@/constants/userRoutes"
+
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
@@ -8,7 +8,11 @@ import Link from "next/link"
 import { z } from "zod"
 import { CustomForm } from "@/components/form/CustomForm"
 import { PasswordInput } from "@/components/ui/password-input"
-import { toast } from "sonner"
+import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes"
+import { useTransition } from "react"
+import { resetPasswordAction } from "../actions/auth.action"
+import { useOtpStore } from "@/store/useOtpStore"
+import { toastHandler } from "@/lib/toastHandler"
 
 const resetPasswordSchema = z
   .object({
@@ -22,15 +26,27 @@ const resetPasswordSchema = z
 
 export default function ResetPasswordPage() {
   const router = useRouter()
+  const [isPending,startTransition] = useTransition()
+  const email = useOtpStore((s) => s.email)
+  const clearOtp = useOtpStore((s) => s.clearOtp)
 
-  const onSubmit = async (data: z.infer<typeof resetPasswordSchema>) => {
-    console.log("Reset Password Data:", data)
-    
-    // Mock API Call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    toast.success("Password reset successfully")
-    router.push(USER_ROUTES.LOGIN)
+  const onSubmit = (data: z.infer<typeof resetPasswordSchema>) => {
+
+    startTransition(async () => {
+      const res = await resetPasswordAction(email,data.password)
+      toastHandler(res)
+      if(res.success){
+        clearOtp()
+        router.replace(AUTH_CLIENT_ROUTES.LOGIN)
+      }
+
+      if(!res.success){
+        clearOtp()
+        router.replace(AUTH_CLIENT_ROUTES.FORGOT_PASSWORD)
+      }
+
+    })
+
   }
 
   return (
@@ -53,7 +69,7 @@ export default function ResetPasswordPage() {
             <CustomForm
                 schema={resetPasswordSchema}
                 onSubmit={onSubmit}
-                submitText="Reset Password"
+                submitText={isPending ? "Loading...":"Reset Password"}
                 fields={[
                     {
                         name: "password",
@@ -68,11 +84,16 @@ export default function ResetPasswordPage() {
                         placeholder: "••••••••",
                     },
                 ]}
+                defaultValues={{
+                  password:"",
+                  confirmPassword:""
+                }}
+                disabled={isPending}
             />
         </div>
 
          <div className="text-center text-sm text-gray-400">
-            <Link href={USER_ROUTES.LOGIN} className="text-white hover:underline font-medium flex items-center justify-center gap-2">
+            <Link href={AUTH_CLIENT_ROUTES.LOGIN} className="text-white hover:underline font-medium flex items-center justify-center gap-2">
               <ArrowLeft size={16} /> Back to Login
             </Link>
           </div>

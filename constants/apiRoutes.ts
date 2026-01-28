@@ -12,10 +12,10 @@ export const AUTH_API_ROUTES = {
     RESEND_EMAIL:'/auth/resend-email',
 
     VERIFY_OTP:'/auth/verify-otp',
-    RESEND_OTP:'/auth/verify-otp',
+    RESEND_OTP:'/auth/resend-otp',
 
 
-    FORGOT_PASSWORD:'/forgot-password',
-    RESET_PASSWORD:'/reset-password',
+    FORGOT_PASSWORD:'/auth/forgot-password',
+    RESET_PASSWORD:'/auth/reset-password',
     
 }
