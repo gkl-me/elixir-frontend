@@ -1,9 +1,11 @@
 
 
 
-export const publicRoutes = [
+export const PUBLIC_ROUTES = [
     '/login',
     '/register',
-    '/admin/login',
+    '/verify',
+    '/forgot-password',
+    '/verify-password',
 ]
 
