@@ -15,6 +15,7 @@ import { cookies } from "next/headers"
 import { getIronSession } from "iron-session"
 import { IAuthSession } from "@/types/types"
 import { destorySession, sessionOptions } from "@/lib/session"
+import { ENV } from "@/config/env"
 
 
 
@@ -171,4 +172,121 @@ export async function refreshTokenAction(){
         }
 
     } 
+}
+
+
+export async function forgotPasswordAction(email:string){
+    try {
+
+        const res = await api.post(AUTH_API_ROUTES.FORGOT_PASSWORD,{
+            email
+        })
+
+
+        return {
+            success:res.data.success,
+            message:res.data.message,
+            expiresAt:res.data.data.expiresAt,
+            email:res.data.data.email
+        }
+        
+    } catch (error) {
+        console.log(error.response)
+        const err = AxiosErrorHandler(error)
+        return {
+            success:false,
+            error:err.message
+        }
+    }
+}
+
+
+export async function verifyOtpAction(otp:string,email:string){
+    try {
+
+        const res = await api.post(AUTH_API_ROUTES.VERIFY_OTP,{
+            otp,
+            email
+        })
+
+        const resetToken = res.data.data.resetPasswordToken
+
+        const cookieStore = await cookies()
+
+        cookieStore.set('reset_token',resetToken,{
+            httpOnly:true,
+            secure:ENV.NODE_ENV === 'production',
+            sameSite:'lax',
+            path:'/',
+            maxAge:15 * 60 * 1000
+        })
+
+        return {
+            success:res.data.success,
+            message:res.data.message
+        }
+        
+    } catch (error) {
+        const err = AxiosErrorHandler(error)
+        return {
+            success:false,
+            error:err.message
+        }
+    }
+}
+
+
+export async function resendOtpAction(email:string){
+    try {
+
+        const res = await api.post(AUTH_API_ROUTES.RESEND_OTP,{
+            email
+        })
+
+
+        return {
+            success:res.data.success,
+            message:res.data.message,
+            expiresAt:res.data.data.expiresAt,
+            email:res.data.data.email
+        }
+        
+    } catch (error) {
+        const err = AxiosErrorHandler(error)
+        return {
+            success:false,
+            error:err.message
+        }
+    }
+}
+
+
+export async function resetPasswordAction(email:string,password:string){
+    try {
+
+        const cookieStore = await cookies()
+        const resetToken = cookieStore.get('reset_token')?.value
+
+        const res = await api.post(AUTH_API_ROUTES.RESET_PASSWORD,{
+            email,
+            newPassword:password,
+            resetPasswordToken:resetToken
+        })
+
+        cookieStore.delete('reset_token')
+
+        return {
+            success:res.data.success,
+            message:res.data.message
+        }
+        
+    } catch (error) {
+         const cookieStore = await cookies()
+        cookieStore.delete('reset_token')
+        const err = AxiosErrorHandler(error)
+        return {
+            success:false,
+            error:err.message
+        }
+    }
 }

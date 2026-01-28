@@ -26,17 +26,21 @@ export default function LoginPage() {
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
     startTransition(async () => {
       const res = await loginAction(data)
-      login(res.accessToken)
-      if(res.role=='superAdmin'){
-        router.replace(ADMIN_CLIENT_ROUTES.DASHBOARD)
-      }else{
-        router.replace(USER_CLIENT_ROUTES.ONBOARDING)
-      }
-
       toastHandler({
         success:res.success,
-        message:res.message
+        message:res.message,
+        error:res.error
       })
+      if(res.success){
+
+        login(res.accessToken)
+        if(res.role=='superAdmin'){
+          router.replace(ADMIN_CLIENT_ROUTES.DASHBOARD)
+        }else{
+          router.replace(USER_CLIENT_ROUTES.ONBOARDING)
+        }
+      }
+
     })
   }
 

@@ -1,77 +1,19 @@
-'use client'
+"use client"
 
-import { Loader2, ShieldCheck, Github } from "lucide-react"
 import { GoogleIcon } from "@/components/landing/GoogleIcon"
-import { verifyEmailAction } from "@/app/actions/auth.action"
-import { useParams, useSearchParams } from "next/navigation"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { USER_CLIENT_ROUTES } from "@/constants/clientRoutes"
-import { toastHandler } from "@/lib/toastHandler"
-import { useAuthStore } from "@/store/useAuthStore"
+import { Loader2 } from "lucide-react"
 
 
-
-
-export default function VerifyPage() {
-
-  const params = useParams()
-  const searchParams = useSearchParams()
-
-  const slug= params.slug as string
-  const email = searchParams.get('email')
-
-  const router = useRouter()
-  const login = useAuthStore((s) => s.login)
-
-  useEffect(() => {
-    (async () => {
-      const res = await verifyEmailAction(slug,email)
-
-
-      //save token in zustand
-      login(res.accessToken)
-
-      //redirect user 
-      toastHandler({
-        success:res.success,
-        message:res.message,
-      })
-      router.replace(USER_CLIENT_ROUTES.ONBOARDING)
-
-
-    })()
-  },[slug,email])
-
-  const getContent = () => {
-    switch (slug) {
-      case "google":
-        return {
+const content = {
           title: "Verifying Google Account",
           description: "Please wait while we securely verify your Google credentials.",
           icon: <GoogleIcon className="h-12 w-12" />,
           colorAttributes: "bg-blue-500/10 border-blue-500/20 text-blue-500"
         }
-      case "github":
-        return {
-          title: "Verifying GitHub Account",
-          description: "Connecting to GitHub to verify your identity.",
-          icon: <Github className="h-12 w-12 text-white" />,
-          colorAttributes: "bg-zinc-800/50 border-zinc-700/50 text-white"
-        }
-      default:
-        return {
-          title: "Verifying Token",
-          description: "Validating your security token...",
-          icon: <ShieldCheck className="h-12 w-12 text-violet-500" />,
-          colorAttributes: "bg-violet-500/10 border-violet-500/20 text-violet-500"
-        }
-    }
-  }
 
-  const content = getContent()
 
-  return (
+export default function googleAuth(){
+    return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-navyDark p-4 relative overflow-hidden">
       
       {/* Background Aesthetic Elements */}

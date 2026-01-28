@@ -150,3 +150,9 @@
     color: white !important;
   }
 }
+
+html,
+body {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}

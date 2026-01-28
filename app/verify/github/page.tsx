@@ -1,56 +1,18 @@
-import { Loader2, ShieldCheck, Github } from "lucide-react"
-import { GoogleIcon } from "@/components/landing/GoogleIcon"
-import { verifyEmailAction } from "@/app/api/actions/auth.action"
+"use client"
+
+import { Github, Loader2 } from "lucide-react"
 
 
-
-export default async function VerifyPage({
-    params,searchParams
-}) {
-
-  const {slug} = await params
-  const {email} = await searchParams
-
-  if(slug=='google'){
-    console.log("verify google")
-  }else if(slug == 'github'){
-    console.log("verify github")
-  }else{
-    await verifyEmailAction(slug,email)
-  }
-
-
-
-
-  const getContent = () => {
-    switch (slug) {
-      case "google":
-        return {
-          title: "Verifying Google Account",
-          description: "Please wait while we securely verify your Google credentials.",
-          icon: <GoogleIcon className="h-12 w-12" />,
-          colorAttributes: "bg-blue-500/10 border-blue-500/20 text-blue-500"
-        }
-      case "github":
-        return {
+const content = {
           title: "Verifying GitHub Account",
           description: "Connecting to GitHub to verify your identity.",
           icon: <Github className="h-12 w-12 text-white" />,
           colorAttributes: "bg-zinc-800/50 border-zinc-700/50 text-white"
         }
-      default:
-        return {
-          title: "Verifying Token",
-          description: "Validating your security token...",
-          icon: <ShieldCheck className="h-12 w-12 text-violet-500" />,
-          colorAttributes: "bg-violet-500/10 border-violet-500/20 text-violet-500"
-        }
-    }
-  }
 
-  const content = getContent()
 
-  return (
+export default function googleAuth(){
+    return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-navyDark p-4 relative overflow-hidden">
       
       {/* Background Aesthetic Elements */}
