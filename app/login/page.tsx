@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
-import { useState, useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { ArrowLeft, Github, Mail } from "lucide-react"
 import { z } from "zod"
 import { CustomForm } from "@/components/form/CustomForm"
@@ -13,7 +13,9 @@ import { LoginSchema } from "@/validator/AuthSchema"
 import { loginAction } from "../actions/auth.action"
 import {  toastHandler } from "@/lib/toastHandler"
 import { useAuthStore } from "@/store/useAuthStore"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { toast } from "sonner"
+import { AUTH_ERROR_CODE } from "@/constants/errorCode"
 
 export default function LoginPage() {
 
@@ -22,6 +24,20 @@ export default function LoginPage() {
   const [showEmail, setShowEmail] = useState(false)
   const [isPending,startTransition] = useTransition()
   const router = useRouter()
+
+  const searchParams = useSearchParams()
+  const reason = searchParams.get('reason')
+
+  useEffect(() => {
+    if(reason){
+      if(reason == AUTH_ERROR_CODE.UNAUTHORIZED){
+        toast.error('You are not authorized to access this resource')
+      }else if(reason == AUTH_ERROR_CODE.SESSION_EXPIRED){
+        toast.error("Your session has expired. Please log in again.")
+      }
+    }
+  },[reason])
+
 
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
     startTransition(async () => {

@@ -16,10 +16,6 @@ import { getIronSession } from "iron-session"
 import { IAuthSession } from "@/types/types"
 import { destorySession, sessionOptions } from "@/lib/session"
 import { ENV } from "@/config/env"
-import http from 'http'
-import https from "https"
-import axios from "axios";
-import { API_BASE_URL } from "@/config/url";
 
 
 export async function registerAction(data: z.infer<typeof RegisterSchema>){
@@ -56,8 +52,6 @@ export async function loginAction(data: z.infer<typeof LoginSchema>){
         await session.save()
 
         await setCookies(refreshToken)
-
-        console.log(res)
 
         return {
             success:res.data.success,
@@ -136,48 +130,6 @@ export async function resendVerifyEmail(email:string){
             error:err.message
         }
     }
-}
-
-export async function refreshTokenAction(){
-    try {
-
-
-        const cookieStore = await cookies()
-        const refreshToken = cookieStore.get('refreshToken')?.value
-        const res = await axios.post(API_BASE_URL+AUTH_API_ROUTES.REFRESH,{
-            refreshToken
-        },{
-            withCredentials:true,
-            httpAgent:new http.Agent({keepAlive:true}),
-            httpsAgent:new https.Agent({keepAlive:true})
-        })
-
-        const accessToken = res.data.data.accessToken
-        const newRefreshToken= res.data.data.refreshToken
-
-
-        const session = await getIronSession<IAuthSession>(
-            cookieStore,
-            sessionOptions
-        )
-
-        session.accessToken = accessToken
-        await session.save()
-
-        await setCookies(newRefreshToken)
-
-        return {
-            success:res.data.success,
-            accessToken
-        }
-        
-    } catch (error) {
-        await destorySession()
-        await deleteCookies()
-        if(isRedirectError(error)) throw error
-
-        redirect(AUTH_CLIENT_ROUTES.LOGIN+`?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`)
-    } 
 }
 
 

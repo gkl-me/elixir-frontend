@@ -41,7 +41,7 @@ export default function VerifyPage() {
 
 
     })()
-  },[slug,email])
+  },[slug,email,login,router])
 
   const getContent = () => {
     switch (slug) {

@@ -6,8 +6,20 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
 
+type PlanLimits = {
+  maxProjects?: number
+  maxTeams?: number
+  maxUsersPerTeam?: number
+}
+
 // Reusing the structure and styles of PlanCard but tailored for landing page (no edit/switch controls)
-function LandingPlanCard({ name, price, limits, features, isPopular }: any) {
+function LandingPlanCard({ name, price, limits, features, isPopular }: {
+    name:string,
+    price:number,
+    limits:PlanLimits,
+    features:string[],
+    isPopular:boolean
+}) {
     return (
         <Card className={`relative overflow-hidden border transition-all duration-300 flex flex-col h-full ${isPopular ? 'bg-navy border-purple shadow-lg shadow-purple/20 scale-105' : 'bg-navyDark border-white/10 hover:border-purple/50'}`}>
             {isPopular && (

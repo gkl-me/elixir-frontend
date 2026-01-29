@@ -7,6 +7,7 @@ import { sessionOptions } from "./lib/session";
 import { verifyAccessToken, verifyRefreshToken } from "./lib/tokenHandler";
 import { ADMIN_CLIENT_ROUTES, AUTH_CLIENT_ROUTES, USER_CLIENT_ROUTES } from "./constants/clientRoutes";
 import { AUTH_ERROR_CODE } from "./constants/errorCode";
+import { applyCookies, handleAuthFailure, refreshAuthToken } from "./lib/middlewareHelper";
 
 const ADMIN_ROUTE = '/admin'
 
@@ -20,7 +21,7 @@ function redirect(url:string,req:NextRequest){
 
 export async function middleware(req:NextRequest){
     const {pathname}  = req.nextUrl
-
+    const response = NextResponse.next()
 
     const cookieStore = await cookies()
     const session = await getIronSession<IAuthSession>(
@@ -33,18 +34,46 @@ export async function middleware(req:NextRequest){
     const resetToken = cookieStore.get('reset_token')?.value
 
     //verify token 
-    const accessPayload = await verifyAccessToken(accessToken)
+    let accessPayload = await verifyAccessToken(accessToken)
     const refreshPayload = accessPayload ? null : await verifyRefreshToken(refreshToken)
+
+    if(!accessPayload && refreshToken){
+        //get new access and refresh using helpers
+
+        const data = await refreshAuthToken(refreshToken)
+
+        if(!data?.success || !data?.data){
+            return handleAuthFailure(req)
+        }
+
+
+        session.accessToken = data.data.accessToken
+        await session.save()
+
+        //re verify accessToken
+        accessPayload = await verifyAccessToken(session.accessToken)
+
+        //apply cookies to next response
+        await applyCookies(response,session,data.data.refreshToken)
+
+    }
 
     const user = accessPayload || refreshPayload
     const isAuthenticated = Boolean(user)
+
 
     //reset password middleware
     if(pathname.startsWith(AUTH_CLIENT_ROUTES.RESET_PASSWORD)){
         if(!resetToken){
             return redirect(AUTH_CLIENT_ROUTES.FORGOT_PASSWORD,req)
         }
-        return
+        return response
+    }
+
+    //landing page routes
+
+    if(pathname === '/'){
+        return response
     }
 
     //public routes
@@ -56,7 +85,7 @@ export async function middleware(req:NextRequest){
                 return redirect(USER_CLIENT_ROUTES.ONBOARDING,req)
             }
         }
-        return
+        return response
     }
 
     //private routes
@@ -75,7 +104,7 @@ export async function middleware(req:NextRequest){
         }
     }
 
-    return NextResponse.next()
+    return response
 
 }
 
