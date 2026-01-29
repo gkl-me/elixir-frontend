@@ -116,14 +116,12 @@ export async function verifyEmailAction(token:string,email:string){
 export async function resendVerifyEmail(email:string){
     try {
 
-        const res = await api.post(AUTH_API_ROUTES.RESEND_EMAIL,{email})
+        await api.post(AUTH_API_ROUTES.RESEND_EMAIL,{email})
+        redirect(AUTH_CLIENT_ROUTES.VERIFY_EMAIL)
 
-        return {
-            success:res.data.success,
-            message:res.data.message
-        }
         
     } catch (error) {
+        if(isRedirectError(error)) throw error
         const err = AxiosErrorHandler(error)
         return {
             success:false,

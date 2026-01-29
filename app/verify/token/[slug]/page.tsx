@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { USER_CLIENT_ROUTES } from "@/constants/clientRoutes"
 import { toastHandler } from "@/lib/toastHandler"
 import { useAuthStore } from "@/store/useAuthStore"
+import { sleep } from "@/lib/helper"
 
 
 
@@ -26,6 +27,9 @@ export default function VerifyPage() {
 
   useEffect(() => {
     (async () => {
+
+      await sleep(1200)
+
       const res = await verifyEmailAction(slug,email)
 
 
