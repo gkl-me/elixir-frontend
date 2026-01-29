@@ -34,8 +34,11 @@ api.interceptors.response.use(
     (response) => response,
     async (error) => {                        
             if(error.response?.status == STATUS_CODES.UNAUTHORIZED){
+                console.log("error")
                 redirect(AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`)
-            }else if(error.response?.status == STATUS_CODES.FORBIDDEN && error.response?.errorCode == AUTH_ERROR_CODE.BLOCKED){
+            }
+            if(error.response?.status == STATUS_CODES.FORBIDDEN){
+                console.log("user blocked")
                 redirect(AUTH_CLIENT_ROUTES.LOGIN+`?reason=${AUTH_ERROR_CODE.BLOCKED}`)
             }
             return Promise.reject(error)

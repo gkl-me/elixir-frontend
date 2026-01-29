@@ -1,4 +1,4 @@
-import UsersListForm from "@/components/users/UsersListForm";
+import UsersListForm from "@/components/users/UserDataTable";
 
 
 

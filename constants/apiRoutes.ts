@@ -19,3 +19,9 @@ export const AUTH_API_ROUTES = {
     RESET_PASSWORD:'/auth/reset-password',
     
 }
+
+
+export const USER_API_ROUTES = {
+    GET_ALL_USER:'/users/',
+    TOGGLE_USER_STATUS:'/users',
+}
