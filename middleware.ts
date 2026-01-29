@@ -23,6 +23,8 @@ export async function middleware(req:NextRequest){
     const {pathname}  = req.nextUrl
     const response = NextResponse.next()
 
+    console.log("middleware running")
+
     const cookieStore = await cookies()
     const session = await getIronSession<IAuthSession>(
         cookieStore,

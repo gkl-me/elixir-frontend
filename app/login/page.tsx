@@ -34,6 +34,8 @@ export default function LoginPage() {
         toast.error('You are not authorized to access this resource')
       }else if(reason == AUTH_ERROR_CODE.SESSION_EXPIRED){
         toast.error("Your session has expired. Please log in again.")
+      }else if(reason==AUTH_ERROR_CODE.BLOCKED){
+       toast.error("Your account has been blocked. Please contact the admin.");
       }
     }
   },[reason])

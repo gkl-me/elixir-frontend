@@ -38,6 +38,7 @@ export async function loginAction(data: z.infer<typeof LoginSchema>){
     try {
 
         const res = await api.post(AUTH_API_ROUTES.LOGIN,data)
+
         const accessToken = res.data.data.accessToken
         const refreshToken = res.data.data.refreshToken
 
@@ -62,7 +63,6 @@ export async function loginAction(data: z.infer<typeof LoginSchema>){
 
     } catch (error) {
         if(isRedirectError(error)) throw error
-
         const err = AxiosErrorHandler(error)
         if(err.errorCode === AUTH_ERROR_CODE.NOT_VERIFIED){
             redirect(AUTH_CLIENT_ROUTES.VERIFY_ERROR+`?email=${encodeURIComponent(data.email)}`);
@@ -149,7 +149,6 @@ export async function forgotPasswordAction(email:string){
         }
         
     } catch (error) {
-        console.log(error.response)
         const err = AxiosErrorHandler(error)
         return {
             success:false,
@@ -254,18 +253,16 @@ export async function logoutAction(){
     try {
         
         const refreshToken = (await cookies()).get('refreshToken')?.value
-        const res = await api.post(AUTH_API_ROUTES.LOGOUT,{
-            refreshToken
-        })
-
         await destorySession()
         await deleteCookies()
 
-        return {
-            success:res.data.success,
-            message:res.data.message
-        }
+        
+        await api.post(AUTH_API_ROUTES.LOGOUT,{
+            refreshToken
+        })
 
+        redirect(AUTH_CLIENT_ROUTES.LOGIN)
+        
     } catch (error) {
         if(isRedirectError(error)) throw error
         redirect(AUTH_CLIENT_ROUTES.LOGIN)

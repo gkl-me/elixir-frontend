@@ -6,6 +6,8 @@ export const PUBLIC_ROUTES = [
     '/register',
     '/verify',
     '/forgot-password',
-    '/verify-password',
+    '/verify-otp',
+    '/verify-email',
+    '/verification-error'
 ]
 
