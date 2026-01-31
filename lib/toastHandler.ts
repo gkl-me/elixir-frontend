@@ -4,7 +4,7 @@ import { toast } from "sonner"
 interface IRes{
     success:boolean,
     error?:string,
-    message?:string
+    message?:string,
 }
 
 export function toastHandler(res:IRes){

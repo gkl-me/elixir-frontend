@@ -21,6 +21,7 @@ function redirect(url:string,req:NextRequest){
 
 export async function middleware(req:NextRequest){
     const {pathname}  = req.nextUrl
+    const reason = req.nextUrl.searchParams.get("reason")
     const response = NextResponse.next()
 
     console.log("middleware running")
@@ -80,7 +81,7 @@ export async function middleware(req:NextRequest){
 
     //public routes
     if(isPublicRoutes(pathname)){
-        if(isAuthenticated){
+        if(isAuthenticated && !reason){
             if(user.role == 'superAdmin'){
                 return redirect(ADMIN_CLIENT_ROUTES.DASHBOARD,req)
             }else{
