@@ -5,7 +5,7 @@ import {getIronSession, SessionOptions} from 'iron-session'
 import { cookies } from 'next/headers'
 
 export const sessionOptions:SessionOptions = {
-    cookieName:'session',
+    cookieName:ENV.SESSION_NAME,
     password:ENV.SESSION_PASSWORD,
     cookieOptions:{
         secure:ENV.NODE_ENV == 'production',
@@ -15,12 +15,15 @@ export const sessionOptions:SessionOptions = {
     }
 }
 
-
-export const destorySession = async () => {
+export async function getSession(){
     const cookieStore = await cookies()
-    const session = await getIronSession<IAuthSession>(
-        cookieStore,
-        sessionOptions
-    )
+    return getIronSession<IAuthSession>(cookieStore,sessionOptions)
+}
+
+export async function deleteSession(){
+    const cookieStore = await cookies()
+    const session = await getIronSession<IAuthSession>(cookieStore,sessionOptions)
     session.destroy()
 }
+
+

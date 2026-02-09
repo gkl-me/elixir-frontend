@@ -8,6 +8,6 @@ export const PUBLIC_ROUTES = [
     '/forgot-password',
     '/verify-otp',
     '/verify-email',
-    '/verification-error'
+    '/verification-error',
 ]
 
