@@ -1,30 +1,82 @@
-import NextAuth from 'next-auth'
-import  GoogleProvider from 'next-auth/providers/google'
+import { ENV } from "@/config/env";
+import { authService } from "@/services/auth.service";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import GoogleProvider from 'next-auth/providers/google'
+import GithubProvider from 'next-auth/providers/github'
 
-const handler =  NextAuth({
-    providers:[
+export const authOptions:NextAuthOptions = {
+    providers: [
         GoogleProvider({
-            clientId:process.env.GOOGLE_CLIENT_ID||"",
-            clientSecret:process.env.GOOGLE_SECRET||""
+            clientId:ENV.GOOGLE_CLIENT_ID,
+            clientSecret:ENV.GOOGLE_SECRET,
+            authorization:{
+                params:{
+                    prompt:"select_account",
+                },
+            }
+        }),
+
+        GithubProvider({
+            clientId:ENV.GITHUB_CLIENT_ID,
+            clientSecret:ENV.GITHUB_SECRET,
+            authorization:{
+                params:{
+                    prompt:"select_account"
+                }
+            }
         })
     ],
-    secret:process.env.NEXTAUTH_SECRET,
-    callbacks:{
-        async jwt({token}){
+
+    debug:true,
+
+    callbacks: {
+        async signIn({user,account,profile}) {
+            if(account?.provider == 'google' && account?.id_token){
+                const res = await authService.googleAuth({idToken:account?.id_token})
+                account.access_token = res.data.data.accessToken
+                account.refresh_token = res.data.data.refreshToken            
+            }
+
+            if(account?.provider == 'github' && account?.access_token){
+                const res = await authService.githubAuth({
+                    access_token:account.access_token,
+                    githubId:user.id,
+                    githubUsername:profile.login,
+                    name:user.name,
+                    email:user.email,
+                    image:user.image
+                })
+                account.access_token = res.data.data.accessToken
+                account.refresh_token = res.data.data.refreshToken
+            }
+            return true
+        },
+
+        async jwt({token,account}) {
+            if(account?.access_token && account?.refresh_token){
+                token.accessToken = account.access_token
+                token.refreshToken = account.refresh_token
+            }
             return token
         },
-        async session({session,token}){
-            session.user.name = token.name || ""
-            session.user.email = token.email || ""
-            session.user.image = token.picture || ""
-            session.user.googleId = token.sub || ""
-            return session
-        }
-    },
-    session:{
-        strategy:'jwt'
-    }
-}) 
 
+        async session({session,token}){
+            if(token.accessToken && token.refreshToken){
+                session.accessToken = token.accessToken
+                session.refreshToken = token.refreshToken
+            }
+            return session
+        },
+    },
+
+    session:{
+        strategy:"jwt"
+    },
+
+    secret:ENV.NEXT_AUTH_SECRET
+}
+
+
+const handler =  NextAuth(authOptions)
 
 export {handler as GET , handler as POST}
