@@ -4,11 +4,20 @@ import 'next-auth'
 
 declare module  'next-auth'{
         interface Session{
-            user : {
-                googleId?:string
-                name?:string,
-                email?:string,
-                image?:string
-            }
+            accessToken?:string,
+            refreshToken?:string
         }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+    refreshToken?: string;
+  }
+}
+
+declare module "next-auth"{
+  interface Profile{
+    login:string
+  }
 }

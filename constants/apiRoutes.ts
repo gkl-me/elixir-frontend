@@ -25,3 +25,9 @@ export const USER_API_ROUTES = {
     GET_ALL_USER:'/users/',
     TOGGLE_USER_STATUS:'/users',
 }
+
+
+export const PLAN_API_ROUTES = {
+    GET_ALL_PLANS:'/plans/',
+    UPDATE_PLAN:'/plans/update'
+}

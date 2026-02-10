@@ -1,5 +1,6 @@
 "use server"
 
+import { handlerServerError } from "@/lib/authHelper";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { userService } from "@/services/user.service";
 
@@ -19,6 +20,7 @@ export async function toggleUserStatusAction(
         }
 
     } catch (error) {
+        handlerServerError(error)
         return {
             success:false,
             error:AxiosErrorHandler(error).message
