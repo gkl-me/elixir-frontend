@@ -28,6 +28,7 @@ interface FieldConfig<T extends FieldValues> {
   label: string
   type?: React.HTMLInputTypeAttribute
   placeholder?: string
+  disabled?:boolean
   component?: React.ComponentType<{
     value: T[Path<T>]
     onChange: (...event: unknown[]) => void
@@ -35,6 +36,7 @@ interface FieldConfig<T extends FieldValues> {
     name: Path<T>
     ref: React.RefCallback<HTMLInputElement>
     placeholder?:string
+    disabled?:boolean
   }>
 }
 
@@ -80,12 +82,14 @@ export function CustomForm<T extends FieldValues>({
                   {field.component ? (
                     <field.component {...rhfField} 
                       placeholder={field.placeholder}
+                      disabled={field.disabled}
                     />
                   ) : (
                     <Input
                       {...rhfField}
                       type={field.type ?? "text"}
                       placeholder={field.placeholder}
+                      disabled={field.disabled}
                     />
                   )}
                 </FormControl>
