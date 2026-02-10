@@ -1,7 +1,11 @@
 "use server"
 
+<<<<<<< HEAD
 import { USER_API_ROUTES } from "@/constants/apiRoutes";
 import { api } from "@/lib/api";
+=======
+import { handlerServerError } from "@/lib/authHelper";
+>>>>>>> a43d818 (changes for plan to admin branc)
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 
 
@@ -58,6 +62,7 @@ export async function toggleUserStatusAction(
         }
 
     } catch (error) {
+        handlerServerError(error)
         return {
             success:false,
             error:AxiosErrorHandler(error).message

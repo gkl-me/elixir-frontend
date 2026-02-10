@@ -10,8 +10,20 @@ import PricingSection from "@/components/landing/PricingSection";
 import CTABanner from "@/components/landing/CTABanner";
 import Footer from "@/components/landing/Footer";
 import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { planService } from "@/services/plan.service";
 
-export default function Home() {
+export default async function Home() {
+
+  let plans;
+  try {
+    const res = await planService.getAllPlans()
+    plans = res.data.data.plans
+  } catch (error) {
+    const err = AxiosErrorHandler(error)
+    throw new Error(err.message)
+  }
+
   return (
     <div className="bg-navyDark min-h-screen">
       <LandingHeader />
@@ -48,7 +60,7 @@ export default function Home() {
         <AutomationSection />
 
         {/* Pricing Section */}
-        <PricingSection />
+        <PricingSection plans={plans} />
 
         {/* CTA Banner */}
         <CTABanner />
