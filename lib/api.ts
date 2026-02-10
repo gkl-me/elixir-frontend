@@ -1,15 +1,12 @@
 import { API_BASE_URL } from '@/config/url'
-import { IAuthSession } from '@/types/types'
 import axios from 'axios'
-import { getIronSession } from 'iron-session'
 import { cookies } from 'next/headers'
-import { sessionOptions } from './session'
+import { getSession } from './session'
 import { STATUS_CODES } from '@/constants/statusCodes'
-import { redirect } from 'next/navigation'
-import { AUTH_CLIENT_ROUTES } from '@/constants/clientRoutes'
-import { AUTH_ERROR_CODE } from '@/constants/errorCode'
+import { AUTH_API_ROUTES } from '@/constants/apiRoutes'
+import { setCookies } from './cookies'
 
-export const api = axios.create({
+const api = axios.create({
     baseURL:API_BASE_URL,
     withCredentials:true,
 })
@@ -17,30 +14,54 @@ export const api = axios.create({
 
 
 api.interceptors.request.use(async (config) => {
-
-    const cookieStore = await cookies()
-    const session = await getIronSession<IAuthSession>(
-        cookieStore,
-        sessionOptions
-    )
-    if(session?.accessToken){
-        config.headers.Authorization=`Bearer ${session.accessToken}`
-    }    
+    const session = await getSession()
+    if(session.accessToken){
+        config.headers.Authorization =  `Bearer ${session.accessToken}`;
+    }
     return config
-})
+},
+    (error) => Promise.reject(error)
+)
+
 
 
 api.interceptors.response.use(
     (response) => response,
-    async (error) => {                        
-            if(error.response?.status == STATUS_CODES.UNAUTHORIZED){
-                console.log("error")
-                redirect(AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`)
+    async (error) => {
+        const originalRequest = error.config
+
+        if(error.response.status == STATUS_CODES.UNAUTHORIZED && !originalRequest._retry){
+            originalRequest._retry = true
+
+            try {
+
+                const cookieStore = await cookies()
+                const refreshToken = cookieStore.get('refreshToken')?.value
+
+                //call refresh route to refresh the token 
+                const response = await axios.post(API_BASE_URL+AUTH_API_ROUTES.REFRESH,{
+                    refreshToken
+                })
+
+                const {accessToken,refreshToken:newRefreshToken} = response.data.data
+
+                const session = await getSession()
+                session.accessToken = accessToken
+
+                //save access in session and refresh in cookie
+                await session.save()
+                setCookies(newRefreshToken)
+
+                originalRequest.headers.Authorization = `Bearer ${accessToken}`
+                return api(originalRequest)
+
+            } catch (error) {
+                return Promise.reject(error)
             }
-            if(error.response?.status == STATUS_CODES.FORBIDDEN){
-                console.log("user blocked")
-                redirect(AUTH_CLIENT_ROUTES.LOGIN+`?reason=${AUTH_ERROR_CODE.BLOCKED}`)
-            }
-            return Promise.reject(error)
+        }
+        return Promise.reject(error)
     }
-) 
+)
+
+
+export default api 

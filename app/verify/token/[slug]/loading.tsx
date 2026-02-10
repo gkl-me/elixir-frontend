@@ -1,18 +1,19 @@
-"use client"
-
-import { Github, Loader2 } from "lucide-react"
+import { Loader2, ShieldCheck} from "lucide-react"
 
 
-const content = {
-          title: "Verifying GitHub Account",
-          description: "Connecting to GitHub to verify your identity.",
-          icon: <Github className="h-12 w-12 text-white" />,
-          colorAttributes: "bg-zinc-800/50 border-zinc-700/50 text-white"
+
+
+
+export default function Loading() {
+
+    const content = {
+          title: "Verifying Token",
+          description: "Validating your security token...",
+          icon: <ShieldCheck className="h-12 w-12 text-violet-500" />,
+          colorAttributes: "bg-violet-500/10 border-violet-500/20 text-violet-500"
         }
 
-
-export default function googleAuth(){
-    return (
+  return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-navyDark p-4 relative overflow-hidden">
       
       {/* Background Aesthetic Elements */}

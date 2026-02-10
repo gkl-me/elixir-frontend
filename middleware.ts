@@ -1,13 +1,12 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { PUBLIC_ROUTES } from "./constants/publicRoutes.";
-import { getIronSession } from "iron-session";
-import { IAuthSession } from "./types/types";
-import { sessionOptions } from "./lib/session";
+import { getSession} from "./lib/session";
 import { verifyAccessToken, verifyRefreshToken } from "./lib/tokenHandler";
 import { ADMIN_CLIENT_ROUTES, AUTH_CLIENT_ROUTES, USER_CLIENT_ROUTES } from "./constants/clientRoutes";
 import { AUTH_ERROR_CODE } from "./constants/errorCode";
-import { applyCookies, handleAuthFailure, refreshAuthToken } from "./lib/middlewareHelper";
+import { getCookies } from "./lib/cookies";
+import { refreshHandler } from "./lib/refreshHandler";
+import { handleRefreshFailure, updateSessionAndCookies } from "./lib/authHelper";
 
 const ADMIN_ROUTE = '/admin'
 
@@ -26,15 +25,10 @@ export async function middleware(req:NextRequest){
 
     console.log("middleware running")
 
-    const cookieStore = await cookies()
-    const session = await getIronSession<IAuthSession>(
-        cookieStore,
-        sessionOptions
-    )
-
+    const session = await getSession()
     const accessToken = session?.accessToken
-    const refreshToken = cookieStore.get('refreshToken')?.value
-    const resetToken = cookieStore.get('reset_token')?.value
+    const refreshToken = await getCookies('refreshToken')
+    const resetToken = await getCookies('reset_token')
 
     //verify token 
     let accessPayload = await verifyAccessToken(accessToken)
@@ -43,21 +37,19 @@ export async function middleware(req:NextRequest){
     if(!accessPayload && refreshToken){
         //get new access and refresh using helpers
 
-        const data = await refreshAuthToken(refreshToken)
+        const data = await refreshHandler(refreshToken)
 
-        if(!data?.success || !data?.data){
-            return handleAuthFailure(req)
-        }
-
-
-        session.accessToken = data.data.accessToken
-        await session.save()
-
-        //re verify accessToken
         accessPayload = await verifyAccessToken(session.accessToken)
 
-        //apply cookies to next response
-        await applyCookies(response,session,data.data.refreshToken)
+        if(!data || !data?.success || !data?.data){
+            return handleRefreshFailure(req)
+        }
+
+        if(data){
+            //update session and token in cookies 
+            return await updateSessionAndCookies(req,session,data.accessToken,data.refreshToken)
+        }
+        //re verify accessToken
 
     }
 
@@ -114,6 +106,6 @@ export async function middleware(req:NextRequest){
 
 export const config = {
    matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf)).*)'
+    '/((?!api|!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf)).*)'
   ]
 }
