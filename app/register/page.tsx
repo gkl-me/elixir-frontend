@@ -12,6 +12,8 @@ import {  registerAction } from "../actions/auth.action"
 import { RegisterSchema } from "@/validator/AuthSchema"
 import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes"
 import { toastHandler } from "@/lib/toastHandler"
+import { signIn } from "next-auth/react"
+import { NEXT_API_ROUTES } from "@/constants/routeHandler"
 
 
 export default function SignupPage() {
@@ -24,6 +26,22 @@ export default function SignupPage() {
       toastHandler(res)
     })
   }
+
+  const handleGoogle = () => {
+      signIn(
+        "google",{
+          callbackUrl:NEXT_API_ROUTES.GOOGLE_AUTH
+        }
+      )
+    }
+  
+    const handleGithub = () => {
+      signIn(
+        'github',{
+          callbackUrl:NEXT_API_ROUTES.GITHUB_AUTH
+        }
+      )
+    }
 
   return (
     <div className="min-h-screen bg-navyDark flex flex-col items-center justify-center p-4">
@@ -50,12 +68,14 @@ export default function SignupPage() {
               <Button
                 variant="dark"
                 className="w-full bg-purple hover:bg-purple/90 h-10 text-base"
+                onClick={() => handleGoogle()}
               >
                 <span className="mr-2">G</span> Continue with Google
               </Button>
               <Button
                 variant="white"
                 className="w-full  h-10 text-base"
+                onClick={() => handleGithub()}
               >
                 <Github className="mr-2 h-4 w-4" /> Continue with GitHub
               </Button>

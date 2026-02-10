@@ -7,23 +7,22 @@ import { useEffect, useState, useTransition } from "react"
 import { ArrowLeft, Github, Mail } from "lucide-react"
 import { z } from "zod"
 import { CustomForm } from "@/components/form/CustomForm"
-import { ADMIN_CLIENT_ROUTES, AUTH_CLIENT_ROUTES, USER_CLIENT_ROUTES } from "@/constants/clientRoutes"
+import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes"
 import { PasswordInput } from "@/components/ui/password-input"
 import { LoginSchema } from "@/validator/AuthSchema"
 import { loginAction } from "../actions/auth.action"
-import {  toastHandler } from "@/lib/toastHandler"
-import { useAuthStore } from "@/store/useAuthStore"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { AUTH_ERROR_CODE } from "@/constants/errorCode"
+import {signIn} from "next-auth/react"
+import { toastHandler } from "@/lib/toastHandler"
+import { NEXT_API_ROUTES } from "@/constants/routeHandler"
 
 export default function LoginPage() {
 
-  const login = useAuthStore((s) => s.login)
 
   const [showEmail, setShowEmail] = useState(false)
   const [isPending,startTransition] = useTransition()
-  const router = useRouter()
 
   const searchParams = useSearchParams()
   const reason = searchParams.get('reason')
@@ -44,22 +43,24 @@ export default function LoginPage() {
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
     startTransition(async () => {
       const res = await loginAction(data)
-      toastHandler({
-        success:res.success,
-        message:res.message,
-        error:res.error
-      })
-      if(res.success){
-
-        login(res.accessToken)
-        if(res.role=='superAdmin'){
-          router.replace(ADMIN_CLIENT_ROUTES.DASHBOARD)
-        }else{
-          router.replace(USER_CLIENT_ROUTES.ONBOARDING)
-        }
-      }
-
+      toastHandler(res)
     })
+  }
+
+  const handleGoogle = () => {
+    signIn(
+      "google",{
+        callbackUrl:NEXT_API_ROUTES.GOOGLE_AUTH
+      }
+    )
+  }
+
+  const handleGithub = () => {
+    signIn(
+      'github',{
+        callbackUrl:NEXT_API_ROUTES.GITHUB_AUTH
+      }
+    )
   }
 
   return (
@@ -87,13 +88,13 @@ export default function LoginPage() {
               <Button
                 variant="dark"
                 className="w-full"
-                onClick={() => {}}
+                onClick={() => handleGoogle()}
               >
                 <span className="mr-2">G</span> Continue with Google
               </Button>
               <Button
                 variant="white"
-                onClick={() => {}}
+                onClick={() => handleGithub()}
               >
                 <Github className="mr-2 h-4 w-4" /> Continue with GitHub
               </Button>
