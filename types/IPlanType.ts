@@ -1,3 +1,4 @@
+import { PlanType } from "./IOnboardingTypes"
 
 
 
@@ -8,6 +9,7 @@
 
 export interface IPlan{
     id:string
+    type:'Free'|'Pro'|'Enterprice'
     name:string
     price:number,
     limits:{
@@ -21,12 +23,15 @@ export interface IPlan{
         githubAutomation:boolean,
         automationScripts:boolean
     }
+    isActive:boolean
 }
 
 
 
 
-export interface IUpdatePlanData{
+export interface ICreatePlanData{
+    name:string
+    type:PlanType
     price?:number,
     limits?:{
         projects?:number,
@@ -39,4 +44,8 @@ export interface IUpdatePlanData{
         githubAutomation?:boolean,
         automationScripts?:boolean
     }
+}
+
+export interface ITogglePlanStatusData{
+    planId:string
 }

@@ -1,5 +1,5 @@
 import { PlanCard } from "@/components/plans/PlanCard"
-import UpdateCardModal from "@/components/plans/UpdateCardModal"
+import CreateCardModal from "@/components/plans/CreateCardModal"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
 import { planService } from "@/services/plan.service";
 
@@ -24,22 +24,17 @@ export default async function PlansPage() {
                 Plans
                 <span className="absolute -bottom-2 left-0 w-12 h-1 bg-purple rounded-full"></span>
             </h1>
+            <div>
+                <CreateCardModal/>
+            </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {plans.map((plan) => (
                 <PlanCard 
                     key={plan.id} 
-                    {...plan} 
-                    actionSlot={
-                        <UpdateCardModal 
-                            id={plan.id}
-                            name={plan.name}
-                            price={plan.price}
-                            limits={plan.limits}
-                            features={plan.features}
-                        />
-                    }
+                    {...plan}
+                    showToggle={true}
                 />
             ))}
         </div>
