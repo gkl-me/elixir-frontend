@@ -3,6 +3,8 @@ import { authService } from "@/services/auth.service";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from 'next-auth/providers/google'
 import GithubProvider from 'next-auth/providers/github'
+import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { AUTH_ERROR_CODE } from "@/constants/errorCode";
 
 export const authOptions:NextAuthOptions = {
     providers: [
@@ -31,6 +33,8 @@ export const authOptions:NextAuthOptions = {
 
     callbacks: {
         async signIn({user,account,profile}) {
+            try {
+            
             if(account?.provider == 'google' && account?.id_token){
                 const res = await authService.googleAuth({idToken:account?.id_token})
                 account.access_token = res.data.data.accessToken
@@ -50,6 +54,13 @@ export const authOptions:NextAuthOptions = {
                 account.refresh_token = res.data.data.refreshToken
             }
             return true
+            } catch (error) {
+                const err = AxiosErrorHandler(error)
+                if(err.errorCode){
+                    return `/login?reason=${err.errorCode}`  
+                }
+                return `/login?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`
+            }
         },
 
         async jwt({token,account}) {
@@ -71,6 +82,9 @@ export const authOptions:NextAuthOptions = {
 
     session:{
         strategy:"jwt"
+    },
+    pages:{
+        error:'/login',
     },
 
     secret:ENV.NEXT_AUTH_SECRET

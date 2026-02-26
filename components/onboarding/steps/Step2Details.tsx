@@ -3,12 +3,12 @@
 import { z } from "zod"
 import { CustomForm } from "@/components/form/CustomForm"
 import { ArrowLeft } from "lucide-react"
-import { OnboardingData } from "@/types/IOnboardingTypes"
+import { IOnboardingState } from "@/types/IOnboardingTypes"
 
 interface Step2DetailsProps {
-  onNext: (data: Partial<OnboardingData>) => void
+  onNext: (data: Partial<IOnboardingState>) => void
   onBack: () => void
-  data: OnboardingData
+  data: IOnboardingState
 }
 
 // Schemas
@@ -17,16 +17,36 @@ const WorkspaceSchema = z.object({
 })
 
 const EnterpriseSchema = z.object({
-  companyName: z.string().min(2, "Company name is required"),
-  companySize: z.string().min(1, "Please select company size"),
-  role: z.string().min(2, "Please enter your role"),
+  name: z.string().min(2, "Company name is required"),
+  type: z.string().min(1, "Please select company size"),
+  size: z.string().min(2, "Please enter your role"),
+  email: z.string(),
+  phone: z.string(),
+  workspaceName: z.string()
 })
 
 export default function Step2Details({ onNext, onBack, data }: Step2DetailsProps) {
   const isEnterprise = data.planName === 'Enterprice'
 
   const handleSubmit = (values : z.infer<typeof WorkspaceSchema> | z.infer<typeof EnterpriseSchema>) => {
-    onNext(values)
+    if(isEnterprise){
+      const enterpriseValues = values as z.infer<typeof EnterpriseSchema>
+
+      onNext({
+        company:{
+          name:enterpriseValues.name,
+          email:enterpriseValues.email,
+          type:enterpriseValues.type,
+          phone:enterpriseValues.phone,
+          size:enterpriseValues.size
+        },
+        workspaceName:enterpriseValues.workspaceName
+      })
+    }else{
+      onNext({
+        workspaceName:values.workspaceName
+      })
+    }
   }
 
   return (
@@ -47,16 +67,42 @@ export default function Step2Details({ onNext, onBack, data }: Step2DetailsProps
           <CustomForm
             schema={EnterpriseSchema}
             defaultValues={{
-              companyName: data.companyName || "",
-              companySize: data.companySize || "",
-              role: data.role || "",
+              name: data.company.name || "",
+              size: data.company.size || "",
+              type: data.company.type || "",
+              email: data.company.email || "",
+              phone: data.company.phone || "",
+              workspaceName:data.workspaceName || "",
+
             }}
             onSubmit={handleSubmit}
             submitText="Continue to Payment"
             fields={[
-              { name: "companyName", label: "Company Name", placeholder: "Acme Corp" },
-              { name: "companySize", label: "Company Size", placeholder: "e.g. 1-10, 11-50, 50+" },
-              { name: "role", label: "Your Role", placeholder: "e.g. CTO, Manager" },
+              {
+                name:"name",
+                label:"Company Name",
+                type:"text"
+              },{
+                name:"email",
+                label:"Company Email",
+                type:"text"
+              },{
+                name:"size",
+                label:"Company Size",
+                type:"text"
+              },{
+                name:"phone",
+                label:"Company Phone",
+                type:"text",
+              },{
+                name:"type",
+                label:"Company Type",
+                type:"text"
+              },{
+                name:"workspaceName",
+                label:"Workspace Name",
+                type:"text"
+              }
             ]}
           />
         ) : (
