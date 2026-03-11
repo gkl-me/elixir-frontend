@@ -14,21 +14,21 @@ interface Step2DetailsProps {
 }
 
 export default function Step2Details({ onNext, onBack, data }: Step2DetailsProps) {
-  const isEnterprise = data.planType === 'Enterprice'
+  const isEnterprice = data.planType === 'Enterprice'
 
   const handleSubmit = (values : z.infer<typeof WorkspaceSchema> | z.infer<typeof CompanySchema>) => {
-    if(isEnterprise){
-      const enterpriseValues = values as z.infer<typeof CompanySchema>
+    if(isEnterprice){
+      const enterpriceValues = values as z.infer<typeof CompanySchema>
 
       onNext({
         company:{
-          name:enterpriseValues.name,
-          email:enterpriseValues.email,
-          type:enterpriseValues.type,
-          phone:enterpriseValues.phone,
-          size:enterpriseValues.size
+         name:enterpriceValues.name,
+          email:enterpriceValues.email,
+          type:enterpriceValues.type,
+          phone:enterpriceValues.phone,
+          size:enterpriceValues.size
         },
-        workspaceName:enterpriseValues.workspaceName
+        workspaceName:enterpriceValues.workspaceName
       })
     }else{
       onNext({
@@ -41,17 +41,17 @@ export default function Step2Details({ onNext, onBack, data }: Step2DetailsProps
     <div className="max-w-xl mx-auto space-y-8">
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-bold text-white">
-          {isEnterprise ? "Tell us about your company" : "Set up your workspace"}
+          {isEnterprice ? "Tell us about your company" : "Set up your workspace"}
         </h2>
         <p className="text-gray-400">
-           {isEnterprise 
+           {isEnterprice 
              ? "We need a few details to tailor the experience for your organization." 
              : "Give your workspace a name to get started."}
         </p>
       </div>
 
       <div className="bg-navy border border-white/10 rounded-xl p-8 shadow-lg">
-        {isEnterprise ? (
+        {isEnterprice ? (
           <CustomForm
             schema={CompanySchema}
             defaultValues={{

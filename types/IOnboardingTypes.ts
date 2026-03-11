@@ -1,26 +1,22 @@
+export type PlanType = "Free" | "Pro" | "Enterprice";
 
+export interface IOnboardingState {
+  currentStep: number;
+  isCompleted: boolean;
 
-export type PlanType = 'Free' |'Pro'|'Enterprice'
+  paymentStatus: "pending" | "incomplete" | "failed" | "success";
 
-export interface IOnboardingState{
+  planType: PlanType;
+  planId: string;
+  planPrice: number;
 
+  workspaceName?: string;
 
-    currentStep:number,
-    isCompleted:boolean,
-
-    paymentStatus:'idle'|'completed'|'failed'|'processing',
-
-    planType:PlanType,
-    planId:string,
-    planPrice:number,
-
-    workspaceName?:string,
-
-    company?:{
-        name:string,
-        type:string,
-        email:string,
-        phone:string,
-        size:number
-    } 
+  company?: {
+    name: string;
+    type: string;
+    email: string;
+    phone: string;
+    size: number;
+  };
 }

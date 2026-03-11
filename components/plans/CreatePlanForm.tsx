@@ -106,7 +106,7 @@ export default function CreatePlanForm({ onSuccess }: CreatePlanFormProps) {
                 <SelectContent className="bg-navyDark  border-purpleDark/50 text-white">
                   <SelectItem value="Free">Free</SelectItem>
                   <SelectItem value="Pro">Pro</SelectItem>
-                  <SelectItem value="Enterprice">Enterprise</SelectItem>
+                  <SelectItem value="Enterprice">Enterprice</SelectItem>
                 </SelectContent>
               </Select>
             </div>

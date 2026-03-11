@@ -16,26 +16,26 @@ export default function OnboardingWizard() {
 
   // Start directly from demo data
   const [state, setState] = useState<IOnboardingState>(null)
-  const [progress,setProgress] = useState(0)
+  const [progress, setProgress] = useState(0)
   const router = useRouter()
 
-  const {execute,isLoading} = useApi({
-    url:'/api/onboarding',
-    method:"GET"
+  const { execute, isLoading } = useApi({
+    url: '/api/onboarding',
+    method: "GET"
   })
 
   useEffect(() => {
     console.log("rendering")
     fetchOnboarding()
-  },[])
+  }, [])
 
   const findProgress = (step) => {
-     return ((step - 0.5) / 2.5) * 100
+    return ((step - 0.5) / 2.5) * 100
   }
 
-  const fetchOnboarding = async ()  => {
+  const fetchOnboarding = async () => {
     const res = await execute()
-    console.log("res rendered",res)
+    console.log("res rendered", res)
     setState(res.data.onboarding)
     const prog = findProgress(res.data.onboarding.currentStep)
     setProgress(prog)
@@ -45,18 +45,18 @@ export default function OnboardingWizard() {
   const handleNext = async (data: Partial<IOnboardingState>) => {
     //call the server action here 
     console.log(data)
-    const res = await saveOnboardingStepAction({...data,currentStep:state.currentStep+1})
+    const res = await saveOnboardingStepAction({ ...data, currentStep: state.currentStep + 1 })
     setState(res.data)
     const prog = findProgress(state.currentStep)
     setProgress(prog)
-    
+
   }
 
   //go back function
   const handleBack = async () => {
-    const res = await saveOnboardingStepAction({currentStep:state.currentStep-1})
+    const res = await saveOnboardingStepAction({ currentStep: state.currentStep - 1 })
     setState(res.data)
-    const prog = findProgress(state.currentStep-1)
+    const prog = findProgress(state.currentStep - 1)
     setProgress(prog)
   }
 
@@ -64,7 +64,7 @@ export default function OnboardingWizard() {
   //on complete function
   const handleComplete = async () => {
     const res = await completeOnboardingAction()
-    if(res.success){
+    if (res.success) {
       console.log(res)
       router.push(res.data.payment_url)
     }
@@ -99,18 +99,16 @@ export default function OnboardingWizard() {
           </div>
 
           <div
-            className={`text-center ${
-              state.currentStep >= 2 ? "text-white" : "text-gray-600"
-            }`}
+            className={`text-center ${state.currentStep >= 2 ? "text-white" : "text-gray-600"
+              }`}
           >
             <span className="block text-xs text-gray-500 mb-1">STEP 2</span>
             Details
           </div>
 
           <div
-            className={`text-right ${
-              state.currentStep >= 3 ? "text-white" : "text-gray-600"
-            }`}
+            className={`text-right ${state.currentStep >= 3 ? "text-white" : "text-gray-600"
+              }`}
           >
             <span className="block text-xs text-gray-500 mb-1">STEP 3</span>
             Payment
