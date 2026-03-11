@@ -26,7 +26,7 @@ const EnterpriseSchema = z.object({
 })
 
 export default function Step2Details({ onNext, onBack, data }: Step2DetailsProps) {
-  const isEnterprise = data.planName === 'Enterprice'
+  const isEnterprise = data.planType === 'Enterprice'
 
   const handleSubmit = (values : z.infer<typeof WorkspaceSchema> | z.infer<typeof EnterpriseSchema>) => {
     if(isEnterprise){
