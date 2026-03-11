@@ -9,6 +9,7 @@ import { toggleUserStatusAction } from "@/app/actions/user.action"
 import { toastHandler } from "@/lib/toastHandler"
 import { useApi } from "@/hooks/useApi"
 import { NEXT_API_ROUTES } from "@/constants/routeHandler"
+import { useDebounce } from "@/hooks/useDebounce"
 
 
 export default function UserDataTable({
@@ -27,6 +28,7 @@ export default function UserDataTable({
     const [pageSize] = useState(8)
     const [sorting, setSorting] = useState<SortingState>([])
     const [statusFilter, setStatusFilter] = useState<string>("")
+    const debouncedSearch = useDebounce(search,500)
 
     //api hook called
     const {execute,isLoading} = useApi({
@@ -43,7 +45,7 @@ export default function UserDataTable({
 
         const res = await execute({
             params:{
-                search,
+                search:debouncedSearch,
                 status:statusFilter,
                 page:pageIndex+1,
                 limit:pageSize,
@@ -52,12 +54,11 @@ export default function UserDataTable({
             }
         })
 
-        console.log("fetch is called")
 
         setData(res.data.users)
         setTotalCount(res.data.totalCount)
 
-    }, [search, pageIndex, pageSize, sorting, statusFilter,execute])
+    }, [debouncedSearch, pageIndex, pageSize, sorting, statusFilter,execute])
 
     useEffect(() => {
         if(isFirstRendered.current){
@@ -70,7 +71,7 @@ export default function UserDataTable({
     // Reset page when filters change
     useEffect(() => {
         setPageIndex(0)
-    }, [search, statusFilter,])
+    }, [debouncedSearch,statusFilter,])
 
 
     const handleToggleBlock = async (id: string) => {

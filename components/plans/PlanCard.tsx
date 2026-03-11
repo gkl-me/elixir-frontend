@@ -4,10 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatBytes } from "@/lib/helper"
 import { Check, X, LayoutGrid, Users, UserCheck, HardDrive, Shield } from "lucide-react"
 import React from "react"
+import { TogglePlanStatus } from "./TogglePlanStatus"
 
 interface PlanProps {
   id: string
   name: string
+  type: string
   price: number
   limits: {
     projects: number
@@ -23,6 +25,9 @@ interface PlanProps {
   actionSlot?: React.ReactNode
   isSelected?: boolean
   onClick?: () => void
+  showToggle?:boolean
+  isActive:boolean,
+  onToggle?:(id:string)=>void
 }
 
 export function PlanCard({
@@ -34,6 +39,8 @@ export function PlanCard({
   actionSlot,
   isSelected,
   onClick,
+  showToggle,
+  isActive,
 }: PlanProps) {
   return (
     <div
@@ -59,6 +66,17 @@ export function PlanCard({
 
         {/* HEADER */}
         <CardHeader className="text-center pb-2 relative z-10">
+
+           {/* TOP TOGGLE */}
+          {showToggle && (
+            <div className="absolute right-4 top-4">
+              <TogglePlanStatus 
+                id={id}
+                isActive={isActive}
+              />
+            </div>
+          )}
+
           <CardTitle className="text-white text-xl sm:text-2xl font-bold tracking-tight">
             {name}
           </CardTitle>
@@ -90,7 +108,7 @@ export function PlanCard({
               />
               <FeatureRow
                 icon={<UserCheck className="w-4 h-4 text-purple" />}
-                label="Members per Team"
+                label="Members"
                 value={limits.members === -1 ? "Unlimited" : limits.members}
               />
               <FeatureRow
@@ -115,9 +133,9 @@ export function PlanCard({
           </div>
 
           {/* ACTION */}
-          <div className="pt-3 sm:pt-4 border-t border-white/5">
+          {actionSlot && <div className="pt-3 sm:pt-4 border-t border-white/5">
             {actionSlot}
-          </div>
+          </div>}
         </CardContent>
       </Card>
     </div>

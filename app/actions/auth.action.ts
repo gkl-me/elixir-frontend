@@ -208,7 +208,7 @@ export async function resetPasswordAction(email:string,password:string){
 
         const res = await authService.resetPassword({
             email,
-            password,
+            newPassword:password,
             resetPasswordToken:resetToken
         })
 

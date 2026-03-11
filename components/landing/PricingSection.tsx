@@ -14,7 +14,7 @@ export default function PricingSection({plans}:{
     // Add isPopular property to PLANS for display purposes if needed, or just hardcode it here
     const plansWithPopularity = plans.map(plan => ({
         ...plan,
-        isPopular: plan.name === "Pro"
+        isPopular: plan.type === "Pro"
     }))
 
     return (

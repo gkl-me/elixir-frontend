@@ -1,11 +1,11 @@
 'use client'
 
-import { 
-    ColumnDef, 
-    flexRender, 
-    getCoreRowModel, 
-    useReactTable, 
-    SortingState 
+import {
+    ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+    SortingState
 } from "@tanstack/react-table"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -25,21 +25,21 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     totalCount: number
-    
+
     // State
     pageIndex: number
     pageSize: number
     search: string
     sorting: SortingState
-    
+
     // Handlers
     onPageChange: (newPageIndex: number) => void
     onSearchChange: (newSearch: string) => void
     onSortingChange: (newSorting: SortingState) => void
-    
+
     // Slots
     renderFilters?: () => ReactNode
-    
+
     title?: string
     isLoading?: boolean
 }
@@ -76,9 +76,9 @@ export function DataTable<TData, TValue>({
         manualSorting: true,
         manualFiltering: true,
         onPaginationChange: (updater) => {
-             // Handle both functional updates and direct values for pagination
-            const newState = typeof updater === 'function' 
-                ? updater({ pageIndex, pageSize }) 
+            // Handle both functional updates and direct values for pagination
+            const newState = typeof updater === 'function'
+                ? updater({ pageIndex, pageSize })
                 : updater
             onPageChange(newState.pageIndex)
         },
@@ -99,7 +99,7 @@ export function DataTable<TData, TValue>({
                     <div className="h-1 w-20 bg-gradient-to-r from-purple to-purpleDark rounded-full"></div>
                 </div>
             )}
-            
+
             <div className="flex flex-col justify-between sm:flex-row gap-4 mb-6">
                 {/* Search Input */}
                 <div className="relative w-full flex-1 md:max-w-sm min-w-[180px]">
@@ -128,16 +128,16 @@ export function DataTable<TData, TValue>({
                 <Table className="min-w-[800px]">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow 
+                            <TableRow
                                 className="border-b border-purple/20 bg-gradient-to-r from-navy via-blueDark to-navy hover:bg-gradient-to-r hover:from-purple/10 hover:via-purpleDark/10 hover:to-purple/10 transition-all duration-300"
                                 key={headerGroup.id}
                             >
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead 
+                                        <TableHead
                                             key={header.id}
                                             className="text-white font-semibold text-sm uppercase tracking-wider py-2 md:py-4 px-4 md:px-6 border-r border-purple/10 last:border-r-0 whitespace-nowrap"
-                                        >  
+                                        >
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -161,7 +161,7 @@ export function DataTable<TData, TValue>({
                                         <span className="text-white/70 ml-3">Loading...</span>
                                     </div>
                                 </TableCell>
-                            </TableRow> 
+                            </TableRow>
                         ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row, index) => (
                                 <TableRow
@@ -175,7 +175,7 @@ export function DataTable<TData, TValue>({
                                     data-state={row.getIsSelected() && "selected"}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell 
+                                        <TableCell
                                             key={cell.id}
                                             className="text-white/90 py-4 px-6 border-r border-navy/10 last:border-r-0"
                                         >
@@ -220,6 +220,11 @@ export function DataTable<TData, TValue>({
                                       text-white text-sm font-medium rounded-md">
                             {pageIndex + 1}
                         </span>
+                        {table.getPageCount() > 0 && (
+                            <span className="text-gray-400 text-sm font-medium">
+                                of {table.getPageCount()}
+                            </span>
+                        )}
                     </div>
                     <Button
                         size="sm"

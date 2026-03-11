@@ -3,19 +3,30 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { PlanCard } from "@/components/plans/PlanCard"
-import { OnboardingData, PlanType } from "@/types/IOnboardingTypes"
 import { IPlan } from "@/types/IPlanType"
 import { useApi } from "@/hooks/useApi"
 import { Button } from "@/components/ui/button"
+import { IOnboardingState} from "@/types/IOnboardingTypes"
 
 
 interface Step1PlanProps {
-  onNext: (data: { planName: PlanType }) => void
-  initialData: OnboardingData
+  onNext: (data:ISelectedPlan) => void
+  initialData: IOnboardingState
+}
+
+
+interface ISelectedPlan { 
+  planType:'Free'|'Pro'|'Enterprice',
+  planId?:string,
+  planPrice?:number
 }
 
 export default function Step1Plan({ onNext, initialData }: Step1PlanProps) {
-  const [selectedPlan, setSelectedPlan] = useState<PlanType>(initialData?.planName || 'Free')
+
+  const [selectedPlan, setSelectedPlan] = useState<ISelectedPlan>({
+    planType:initialData.planType || 'Free',
+  })
+
   const [plans,setPlans] = useState<IPlan[]>([])
   
   const {execute} = useApi({
@@ -31,7 +42,7 @@ export default function Step1Plan({ onNext, initialData }: Step1PlanProps) {
   },[])
 
   const handleContinue = () => {
-    onNext({ planName: selectedPlan })
+    onNext(selectedPlan)
   }
 
   return (
@@ -52,16 +63,20 @@ export default function Step1Plan({ onNext, initialData }: Step1PlanProps) {
           >
             <PlanCard
               {...plan}
-              isSelected={selectedPlan === (plan.name)}
-              onClick={() => setSelectedPlan(plan.name as PlanType)}
+              isSelected={selectedPlan.planType === (plan.type)}
+              onClick={() => setSelectedPlan({
+                planId:plan.id,
+                planType:plan.type,
+                planPrice:plan.price
+              })}
               actionSlot={
                 <div className="mt-4 w-full text-center">
                     <Button 
-                    variant={selectedPlan == plan.name ? "dark":"light"}
+                    variant={selectedPlan.planType == plan.type ? "dark":"light"}
                     className="w-full"
                     >
 
-                        {selectedPlan === (plan.name as PlanType) ? 'Selected' : 'Click to Select'}
+                        {selectedPlan.planType === plan.type ? 'Selected' : 'Click to Select'}
                     </Button>
                 </div>
               }

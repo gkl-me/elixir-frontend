@@ -11,5 +11,9 @@ export default async function AuthenticatedLayout({
 
 {
 
-    return {children}
+    return (
+        <>
+        {children}
+        </>
+    )
 }

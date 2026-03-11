@@ -1,74 +1,77 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Loader2 } from "lucide-react"
 import Step1Plan from "./steps/Step1Plan"
 import Step2Details from "./steps/Step2Details"
 import Step3Payment from "./steps/Step3Payment"
-import { OnboardingState } from "@/types/IOnboardingTypes"
+import { IOnboardingState } from "@/types/IOnboardingTypes"
+import { useApi } from "@/hooks/useApi"
+import { completeOnboardingAction, saveOnboardingStepAction } from "@/app/actions/onboarding.action"
+import { useRouter } from "next/navigation"
 
-const demoData: OnboardingState = {
-  currentStep: 1,
-  isCompleted: false,
-  paymentStatus: "pending",
-  data: {
-    planName: "Free",
-    workspaceName: "",
-    companyName: "",
-    companySize: "",
-    role: "",
-    paymentMethod: "",
-  },
-}
 
 export default function OnboardingWizard() {
 
   // Start directly from demo data
-  const [state, setState] = useState<OnboardingState>(demoData)
-  const [loading] = useState(false)
+  const [state, setState] = useState<IOnboardingState>(null)
+  const [progress,setProgress] = useState(0)
+  const router = useRouter()
 
-  /**
-   * NEXT STEP
-   * Updates local demo state instead of calling service
-   */
-  const handleNext = (data: Partial<OnboardingState["data"]>) => {
-    setState((prev) => {
-      const nextStep = Math.min(prev.currentStep + 1, 3)
+  const {execute,isLoading} = useApi({
+    url:'/api/onboarding',
+    method:"GET"
+  })
 
-      return {
-        ...prev,
-        currentStep: nextStep,
-        data: { ...prev.data, ...data },
-      }
-    })
+  useEffect(() => {
+    console.log("rendering")
+    fetchOnboarding()
+  },[])
+
+  const findProgress = (step) => {
+     return ((step - 0.5) / 2.5) * 100
   }
 
-  /**
-   * BACK STEP
-   */
-  const handleBack = () => {
-    setState((prev) => ({
-      ...prev,
-      currentStep: Math.max(prev.currentStep - 1, 1),
-    }))
+  const fetchOnboarding = async ()  => {
+    const res = await execute()
+    console.log("res rendered",res)
+    setState(res.data.onboarding)
+    const prog = findProgress(res.data.onboarding.currentStep)
+    setProgress(prog)
   }
 
-  /**
-   * COMPLETE ONBOARDING
-   */
-  const handleComplete = () => {
-    setState((prev) => ({
-      ...prev,
-      isCompleted: true,
-      paymentStatus: "completed",
-    }))
+  //on next calls the server action 
+  const handleNext = async (data: Partial<IOnboardingState>) => {
+    //call the server action here 
+    console.log(data)
+    const res = await saveOnboardingStepAction({...data,currentStep:state.currentStep+1})
+    setState(res.data)
+    const prog = findProgress(state.currentStep)
+    setProgress(prog)
+    
   }
 
-  /**
-   * LOADING UI
-   */
-  if (loading) {
+  //go back function
+  const handleBack = async () => {
+    const res = await saveOnboardingStepAction({currentStep:state.currentStep-1})
+    setState(res.data)
+    const prog = findProgress(state.currentStep-1)
+    setProgress(prog)
+  }
+
+
+  //on complete function
+  const handleComplete = async () => {
+    const res = await completeOnboardingAction()
+    if(res.success){
+      console.log(res)
+      router.push(res.data.payment_url)
+    }
+  }
+
+
+  if (isLoading || !state) {
     return (
       <div className="flex justify-center items-center h-full">
         <Loader2 className="w-8 h-8 md:w-12 md:h-12 text-purple animate-spin" />
@@ -76,10 +79,10 @@ export default function OnboardingWizard() {
     )
   }
 
-  /**
-   * PROGRESS CALCULATION
-   */
-  const progress = ((state.currentStep - 0.5) / 2.5) * 100
+  // /**
+  //  * PROGRESS CALCULATION
+  //  */
+  // const progress = ((state.currentStep - 0.5) / 2.5) * 100
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -130,15 +133,15 @@ export default function OnboardingWizard() {
           transition={{ duration: 0.3 }}
         >
           {state.currentStep === 1 && (
-            <Step1Plan onNext={handleNext} initialData={state.data} />
+            <Step1Plan onNext={handleNext} initialData={state} />
           )}
 
           {state.currentStep === 2 && (
-            <Step2Details onNext={handleNext} onBack={handleBack} data={state.data} />
+            <Step2Details onNext={handleNext} onBack={handleBack} data={state} />
           )}
 
           {state.currentStep === 3 && (
-            <Step3Payment onComplete={handleComplete} onBack={handleBack} data={state.data} />
+            <Step3Payment onComplete={handleComplete} onBack={handleBack} data={state} />
           )}
         </motion.div>
       </AnimatePresence>

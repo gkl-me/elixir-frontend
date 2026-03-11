@@ -9,6 +9,7 @@ import { setCookies } from './cookies'
 const api = axios.create({
     baseURL:API_BASE_URL,
     withCredentials:true,
+    timeout: 10000,
 })
 
 
@@ -30,7 +31,7 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config
 
-        if(error.response.status == STATUS_CODES.UNAUTHORIZED && !originalRequest._retry){
+        if(error.response && error.response.status == STATUS_CODES.UNAUTHORIZED && !originalRequest._retry){
             originalRequest._retry = true
 
             try {

@@ -29,5 +29,21 @@ export const USER_API_ROUTES = {
 
 export const PLAN_API_ROUTES = {
     GET_ALL_PLANS:'/plans/',
-    UPDATE_PLAN:'/plans/update'
+    CREATE_PLAN:'/plans/create',
+    TOGGLE_PLAN_STATUS:'/plans/toggle'
+}
+
+
+export const ONBOARDING_API_ROUTES = {
+    GET_USER_ONBOARDING:'/onboarding/',
+    SAVE_ONBOARDING_STEP:'/onboarding/step',
+    COMPLETE_ONBOARDING_STEP:'/onboarding/complete',
+    COMPLETE_ONBOARDING_PAYMENT:'/onboarding/complete-payment',
+    CHANGE_PLAN:'/onboarding/change-plan'
+}
+
+
+export const PAYMENT_API_ROUTES = {
+    VERIFY_PAYMENT:'/payment/verify',
+    RETRY_PAYMENT:'/payment/retry'
 }

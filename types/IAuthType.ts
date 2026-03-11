@@ -30,7 +30,7 @@ export interface ResendOtpData{
 
 export interface ResetPasswordData {
     email:string,
-    password:string
+    newPassword:string
     resetPasswordToken?:string
 }
 

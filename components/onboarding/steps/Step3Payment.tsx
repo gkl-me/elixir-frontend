@@ -2,12 +2,12 @@
 
 import { useState } from "react"
 import { CreditCard, Lock, ArrowLeft } from "lucide-react"
-import { OnboardingData } from "@/types/IOnboardingTypes"
+import { IOnboardingState } from "@/types/IOnboardingTypes"
 
 interface Step3PaymentProps {
   onComplete: () => void
   onBack: () => void
-  data: OnboardingData
+  data: IOnboardingState
 }
 
 export default function Step3Payment({ onComplete, onBack, data }: Step3PaymentProps) {
@@ -43,7 +43,7 @@ export default function Step3Payment({ onComplete, onBack, data }: Step3PaymentP
                      <>
                         <div className="flex justify-between items-center text-sm">
                              <span className="text-gray-400">Company</span>
-                             <span className="text-white font-medium">{data.companyName} ({data.companySize})</span>
+                             <span className="text-white font-medium">{data.company.name} ({data.company.size})</span>
                         </div>
                      </>
                   ) : (
@@ -57,7 +57,7 @@ export default function Step3Payment({ onComplete, onBack, data }: Step3PaymentP
                       <span className="text-gray-300 font-medium">Total due today</span>
                       <div className="text-right">
                           <span className="block text-2xl font-bold text-white">
-                             {data.planName === 'Free' ? "$0" : data.planName === 'Pro' ? "$29" : "$99"}
+                             {"$"+data.planPrice/100}
                           </span>
                           <span className="text-xs text-gray-500">/month</span>
                       </div>
