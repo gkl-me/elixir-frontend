@@ -4,6 +4,8 @@ import { z } from "zod"
 import { CustomForm } from "@/components/form/CustomForm"
 import { ArrowLeft } from "lucide-react"
 import { IOnboardingState } from "@/types/IOnboardingTypes"
+import { WorkspaceSchema } from "@/validator/WorkspaceSchema"
+import { CompanySchema } from "@/validator/CompanySchema"
 
 interface Step2DetailsProps {
   onNext: (data: Partial<IOnboardingState>) => void
@@ -11,26 +13,12 @@ interface Step2DetailsProps {
   data: IOnboardingState
 }
 
-// Schemas
-const WorkspaceSchema = z.object({
-  workspaceName: z.string().min(2, "Workspace name must be at least 2 characters"),
-})
-
-const EnterpriseSchema = z.object({
-  name: z.string().min(2, "Company name is required"),
-  type: z.string().min(1, "Please select company size"),
-  size: z.string().min(2, "Please enter your role"),
-  email: z.string(),
-  phone: z.string(),
-  workspaceName: z.string()
-})
-
 export default function Step2Details({ onNext, onBack, data }: Step2DetailsProps) {
   const isEnterprise = data.planType === 'Enterprice'
 
-  const handleSubmit = (values : z.infer<typeof WorkspaceSchema> | z.infer<typeof EnterpriseSchema>) => {
+  const handleSubmit = (values : z.infer<typeof WorkspaceSchema> | z.infer<typeof CompanySchema>) => {
     if(isEnterprise){
-      const enterpriseValues = values as z.infer<typeof EnterpriseSchema>
+      const enterpriseValues = values as z.infer<typeof CompanySchema>
 
       onNext({
         company:{
@@ -65,10 +53,10 @@ export default function Step2Details({ onNext, onBack, data }: Step2DetailsProps
       <div className="bg-navy border border-white/10 rounded-xl p-8 shadow-lg">
         {isEnterprise ? (
           <CustomForm
-            schema={EnterpriseSchema}
+            schema={CompanySchema}
             defaultValues={{
               name: data.company.name || "",
-              size: data.company.size || "",
+              size: data.company.size || 0,
               type: data.company.type || "",
               email: data.company.email || "",
               phone: data.company.phone || "",

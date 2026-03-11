@@ -18,7 +18,7 @@ export default function Step3Payment({ onComplete, onBack, data }: Step3PaymentP
     onComplete()
   }
 
-  const isFree = data.planName === 'Free'
+  const isFree = data.planType === 'Free'
 
   return (
     <div className="max-w-xl mx-auto">
@@ -37,9 +37,9 @@ export default function Step3Payment({ onComplete, onBack, data }: Step3PaymentP
               <div className="p-6 space-y-4">
                   <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-400">Plan</span>
-                      <span className="text-purple font-bold uppercase tracking-wider">{data.planName}</span>
+                      <span className="text-purple font-bold uppercase tracking-wider">{data.planType}</span>
                   </div>
-                  {data.planName === 'Enterprice' ? (
+                  {data.planType === 'Enterprice' ? (
                      <>
                         <div className="flex justify-between items-center text-sm">
                              <span className="text-gray-400">Company</span>

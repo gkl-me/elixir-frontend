@@ -79,11 +79,6 @@ export default function OnboardingWizard() {
     )
   }
 
-  // /**
-  //  * PROGRESS CALCULATION
-  //  */
-  // const progress = ((state.currentStep - 0.5) / 2.5) * 100
-
   return (
     <div className="max-w-4xl mx-auto">
       {/* Progress Bar */}
