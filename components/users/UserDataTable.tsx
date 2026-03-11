@@ -10,14 +10,15 @@ import { toastHandler } from "@/lib/toastHandler"
 import { useApi } from "@/hooks/useApi"
 import { NEXT_API_ROUTES } from "@/constants/routeHandler"
 import { useDebounce } from "@/hooks/useDebounce"
+import { ConfirmationModal } from "../modal/ConfirmationModal"
 
 
 export default function UserDataTable({
     initialData,
     initialTotalCount
-}:{
-    initialData:User[],
-    initialTotalCount:number
+}: {
+    initialData: User[],
+    initialTotalCount: number
 }) {
     const [data, setData] = useState<User[]>(initialData)
     const [totalCount, setTotalCount] = useState(initialTotalCount)
@@ -28,12 +29,17 @@ export default function UserDataTable({
     const [pageSize] = useState(8)
     const [sorting, setSorting] = useState<SortingState>([])
     const [statusFilter, setStatusFilter] = useState<string>("")
-    const debouncedSearch = useDebounce(search,500)
+    const debouncedSearch = useDebounce(search, 500)
+
+    //confirmatiom modal 
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
     //api hook called
-    const {execute,isLoading} = useApi({
-        url:NEXT_API_ROUTES.USERS_LIST_API,
-        method:"GET"
+    const { execute, isLoading } = useApi({
+        url: NEXT_API_ROUTES.USERS_LIST_API,
+        method: "GET"
     })
 
     const isFirstRendered = useRef(true)
@@ -44,13 +50,13 @@ export default function UserDataTable({
         const sort = sorting[0]
 
         const res = await execute({
-            params:{
-                search:debouncedSearch,
-                status:statusFilter,
-                page:pageIndex+1,
-                limit:pageSize,
-                sortBy:sort?.id,
-                sortOrder:sort?.desc ? "desc" : 'asc'
+            params: {
+                search: debouncedSearch,
+                status: statusFilter,
+                page: pageIndex + 1,
+                limit: pageSize,
+                sortBy: sort?.id,
+                sortOrder: sort?.desc ? "desc" : 'asc'
             }
         })
 
@@ -58,20 +64,20 @@ export default function UserDataTable({
         setData(res.data.users)
         setTotalCount(res.data.totalCount)
 
-    }, [debouncedSearch, pageIndex, pageSize, sorting, statusFilter,execute])
+    }, [debouncedSearch, pageIndex, pageSize, sorting, statusFilter, execute])
 
     useEffect(() => {
-        if(isFirstRendered.current){
+        if (isFirstRendered.current) {
             isFirstRendered.current = false
-            return 
+            return
         }
         fetchData()
-    },[fetchData])
+    }, [fetchData])
 
     // Reset page when filters change
     useEffect(() => {
         setPageIndex(0)
-    }, [debouncedSearch,statusFilter,])
+    }, [debouncedSearch, statusFilter,])
 
 
     const handleToggleBlock = async (id: string) => {
@@ -80,9 +86,25 @@ export default function UserDataTable({
         toastHandler(res)
     }
 
+    const openModal = (id: string) => {
+        const user = data.find(u => u.id === id)
+        if (!user) return
+
+        setSelectedUser(user)
+        setIsModalOpen(true)
+    }
+
+
+    const confirmToggleBlock = () => {
+        if (!selectedUser) return
+        handleToggleBlock(selectedUser.id)
+        setIsModalOpen(false)
+        setSelectedUser(null)
+    }
+
     const renderFilters = () => (
         <>
-             <div className="relative min-w-[150px]">
+            <div className="relative min-w-[150px]">
                 <Select value={statusFilter || "_clear_"} onValueChange={(value) => {
                     setStatusFilter(value === '_clear_' ? "" : value)
                 }}>
@@ -103,7 +125,7 @@ export default function UserDataTable({
         <div className="w-full">
             <DataTable
                 title="Users"
-                columns={getUserColumns(handleToggleBlock)}
+                columns={getUserColumns(openModal)}
                 data={data}
                 totalCount={totalCount}
                 isLoading={isLoading}
@@ -115,6 +137,15 @@ export default function UserDataTable({
                 onSearchChange={setSearch}
                 onSortingChange={setSorting}
                 renderFilters={renderFilters}
+            />
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={confirmToggleBlock}
+                title={selectedUser?.isBlocked ? "Unblock User" : "Block User"}
+                description={`Are you sure you want to ${selectedUser?.isBlocked ? "unblock" : "block"
+                    } ${selectedUser?.name}?`}
+                confirmText={selectedUser?.isBlocked ? "Yes, Unblock" : "Yes, Block"}
             />
         </div>
     )
