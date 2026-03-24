@@ -11,7 +11,7 @@ export default async function UsersPage(){
     try {
         const res = await userService.getAllUsers({})
         data = res.data.data
-        console.log("server res",res.data.data)
+        // console.log("server res",res.data.data)
     } catch (error) {
         throw new Error(AxiosErrorHandler(error).message)
     }

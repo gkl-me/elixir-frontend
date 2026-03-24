@@ -72,7 +72,7 @@ export default function Step1Plan({ onNext, initialData }: Step1PlanProps) {
               actionSlot={
                 <div className="mt-4 w-full text-center">
                     <Button 
-                    variant={selectedPlan.planType == plan.type ? "dark":"light"}
+                    variant={selectedPlan.planType === plan.type ? "dark":"light"}
                     className="w-full"
                     >
 

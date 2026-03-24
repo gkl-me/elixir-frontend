@@ -17,7 +17,7 @@ export default async function Home() {
 
   let plans;
   try {
-    const res = await planService.getAllPlans()
+    const res = await planService.getAllPlans({})
     plans = res.data.data.plans
   } catch (error) {
     const err = AxiosErrorHandler(error)

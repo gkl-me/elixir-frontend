@@ -20,7 +20,7 @@ export default function PaymentVerifyPage() {
       setStatus("pending")
       const res = await verifyPaymentAction()
 
-      console.log(res)
+      // console.log(res)
       
       if (res.success) {
         const paymentData = res.data  

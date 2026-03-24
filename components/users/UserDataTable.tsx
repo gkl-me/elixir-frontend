@@ -88,7 +88,7 @@ export default function UserDataTable({
 
     const openModal = (id: string) => {
         const user = data.find(u => u.id === id)
-        if (!user) return
+        if (!user) {return}
 
         setSelectedUser(user)
         setIsModalOpen(true)
@@ -96,7 +96,7 @@ export default function UserDataTable({
 
 
     const confirmToggleBlock = () => {
-        if (!selectedUser) return
+        if (!selectedUser) {return}
         handleToggleBlock(selectedUser.id)
         setIsModalOpen(false)
         setSelectedUser(null)

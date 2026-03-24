@@ -1,8 +1,6 @@
-import { PlanCard } from "@/components/plans/PlanCard"
 import CreateCardModal from "@/components/plans/CreateCardModal"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
 import { planService } from "@/services/plan.service";
-import { Pagination } from "@/components/ui/pagination";
 import PlanList from "@/components/plans/PlanList";
 
 export default async function PlansPage() {
@@ -16,7 +14,7 @@ export default async function PlansPage() {
         plans = res.data.data.plans
         currentPage = res.data.data.currentPage
         totalPages = res.data.data.totalPage
-        console.log(totalPages)
+        // console.log(totalPages)
 
     } catch (error) {
         const err = AxiosErrorHandler(error)
@@ -28,7 +26,7 @@ export default async function PlansPage() {
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold text-white relative inline-block">
                     Plans
-                    <span className="absolute -bottom-2 left-0 w-12 h-1 bg-purple rounded-full"></span>
+                    <span className="absolute -bottom-2 left-0 w-12 h-1 bg-purple rounded-full"/>
                 </h1>
                 <div>
                     <CreateCardModal />

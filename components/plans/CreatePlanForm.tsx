@@ -31,7 +31,7 @@ export default function CreatePlanForm({ onSuccess }: CreatePlanFormProps) {
 
   const handleSubmit = async (values: z.infer<typeof CreatePlanSchema>) => {
 
-    console.log(values)
+    // console.log(values)
     //call  server action here create plan
     startTransition(async () => {
       await createPlanAction({

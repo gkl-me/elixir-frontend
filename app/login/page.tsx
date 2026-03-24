@@ -29,11 +29,11 @@ export default function LoginPage() {
 
   useEffect(() => {
     if(reason){
-      if(reason == AUTH_ERROR_CODE.UNAUTHORIZED){
+      if(reason === AUTH_ERROR_CODE.UNAUTHORIZED){
         toast.error('You are not authorized to access this resource')
-      }else if(reason == AUTH_ERROR_CODE.SESSION_EXPIRED){
+      }else if(reason === AUTH_ERROR_CODE.SESSION_EXPIRED){
         toast.error("Your session has expired. Please log in again.")
-      }else if(reason==AUTH_ERROR_CODE.BLOCKED){
+      }else if(reason === AUTH_ERROR_CODE.BLOCKED){
        toast.error("Your account has been blocked. Please contact the admin.");
       }
     }

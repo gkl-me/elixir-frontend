@@ -13,7 +13,7 @@ export default async function OnboardingLayout({
 
   try {
     const res = await onboardingService.getUserOnboarding()
-    if(res.data.data.onboarding.isCompleted && res.data.data.onboarding.paymentStatus == 'success'){
+    if(res.data.data.onboarding.isCompleted && res.data.data.onboarding.paymentStatus === 'success'){
       redirect('/dashboard')
     }
 
