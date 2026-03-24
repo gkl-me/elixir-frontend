@@ -1,4 +1,3 @@
-import { PageProps } from "@/.next/types/app/layout";
 import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
 import { handlerServerError } from "@/lib/authHelper";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
@@ -7,14 +6,22 @@ import { authService } from "@/services/auth.service";
 import { redirect } from "next/navigation";
 
 
+type PageProps = {
+  params: {
+    slug: string;
+  };
+  searchParams: {
+    email?: string;
+  };
+};
 
 export default async function VerifyPage({
   params,
   searchParams
 }:PageProps) {
 
-  const {slug} = await params
-  const email = await searchParams
+  const { slug } = params;
+const { email } = searchParams;
 
 
   try {
