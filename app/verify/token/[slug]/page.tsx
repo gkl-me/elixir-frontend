@@ -6,27 +6,21 @@ import { authService } from "@/services/auth.service";
 import { redirect } from "next/navigation";
 
 
-type PageProps = {
-  params: {
-    slug: string;
-  };
-  searchParams: {
-    email?: string;
-  };
-};
-
 export default async function VerifyPage({
   params,
   searchParams
-}:PageProps) {
+}: {
+  params: { slug: string };
+  searchParams: { email?: string };
+}) {
 
   const { slug } = params;
-const { email } = searchParams;
+  const { email } = searchParams;
 
 
   try {
 
-    await authService.verifyEmail({email,token:slug})
+    await authService.verifyEmail({ email, token: slug })
     await sleep(3000)
     redirect(AUTH_CLIENT_ROUTES.LOGIN)
 

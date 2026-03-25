@@ -8,6 +8,7 @@ import { SortingState } from "@tanstack/react-table"
 import { useApi } from "@/hooks/useApi"
 import { useDebounce } from "@/hooks/useDebounce"
 import { CustomModal } from "@/components/modal/CustomModal"
+import { ConfirmationModal } from "@/components/modal/ConfirmationModal"
 import { toastHandler } from "@/lib/toastHandler"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
 
@@ -32,6 +33,8 @@ export default function CompanyDataTable({
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
+    const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false)
+    const [companyToSuspend, setCompanyToSuspend] = useState<Company | null>(null)
 
     // API Hook Setup (Space left here to call the API later)
 
@@ -39,7 +42,7 @@ export default function CompanyDataTable({
         url: "/api/companies", // Replace with your actual API route constants if available
         method: "GET"
     })
-    
+
 
     const isFirstRendered = useRef(true)
 
@@ -59,12 +62,12 @@ export default function CompanyDataTable({
                     sortOrder: sort?.desc ? "desc" : "asc"
                 }
             })
-            
+
             setData(res.data.companies)
             setTotalCount(res.data.totalCount)
 
             // console.log("data",res.data)
-            
+
 
             // console.log("Fetching companies with:", {
             //     debouncedSearch, statusFilter, pageIndex, pageSize, sort
@@ -77,7 +80,7 @@ export default function CompanyDataTable({
 
         } catch (error) {
             const err = AxiosErrorHandler(error)
-            toastHandler({success:false,error:err.message})
+            toastHandler({ success: false, error: err.message })
             // console.error(error)
         }
     }, [debouncedSearch, pageIndex, pageSize, sorting, statusFilter /*, execute */])
@@ -97,10 +100,30 @@ export default function CompanyDataTable({
 
     const openDetailsModal = (id: string) => {
         const company = data.find(c => c.id === id)
-        if (!company) {return}
+        if (!company) { return }
 
         setSelectedCompany(company)
         setIsModalOpen(true)
+    }
+
+    const openSuspendModal = (company: Company) => {
+        setCompanyToSuspend(company)
+        setIsSuspendModalOpen(true)
+    }
+
+    const handleSuspend = async () => {
+        if (!companyToSuspend) { return };
+
+        try {
+            // CALL API: await execute({ method: 'PATCH', url: `/api/companies/${companyToSuspend.id}/suspend` ... })
+            // Mocking for now:
+            toastHandler({ success: true, message: `Company successfully ${companyToSuspend.status === 'blocked' || companyToSuspend.status === 'suspended' ? 'activated' : 'suspended'}.` })
+            setIsSuspendModalOpen(false)
+            fetchData()
+        } catch (error) {
+            const err = AxiosErrorHandler(error)
+            toastHandler({ success: false, error: err.message })
+        }
     }
 
     const renderFilters = () => (
@@ -127,7 +150,7 @@ export default function CompanyDataTable({
         <div className="w-full">
             <DataTable
                 title="Companies"
-                columns={getCompanyColumns(openDetailsModal)}
+                columns={getCompanyColumns(openDetailsModal, openSuspendModal)}
                 data={data}
                 totalCount={totalCount}
                 isLoading={isLoading}
@@ -184,6 +207,16 @@ export default function CompanyDataTable({
                     </div>
                 )}
             </CustomModal>
+
+            <ConfirmationModal
+                isOpen={isSuspendModalOpen}
+                onClose={() => setIsSuspendModalOpen(false)}
+                onConfirm={handleSuspend}
+                title={companyToSuspend?.status === 'blocked' || companyToSuspend?.status === 'suspended' ? "Activate Company" : "Suspend Company"}
+                description={`Are you sure you want to ${companyToSuspend?.status === 'blocked' || companyToSuspend?.status === 'suspended' ? "activate" : "suspend"} the company "${companyToSuspend?.name}"? ${companyToSuspend?.status !== 'blocked' && companyToSuspend?.status !== 'suspended' ? "All associated workspaces will lose access immediately." : ""}`}
+                confirmText={companyToSuspend?.status === 'blocked' || companyToSuspend?.status === 'suspended' ? "Yes, Activate" : "Yes, Suspend"}
+                cancelText="Cancel"
+            />
         </div>
     )
 }
