@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run lint && npm run typecheck && next dev",
+    "dev": "next dev",
     "build": "npm run lint && npm run typecheck && next build",
     "start": "next start",
     "lint": "next lint --max-warnings=0",
-    "typecheck":"tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.2",

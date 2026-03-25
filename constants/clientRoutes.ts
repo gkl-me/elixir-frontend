@@ -1,33 +1,24 @@
-
-
 export const ADMIN_CLIENT_ROUTES = {
-    DASHBOARD:'/admin/dashboard',
-    USERS:'/admin/users'
-}
-
-
+  DASHBOARD: "/admin/dashboard",
+  USERS: "/admin/users",
+};
 
 export const AUTH_CLIENT_ROUTES = {
-    LOGIN:'/login',
-    REGISTER:'/register',
+  LOGIN: "/login",
+  REGISTER: "/register",
 
-    VERIFY_EMAIL:'/verify-email',
-    
-    FORGOT_PASSWORD:'/forgot-password',
-    VERIFY_ERROR:'/verification-error',
-    VERIFY_OTP:'/verify-otp',
-    RESET_PASSWORD:'/reset-password',
+  VERIFY_EMAIL: "/verify-email",
 
-    VERIFY_GOOGLE:'/verify/google'
+  FORGOT_PASSWORD: "/forgot-password",
+  VERIFY_ERROR: "/verification-error",
+  VERIFY_OTP: "/verify-otp",
+  RESET_PASSWORD: "/reset-password",
 
-}
+  VERIFY_GOOGLE: "/verify/google",
+};
 
-
-
-
-
-export const USER_CLIENT_ROUTES ={
-    ONBOARDING:'/onboarding',
-    DASHBOARD:'/dashboard',
-    PAYMENT_VERIFY:'/payment/verify'
-}
+export const USER_CLIENT_ROUTES = {
+  ONBOARDING: "/onboarding",
+  DASHBOARD: "/workspace",
+  PAYMENT_VERIFY: "/payment/verify",
+};

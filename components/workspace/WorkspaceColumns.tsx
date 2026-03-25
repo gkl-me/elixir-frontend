@@ -10,7 +10,7 @@ export type Workspace = {
     id: string
     name: string
     ownerEmail: string
-    plan: 'free' | 'pro' | 'enterprise'
+    plan: 'free' | 'pro' | 'enterprice'
     status: 'active' | 'suspended' | 'blocked'
     userCount: number
     createdAt: string
