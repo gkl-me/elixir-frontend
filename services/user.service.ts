@@ -14,7 +14,7 @@ export const userService = {
         return api.patch(USER_API_ROUTES.TOGGLE_USER_STATUS+`/${data.userId}/status`)
     },
     handleChangePassword:async (data:ChangePasswordData) => {
-        return api.post(USER_API_ROUTES.CHANGE_PASSWORD,{
+        return api.patch(USER_API_ROUTES.CHANGE_PASSWORD,{
             currentPassword: data.currentPassword,
             newPassword: data.newPassword
         })

@@ -58,7 +58,7 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
       {/* Back button */}
       <div className="px-4 pt-4 pb-2">
         <Link
-          href="/demo/projects"
+          href="/workspace"
           className="flex items-center gap-1.5 text-xs text-[#6b7db3] hover:text-white transition-colors mb-4 group"
         >
           <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />

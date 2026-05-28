@@ -22,8 +22,10 @@ export const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({
   const pathname = usePathname();
   const pathParts = pathname?.split('/').filter(Boolean) || [];
   // e.g. ['demo', 'projects', 'p1', 'backlogs']
-  const isProjectView = pathParts[0] === 'demo' && pathParts[1] === 'projects' && pathParts.length > 2;
+  const isProjectView = pathParts[0] === 'workspace' && pathParts[1] === 'projects' && pathParts.length >= 2;
   const activeProjectId = isProjectView ? pathParts[2] : null;
+
+  console.log(isProjectView,pathParts)
 
   // Detect mobile breakpoint
   useEffect(() => {

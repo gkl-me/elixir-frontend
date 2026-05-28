@@ -11,7 +11,6 @@ import {
 import { demoWorkspaceList, demoProjects, WorkspaceSummary } from '../../../data/demoData';
 import { PLAN_CONFIG } from '../../../lib/theme';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 // ─── Types ────────────────────────────────────────────────
 interface NavLinkType {
@@ -148,7 +147,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   const pathParts = pathname?.split('/').filter(Boolean) || [];
   const activeView = pathParts[1] || 'home'; 
 
-  const [projectsOpen, setProjectsOpen] = useState(false);
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws1');
   const switcherRef = useRef<HTMLDivElement>(null);
@@ -168,15 +166,9 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
 
   // When collapsed, also close projects
   useEffect(() => {
-    if (collapsed) { setSwitcherOpen(false); setProjectsOpen(false); }
+    if (collapsed) { setSwitcherOpen(false); }
   }, [collapsed]);
   
-  // Auto open projects if active view is projects
-  useEffect(() => {
-    if (activeView === 'projects' && !collapsed) {
-      setProjectsOpen(true);
-    }
-  }, [activeView, collapsed]);
 
   // Categorized nav sections
   const sections: NavSection[] = [
@@ -231,9 +223,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
       <div>
         <button
           onClick={() => {
-            if (isProjects) {
-              setProjectsOpen(p => !p);
-            }
             router.push(navigateTo);
           }}
           title={collapsed ? link.label : undefined}
@@ -253,49 +242,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
               <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#8735C9]" />
             )}
           </div>
-          {!collapsed && (
-            <div className="flex items-center gap-1.5">
-              {link.badge !== undefined && (
-                <span className={cn(
-                  'text-[11px] font-semibold px-1.5 py-0.5 rounded-full',
-                  isActive ? 'bg-white/20 text-white' : 'bg-[#132353] text-[#8735C9]'
-                )}>
-                  {link.badge}
-                </span>
-              )}
-              {isProjects && (
-                <ChevronDown className={cn(
-                  'w-3.5 h-3.5 transition-transform duration-200',
-                  projectsOpen ? 'rotate-180' : '',
-                  isActive ? 'text-white/70' : 'text-[#4B5578] group-hover:text-[#6b7db3]'
-                )} />
-              )}
-            </div>
-          )}
         </button>
-
-        {/* Projects sub-list (hidden when collapsed) */}
-        {isProjects && projectsOpen && !collapsed && (
-          <div className="mt-1 ml-3 pl-3 border-l border-[#1e2a4a] space-y-0.5">
-            {demoProjects.map(project => (
-              <Link
-                href={`/demo/projects/${project.id}`}
-                key={project.id}
-                className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-xs text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white transition-colors group"
-              >
-                <div className="w-2 h-2 rounded-sm bg-[#8735C9]/60 group-hover:bg-[#8735C9] transition-colors flex-shrink-0" />
-                <span className="truncate text-left">{project.name}</span>
-                <ChevronRight className="w-3 h-3 ml-auto flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </Link>
-            ))}
-            <Link
-              href="/demo/projects"
-              className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-xs text-[#4B5578] hover:text-[#8735C9] transition-colors"
-            >
-              + View all projects
-            </Link>
-          </div>
-        )}
       </div>
     );
   };
