@@ -13,3 +13,9 @@ export interface GetAllUsersData{
 export interface ToggleUserStatusData {
     userId:string
 }
+
+
+export interface ChangePasswordData {
+    currentPassword:string,
+    newPassword:string
+}

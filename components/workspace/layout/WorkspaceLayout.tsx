@@ -78,8 +78,6 @@ export const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({
       {/* ── Main Area ───────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-[#040A1D] min-w-0">
         <Navbar
-          userRole={userRole}
-          setUserRole={setUserRole}
           isProjectView={isProjectView}
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => isMobile ? setMobileOpen(p => !p) : setSidebarOpen(p => !p)}

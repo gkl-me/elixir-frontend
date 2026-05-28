@@ -6,26 +6,54 @@ import { userService } from "@/services/user.service";
 
 
 export async function toggleUserStatusAction(
-    userId:string
-){
+    userId: string
+) {
     try {
-        
+
         const res = await userService.toggleUserStatus({
             userId
         })
 
         return {
-            success:res.data.success,
-            message:res.data.message
+            success: res.data.success,
+            message: res.data.message
         }
 
     } catch (error) {
         handlerServerError(error)
         return {
-            success:false,
-            error:AxiosErrorHandler(error).message
+            success: false,
+            error: AxiosErrorHandler(error).message
         }
-    }    
+    }
+}
+
+
+export async function handleChangePassword(
+    currentPassword: string,
+    newPassword: string
+) {
+
+    try {
+
+        const res = await userService.handleChangePassword({
+            currentPassword,
+            newPassword
+        })
+
+        return {
+            success: res.data.success,
+            message: res.data.message
+        }
+
+    } catch (error) {
+        handlerServerError(error)
+        return {
+            success: false,
+            error: AxiosErrorHandler(error).message
+        }
+    }
+
 }
 
 

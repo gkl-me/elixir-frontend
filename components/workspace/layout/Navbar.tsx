@@ -14,56 +14,67 @@ import { NOTIFICATION_CONFIG, NotificationType } from '../../../lib/theme';
 
 const kindIcon: Record<SearchResult['kind'], React.ReactNode> = {
   project: <FolderKanban className="w-4 h-4 text-[#8735C9]" />,
-  task:    <CheckSquare   className="w-4 h-4 text-sky-400"   />,
-  member:  <UserCircle    className="w-4 h-4 text-emerald-400" />,
-  team:    <Users         className="w-4 h-4 text-amber-400" />,
+  task: <CheckSquare className="w-4 h-4 text-sky-400" />,
+  member: <UserCircle className="w-4 h-4 text-emerald-400" />,
+  team: <Users className="w-4 h-4 text-amber-400" />,
 };
 
 interface NavbarProps {
-  userRole: string;
-  setUserRole: (role: string) => void;
   isProjectView: boolean;
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  userRole,
-  setUserRole,
   sidebarOpen,
   onToggleSidebar,
 }) => {
   const router = useRouter();
-  
-  const [query, setQuery]           = useState('');
+
+  const [query, setQuery] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
-  const searchRef                   = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const results = query.length > 1
     ? demoSearchIndex.filter(r =>
-        r.label.toLowerCase().includes(query.toLowerCase()) ||
-        r.sublabel?.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 8)
+      r.label.toLowerCase().includes(query.toLowerCase()) ||
+      r.sublabel?.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, 8)
     : [];
 
   const [notifications, setNotifications] = useState(demoNotifications);
-  const [notifOpen, setNotifOpen]         = useState(false);
-  const notifRef                          = useRef<HTMLDivElement>(null);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useRef<HTMLDivElement>(null);
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const [roleOpen, setRoleOpen] = useState(false);
-  const roleRef = useRef<HTMLDivElement>(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const currentUser = demoUsers[0];
+
+  const handleKeyDown = (e: globalThis.KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      setSearchFocused(true)
+      searchRef.current.focus()
+      inputRef.current.focus()
+    }
+  }
+
 
   // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) setSearchFocused(false);
-      if (notifRef.current  && !notifRef.current.contains(e.target as Node))  setNotifOpen(false);
-      if (roleRef.current   && !roleRef.current.contains(e.target as Node))   setRoleOpen(false);
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
     };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      window.removeEventListener("keydown", handleKeyDown)
+    }
   }, []);
 
   const markRead = (id: string) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
@@ -91,6 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}>
             <Search className="w-4 h-4 text-[#4B5578] flex-shrink-0" />
             <input
+              ref={inputRef}
               value={query}
               onChange={e => setQuery(e.target.value)}
               onFocus={() => setSearchFocused(true)}
@@ -211,19 +223,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Avatar + User Menu */}
-        <div ref={roleRef} className="relative">
+        <div ref={userMenuRef} className="relative">
           <button
-            onClick={() => setRoleOpen(p => !p)}
+            onClick={() => setUserMenuOpen(p => !p)}
             className="flex items-center gap-2 px-2 py-1 rounded-xl hover:bg-[#0f1d3d] transition-colors"
           >
             <Avatar className="w-7 h-7 border border-[#4B2070]">
               <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${currentUser.name}`} />
               <AvatarFallback className="bg-[#4B2070] text-xs">{currentUser.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            <span className="hidden sm:block text-xs font-semibold text-[#8b9cc8] capitalize">{userRole}</span>
+            <span className="hidden sm:block text-xs font-semibold text-[#8b9cc8] capitalize">{currentUser.name}</span>
           </button>
 
-          {roleOpen && (
+          {userMenuOpen && (
             <div className="absolute right-0 top-full mt-1 bg-[#0C1635] border border-[#1e2a4a] rounded-xl shadow-xl z-50 overflow-hidden min-w-[200px]">
               {/* User info header */}
               <div className="px-4 py-3 border-b border-[#1e2a4a]">
@@ -242,15 +254,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Nav shortcuts */}
               <div className="p-1">
                 {[
-                  { label: 'Profile',   view: 'settings', icon: UserCircle },
-                  { label: 'Settings',  view: 'settings', icon: AtSign },
-                  { label: 'Billing',   view: 'settings', icon: FolderKanban },
+                  { label: 'Profile', view: 'settings', icon: UserCircle },
+                  { label: 'Settings', view: 'settings', icon: AtSign },
                 ].map(item => {
                   const Icon = item.icon;
                   return (
                     <button
                       key={item.label}
-                      onClick={() => { router.push(`/demo/${item.view}`); setRoleOpen(false); }}
+                      onClick={() => { router.push(`/workspace/${item.view}`); setUserMenuOpen(false); }}
                       className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white rounded-lg transition-colors"
                     >
                       <Icon className="w-3.5 h-3.5 text-[#6b7db3]" />
@@ -260,28 +271,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 })}
               </div>
 
-              {/* Role switcher */}
-              <div className="border-t border-[#1e2a4a] p-1">
-                <p className="text-[10px] text-[#4B5578] font-semibold uppercase tracking-widest px-3 py-1.5">Switch role (demo)</p>
-                {['owner', 'admin', 'member'].map(r => (
-                  <button
-                    key={r}
-                    onClick={() => { setUserRole(r); setRoleOpen(false); }}
-                    className={cn(
-                      'flex items-center justify-between w-full px-3 py-2 text-xs capitalize rounded-lg transition-colors',
-                      userRole === r ? 'text-[#8735C9] bg-[#132353]' : 'text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white'
-                    )}
-                  >
-                    {r}
-                    {userRole === r && <span className="w-1.5 h-1.5 rounded-full bg-[#8735C9]" />}
-                  </button>
-                ))}
-              </div>
-
               {/* Logout */}
               <div className="border-t border-[#1e2a4a] p-1">
                 <button
-                  onClick={() => { /* TODO: POST /api/auth/logout */ console.log('[API TODO] Logout'); setRoleOpen(false); alert('Logout called — wire up POST /api/auth/logout'); }}
+                  onClick={() => { /* TODO: POST /api/auth/logout */ console.log('[API TODO] Logout'); setUserMenuOpen(false); alert('Logout called — wire up POST /api/auth/logout'); }}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-lg transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
