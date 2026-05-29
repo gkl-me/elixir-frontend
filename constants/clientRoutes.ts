@@ -19,6 +19,6 @@ export const AUTH_CLIENT_ROUTES = {
 
 export const USER_CLIENT_ROUTES = {
   ONBOARDING: "/onboarding",
-  DASHBOARD: "/workspace",
+  WORKSPACE: "/workspace",
   PAYMENT_VERIFY: "/payment/verify",
 };

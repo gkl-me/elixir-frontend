@@ -15,10 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-// import { useDispatch, useSelector } from "react-redux";
-// import { RootState } from "@/redux/store";
-// import { setCollapsed } from "@/redux/slices/adminSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { set } from "react-hook-form";
 
 
 const navigation = [
@@ -34,25 +32,23 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setCollapsed] = useState(false)
-  //   const isCollapsed= useSelector((state:RootState) => state.admin.isCollapsed)
-  //   const dispatch = useDispatch()
 
-  //   useEffect(() => {
-  //     function handleResize(){
-  //       if(window.innerWidth < 700){
-  //         dispatch(setCollapsed(true))
-  //       }else{
-  //         dispatch(setCollapsed(false))
-  //       }
-  //     }
+    useEffect(() => {
+      function handleResize(){
+        if(window.innerWidth < 700){
+          setCollapsed(true)
+        }else{
+          setCollapsed(false)
+        }
+      }
 
-  //     window.addEventListener('resize',handleResize)
+      window.addEventListener('resize',handleResize)
 
-  //     return () => {
-  //       window.removeEventListener('resize',handleResize)
-  //     }
+      return () => {
+        window.removeEventListener('resize',handleResize)
+      }
 
-  //   },[dispatch])
+    },[])
 
   return (
     <aside

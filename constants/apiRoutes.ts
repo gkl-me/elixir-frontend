@@ -45,3 +45,9 @@ export const PAYMENT_API_ROUTES = {
 export const COMPANY_API_ROUTES = {
   GET_ALL_COMPANY: "/company",
 };
+
+
+
+export const WORKSPACE_API_ROUTES = {
+  GET_WORKSPACE_CONTEXT: "/workspace/context",
+};

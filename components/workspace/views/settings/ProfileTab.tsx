@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { Camera, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,13 +8,14 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CustomForm } from '@/components/form/CustomForm';
 import { demoUsers } from '../../../../data/demoData';
 import { Section } from './shared';
+import { useWorkspaceContext } from '@/store/useWorkspaceContext';
+import { useApi } from '@/hooks/useApi';
+import { NEXT_API_ROUTES } from '@/constants/routeHandler';
 
 // ─── Zod schema ───────────────────────────────────────────
 const profileSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   jobTitle: z.string().min(1, 'Job title is required'),
-  email: z.string().email('Invalid email address'),
-  timezone: z.string().min(1, 'Timezone is required'),
   bio: z.string().max(300, 'Bio must be 300 characters or less'),
 });
 
@@ -36,15 +37,42 @@ TextareaField.displayName = 'TextareaField';
 
 // ─── ProfileTab ───────────────────────────────────────────
 export const ProfileTab = () => {
-  const user = demoUsers[0];
+
+  const user = useWorkspaceContext(s => s)
+
+  const [userDetails, setUserDetails] = React.useState({
+    name: user.name,
+    email: user.email,
+    avatarUrl: user.avatarUrl,
+    jobTitle:"",
+    bio:""
+  })
 
   const defaultValues: ProfileValues = {
-    name: user.name,
-    jobTitle: 'Product Manager',
-    email: user.email ?? 'alice@acmecorp.com',
-    timezone: 'Asia/Kolkata',
-    bio: 'Building great products one sprint at a time.',
+    name: userDetails.name,
+    jobTitle:userDetails.jobTitle,
+    bio:userDetails.bio,
   };
+
+  const {execute,isLoading} = useApi({
+    url:NEXT_API_ROUTES.USERS_ME_API,
+    method:"GET"
+  })
+
+  useEffect(() => {
+    (
+      async () => {
+        const {data} = await execute()
+        setUserDetails({
+          name:data.name,
+          email:data.email,
+          avatarUrl:data.avatarUrl,
+          jobTitle:data.jobTitle,
+          bio:data.bio
+        })
+      }
+    )()
+  },[])
 
   const handleSubmit = (values: ProfileValues) => {
     console.log('[API TODO] POST /api/users/me', values);
@@ -100,17 +128,6 @@ export const ProfileTab = () => {
               name: 'jobTitle',
               label: 'Job Title',
               placeholder: 'e.g. Product Manager',
-            },
-            {
-              name: 'email',
-              label: 'Email Address',
-              type: 'email',
-              placeholder: 'you@example.com',
-            },
-            {
-              name: 'timezone',
-              label: 'Timezone',
-              placeholder: 'e.g. Asia/Kolkata',
             },
             {
               name: 'bio',

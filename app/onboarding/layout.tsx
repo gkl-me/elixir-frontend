@@ -1,4 +1,5 @@
 import OnboardingHeader from "@/components/onboarding/OnboardingHeader"
+import { USER_CLIENT_ROUTES } from "@/constants/clientRoutes"
 import { handlerServerError } from "@/lib/authHelper"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
 import { onboardingService } from "@/services/onboarding.service"
@@ -14,7 +15,7 @@ export default async function OnboardingLayout({
   try {
     const res = await onboardingService.getUserOnboarding()
     if(res.data.data.onboarding.isCompleted && res.data.data.onboarding.paymentStatus === 'success'){
-      redirect('/dashboard')
+      redirect(USER_CLIENT_ROUTES.WORKSPACE)
     }
 
   } catch (error) {

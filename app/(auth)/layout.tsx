@@ -7,7 +7,7 @@ export default async function AuthenticatedLayout({
     children:React.ReactNode
 })
 
-    //call the onboarding  and redirect
+
 
 {
 

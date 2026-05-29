@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, startTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Bell, Search, X, CheckCheck,
@@ -11,6 +11,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { demoNotifications, demoSearchIndex, demoUsers, Notification, SearchResult } from '../../../data/demoData';
 import { cn } from '@/lib/utils';
 import { NOTIFICATION_CONFIG, NotificationType } from '../../../lib/theme';
+import { logoutAction } from '@/app/actions/auth.action';
+import { useWorkspaceContext } from '@/store/useWorkspaceContext';
 
 const kindIcon: Record<SearchResult['kind'], React.ReactNode> = {
   project: <FolderKanban className="w-4 h-4 text-[#8735C9]" />,
@@ -50,7 +52,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const currentUser = demoUsers[0];
+
+
+  const currentUser = useWorkspaceContext(s => s)
 
   const handleKeyDown = (e: globalThis.KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -59,6 +63,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       searchRef.current.focus()
       inputRef.current.focus()
     }
+  }
+
+
+  const handleLogout = () => {
+    startTransition(async() =>{
+    await logoutAction()  
+    })
   }
 
 
@@ -229,7 +240,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-2 px-2 py-1 rounded-xl hover:bg-[#0f1d3d] transition-colors"
           >
             <Avatar className="w-7 h-7 border border-[#4B2070]">
-              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${currentUser.name}`} />
+              <AvatarImage src={currentUser.avatarUrl} />
               <AvatarFallback className="bg-[#4B2070] text-xs">{currentUser.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="hidden sm:block text-xs font-semibold text-[#8b9cc8] capitalize">{currentUser.name}</span>
@@ -241,7 +252,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="px-4 py-3 border-b border-[#1e2a4a]">
                 <div className="flex items-center gap-2.5">
                   <Avatar className="w-8 h-8 border border-[#4B2070] flex-shrink-0">
-                    <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${currentUser.name}`} />
+                    <AvatarImage src={currentUser.avatarUrl} />
                     <AvatarFallback className="bg-[#4B2070] text-xs">{currentUser.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
@@ -274,7 +285,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Logout */}
               <div className="border-t border-[#1e2a4a] p-1">
                 <button
-                  onClick={() => { /* TODO: POST /api/auth/logout */ console.log('[API TODO] Logout'); setUserMenuOpen(false); alert('Logout called — wire up POST /api/auth/logout'); }}
+                  onClick={handleLogout}
                   className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-lg transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
