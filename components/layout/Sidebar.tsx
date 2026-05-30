@@ -2,58 +2,56 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  Home, 
-  Users, 
-  CreditCard, 
-  Building2, 
+import {
+  Home,
+  Users,
+  CreditCard,
+  Building2,
   ChevronLeft,
   ChevronRight,
   BarChart3,
+  LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-// import { useDispatch, useSelector } from "react-redux";
-// import { RootState } from "@/redux/store";
-// import { setCollapsed } from "@/redux/slices/adminSlice";
-import {  useState } from "react";
+import { useEffect, useState } from "react";
+import { set } from "react-hook-form";
 
 
 const navigation = [
   { name: "Dashboard", href: "/admin/dashboard", icon: Home },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Plans", href: "/admin/plans", icon: CreditCard },
-  { name: "Company", href: "/company", icon: Building2 },
+  { name: "Company", href: "/admin/company", icon: Building2 },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Workspaces", href: "/admin/workspace", icon: LayoutDashboard },
 ];
 
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [isCollapsed,setCollapsed] = useState(false)
-//   const isCollapsed= useSelector((state:RootState) => state.admin.isCollapsed)
-//   const dispatch = useDispatch()
+  const [isCollapsed, setCollapsed] = useState(false)
 
-//   useEffect(() => {
-//     function handleResize(){
-//       if(window.innerWidth < 700){
-//         dispatch(setCollapsed(true))
-//       }else{
-//         dispatch(setCollapsed(false))
-//       }
-//     }
+    useEffect(() => {
+      function handleResize(){
+        if(window.innerWidth < 700){
+          setCollapsed(true)
+        }else{
+          setCollapsed(false)
+        }
+      }
 
-//     window.addEventListener('resize',handleResize)
+      window.addEventListener('resize',handleResize)
 
-//     return () => {
-//       window.removeEventListener('resize',handleResize)
-//     }
+      return () => {
+        window.removeEventListener('resize',handleResize)
+      }
 
-//   },[dispatch])
+    },[])
 
   return (
-    <aside 
+    <aside
       className={cn(
         "sticky top-16 bg-navyDark h-[calc(100vh-4rem)] border-r border-white/10 transition-all duration-300",
         isCollapsed ? "w-16" : "w-40 md:w-64",

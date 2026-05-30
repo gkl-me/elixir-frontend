@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { ArrowUpDown, MoreHorizontal, UserX, UserCheck, Mail, Building2 } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, UserX, UserCheck, Mail } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export type User = {
@@ -72,28 +72,6 @@ export function getUserColumns(
                 )
             },
             enableSorting: true
-        },
-        {
-            accessorKey: 'role',
-            header: 'Role',
-            cell: ({ row }) => {
-                const role = row.original.role || 'user'
-                const roleConfig = {
-                    user: { color: 'from-blue-500 to-blue-600', icon: UserCheck, text: 'User' },
-                    company: { color: 'from-gray-500 to-gray-600', icon: Building2, text: 'Company' }
-                }
-                const config = roleConfig[role as keyof typeof roleConfig]
-                const Icon = config.icon
-
-                return (
-                    <div className="flex items-center">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${config.color} text-white shadow-sm`}>
-                            <Icon className="w-3 h-3 mr-1" />
-                            {config.text}
-                        </span>
-                    </div>
-                )
-            }
         },
         {
             accessorKey: 'isBlocked',

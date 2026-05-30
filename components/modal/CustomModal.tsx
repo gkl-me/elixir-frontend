@@ -28,14 +28,21 @@ export function CustomModal({
 }: CustomModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={cn("bg-navy border border-purpleDark sm:max-w-lg w-full rounded-xl shadow-lg shadow-purple/10", className)}>
+      <DialogContent
+        className={cn(
+          "bg-navyDark/95 backdrop-blur-xl border border-purple/30 sm:max-w-lg w-full rounded-2xl shadow-[0_0_40px_-5px_rgba(135,53,201,0.2)] p-6 sm:p-8",
+          className
+        )}
+      >
         <DialogHeader className="mb-4">
-          <DialogTitle className="text-white text-2xl font-semibold">{title}</DialogTitle>
-          <DialogDescription className={cn("text-gray-400", !description && "sr-only")}>
+          <DialogTitle className="text-white text-2xl sm:text-3xl font-bold tracking-tight">
+            {title}
+          </DialogTitle>
+          <DialogDescription className={cn("text-gray-400 mt-2 text-sm sm:text-base", !description && "sr-only")}>
             {description || "Modal Content"}
           </DialogDescription>
         </DialogHeader>
-        <div className="text-white">
+        <div className="text-gray-200 mt-2">
           {children}
         </div>
       </DialogContent>

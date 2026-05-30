@@ -3,23 +3,64 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
-import { useState, useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { ArrowLeft, Github, Mail } from "lucide-react"
 import { z } from "zod"
 import { CustomForm } from "@/components/form/CustomForm"
-import { AUTH_ROUTES } from "@/constants/authRoutes"
+import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes"
 import { PasswordInput } from "@/components/ui/password-input"
 import { LoginSchema } from "@/validator/AuthSchema"
-import { loginAction } from "../api/actions/auth.action"
+import { loginAction } from "../actions/auth.action"
+import { useSearchParams } from "next/navigation"
+import { toast } from "sonner"
+import { AUTH_ERROR_CODE } from "@/constants/errorCode"
+import {signIn} from "next-auth/react"
+import { toastHandler } from "@/lib/toastHandler"
+import { NEXT_API_ROUTES } from "@/constants/routeHandler"
 
 export default function LoginPage() {
+
+
   const [showEmail, setShowEmail] = useState(false)
   const [isPending,startTransition] = useTransition()
 
+  const searchParams = useSearchParams()
+  const reason = searchParams.get('reason')
+
+  useEffect(() => {
+    if(reason){
+      if(reason === AUTH_ERROR_CODE.UNAUTHORIZED){
+        toast.error('You are not authorized to access this resource')
+      }else if(reason === AUTH_ERROR_CODE.SESSION_EXPIRED){
+        toast.error("Your session has expired. Please log in again.")
+      }else if(reason === AUTH_ERROR_CODE.BLOCKED){
+       toast.error("Your account has been blocked. Please contact the admin.");
+      }
+    }
+  },[reason])
+
+
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
     startTransition(async () => {
-      await loginAction(data)
+      const res = await loginAction(data)
+      toastHandler(res)
     })
+  }
+
+  const handleGoogle = () => {
+    signIn(
+      "google",{
+        callbackUrl:NEXT_API_ROUTES.GOOGLE_AUTH
+      }
+    )
+  }
+
+  const handleGithub = () => {
+    signIn(
+      'github',{
+        callbackUrl:NEXT_API_ROUTES.GITHUB_AUTH
+      }
+    )
   }
 
   return (
@@ -47,13 +88,13 @@ export default function LoginPage() {
               <Button
                 variant="dark"
                 className="w-full"
-                onClick={() => {}}
+                onClick={() => handleGoogle()}
               >
                 <span className="mr-2">G</span> Continue with Google
               </Button>
               <Button
                 variant="white"
-                onClick={() => {}}
+                onClick={() => handleGithub()}
               >
                 <Github className="mr-2 h-4 w-4" /> Continue with GitHub
               </Button>
@@ -102,7 +143,7 @@ export default function LoginPage() {
                 disabled={isPending}
               />
               <div className="flex justify-end mb-4 mt-2">
-                 <Link href={AUTH_ROUTES.FORGOT_PASSWORD} className="text-xs text-purple hover:text-purple-400">Forgot password?</Link>
+                 <Link href={AUTH_CLIENT_ROUTES.FORGOT_PASSWORD} className="text-xs text-purple hover:text-purple-400">Forgot password?</Link>
               </div>
               <Button
                 variant="light"
@@ -118,7 +159,7 @@ export default function LoginPage() {
         <div className="text-center text-sm text-gray-400">
           Don&apos;t have an account?{" "}
           <Link
-            href={AUTH_ROUTES.SIGNUP}
+            href={AUTH_CLIENT_ROUTES.REGISTER}
             className="text-white hover:underline font-medium"
           >
             Signup

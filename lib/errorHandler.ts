@@ -8,11 +8,13 @@ export function AxiosErrorHandler(error: unknown): {
 } {
   if (axios.isAxiosError(error)) {
     return {
-      message: error.response?.data?.message || "Request failed",
+      message: error.response?.data?.message || "Request failed please try again",
       errorCode: error.response?.data?.errorCode,
       statusCode: error.response?.status,
     };
   }
 
-  return { message: "Something went wrong" };
+  return { message: "Something went wrong", statusCode:500 };
 }
+
+
