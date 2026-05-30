@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import OnboardingHeader from "@/components/onboarding/OnboardingHeader"
 import { USER_CLIENT_ROUTES } from "@/constants/clientRoutes"
 import { handlerServerError } from "@/lib/authHelper"

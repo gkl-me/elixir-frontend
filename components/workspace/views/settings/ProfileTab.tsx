@@ -2,11 +2,10 @@
 
 import React, { useEffect } from 'react';
 import { z } from 'zod';
-import { Camera, Save } from 'lucide-react';
+import { Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CustomForm } from '@/components/form/CustomForm';
-import { demoUsers } from '../../../../data/demoData';
 import { Section } from './shared';
 import { useWorkspaceContext } from '@/store/useWorkspaceContext';
 import { useApi } from '@/hooks/useApi';
@@ -54,7 +53,7 @@ export const ProfileTab = () => {
     bio:userDetails.bio,
   };
 
-  const {execute,isLoading} = useApi({
+  const {execute} = useApi({
     url:NEXT_API_ROUTES.USERS_ME_API,
     method:"GET"
   })
@@ -74,8 +73,7 @@ export const ProfileTab = () => {
     )()
   },[])
 
-  const handleSubmit = (values: ProfileValues) => {
-    console.log('[API TODO] POST /api/users/me', values);
+  const handleSubmit = () => {
   };
 
   return (

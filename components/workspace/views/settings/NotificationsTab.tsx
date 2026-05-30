@@ -94,9 +94,7 @@ export const NotificationsTab = () => {
         </div>
         <div className="flex justify-end mt-4 pt-4 border-t border-[#1e2a4a]">
           <Button
-            onClick={() =>
-              console.log('[API TODO] PATCH /api/users/me/notification-prefs', prefs)
-            }
+            onClick={() => {}}
             className="bg-gradient-to-r from-[#8735C9] to-[#6a29a0] hover:opacity-90 text-white gap-2"
           >
             <Save className="w-4 h-4" />

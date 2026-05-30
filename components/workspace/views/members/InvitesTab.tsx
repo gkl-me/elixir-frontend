@@ -99,11 +99,11 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
       header: 'Actions',
       cell: ({ row }) => {
         const inv = row.original;
-        if (inv.status !== 'pending') return <span className="text-[10px] text-[#4B5578]">–</span>;
+        if (inv.status !== 'pending') {return <span className="text-[10px] text-[#4B5578]">–</span>;}
         return (
           <div className="flex items-center gap-1">
             <button
-              onClick={() => console.log('[API TODO] POST /api/invites/', inv.id, '/resend')}
+              onClick={() => {}}
               className="flex items-center gap-1 text-[11px] text-[#6b7db3] hover:text-[#c084fc] px-2 py-1 rounded-lg hover:bg-[#1e2a4a] transition-all"
             >
               <RefreshCw className="w-3 h-3" />Resend

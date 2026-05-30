@@ -1,4 +1,3 @@
-// lib/errorHandler.ts
 import axios from "axios";
 
 export function AxiosErrorHandler(error: unknown): {

@@ -4,9 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Home, FolderKanban, Users, UserSquare2,
-  Workflow, MessageSquare, HardDrive,
-  CreditCard, Settings, ChevronDown,
-  ChevronRight, Zap, Plus, Check, Bell, Search, X
+  Workflow, MessageSquare, HardDrive, Settings, ChevronDown, Zap, Plus, Check, Bell, Search, X
 } from 'lucide-react';
 import { demoWorkspaceList, demoProjects, WorkspaceSummary } from '../../../data/demoData';
 import { PLAN_CONFIG } from '../../../lib/theme';
@@ -26,7 +24,6 @@ interface NavSection {
 }
 
 interface MainSidebarProps {
-  userRole: string;
   collapsed?: boolean;
 }
 
@@ -139,7 +136,6 @@ const WorkspaceSwitcherDropdown: React.FC<{
 
 // ─── Main Sidebar ─────────────────────────────────────────
 export const MainSidebar: React.FC<MainSidebarProps> = ({
-  userRole,
   collapsed = false,
 }) => {
   const pathname = usePathname();
@@ -214,7 +210,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   const NavButton = ({ link }: { link: NavLinkType }) => {
     const Icon = link.icon;
     const isActive = activeView === link.id || (activeView === 'home' && link.id === 'home');
-    const isProjects = link.id === 'projects';
     
     // If id is 'home', we navigate to '/demo', otherwise '/demo/[id]'
     const navigateTo = link.id === 'home' ? '/workspace' : `/workspace/${link.id}`;

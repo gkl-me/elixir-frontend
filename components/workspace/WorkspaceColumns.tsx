@@ -61,10 +61,10 @@ export function getWorkspaceColumns(
             cell: ({ row }) => {
                 const plan = row.getValue("plan") as string
                 let badgeClass = "bg-gray-500"
-                if (plan === 'free') badgeClass = "bg-gray-600 text-gray-200"
-                if (plan === 'pro') badgeClass = "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"
-                if (plan === 'enterprise') badgeClass = "bg-gradient-to-r from-purple to-purpleDark text-white border border-purple/50"
-                
+                if (plan === 'free') {badgeClass = "bg-gray-600 text-gray-200"}
+                if (plan === 'pro') {badgeClass = "bg-gradient-to-r from-blue-500 to-indigo-600 text-white"}
+                if (plan === 'enterprise') {badgeClass = "bg-gradient-to-r from-purple to-purpleDark text-white border border-purple/50"}
+
                 return (
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold shadow-sm capitalize ${badgeClass}`}>
                         {plan}

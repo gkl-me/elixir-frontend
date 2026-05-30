@@ -84,7 +84,7 @@ export const MembersTab = ({ onInviteOpen }: MembersTabProps) => {
       header: 'Actions',
       cell: ({ row }) => {
         const m = row.original;
-        if (m.role === 'owner') return <span className="text-[10px] text-[#4B5578]">–</span>;
+        if (m.role === 'owner') {return <span className="text-[10px] text-[#4B5578]">–</span>;}
         return (
           <div className="flex items-center gap-1">
             <button

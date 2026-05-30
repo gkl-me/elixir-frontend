@@ -35,9 +35,7 @@ export const IntegrationsTab = () => (
         </div>
         <Button
           size="sm"
-          onClick={() =>
-            console.log('[API TODO]', int.connected ? 'Disconnect' : 'Connect', int.name)
-          }
+          onClick={() => {}}
           className={
             int.connected
               ? 'border border-[#1e2a4a] bg-transparent text-[#6b7db3] hover:text-red-400 hover:border-red-500/30 hover:bg-red-500/10 text-xs'

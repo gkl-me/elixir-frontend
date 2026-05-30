@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname} from 'next/navigation';
 import Link from 'next/link';
 import {
-  BarChart2, ListTodo, KanbanSquare,
+  BarChart2, KanbanSquare,
   Timer, Activity, Users, ChevronLeft,
   Zap, GitBranch, Layers, Target
 } from 'lucide-react';
@@ -18,7 +18,6 @@ interface ProjectSidebarProps {
 
 export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
   activeProjectId,
-  collapsed = false,
 }) => {
   const pathname = usePathname();
   const pathParts = pathname?.split('/').filter(Boolean) || [];

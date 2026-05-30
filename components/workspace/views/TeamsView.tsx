@@ -100,7 +100,7 @@ const CreateTeamModal = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
         <div className="flex gap-2 pt-2 border-t border-[#1e2a4a]">
-          <Button onClick={() => { if (!form.name.trim()) { setErr('Team name is required'); return; } console.log('[API TODO] POST /api/teams', form); onClose(); }}
+          <Button onClick={() => { if (!form.name.trim()) { setErr('Team name is required'); return; } onClose(); }}
             className="flex-1 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] hover:opacity-90 text-white gap-2 font-semibold">
             <Users className="w-4 h-4" />Create Team
           </Button>
@@ -205,8 +205,6 @@ const AddMembersModal = ({
 type MemberRow = typeof demoMembers[0];
 
 const MemberCell = ({ m }: { m: MemberRow }) => {
-  const badge = ROLE_BADGE[m.role] ?? ROLE_BADGE.member;
-  const Icon  = badge.icon;
   return (
     <div className="flex items-center gap-3">
       <div className={cn('w-8 h-8 rounded-xl bg-gradient-to-br flex items-center justify-center text-white text-xs font-bold flex-shrink-0', grad(m.user.name))}>
@@ -272,8 +270,6 @@ const TeamManagePage = ({ team, onBack }: { team: TeamType; onBack: () => void }
   const currentMembers = useMemo(() =>
     demoMembers.filter(m => memberIds.includes(m.id)), [memberIds]);
 
-  const nonMembers = useMemo(() =>
-    demoMembers.filter(m => !memberIds.includes(m.id)), [memberIds]);
 
   // Filtered + paginated — current members
   const [memberSearch, setMemberSearch] = useState('');
@@ -291,7 +287,6 @@ const TeamManagePage = ({ team, onBack }: { team: TeamType; onBack: () => void }
     [filteredCurrent, memberPage]);
 
   const removeMember = (id: string) => setMemberIds(ids => ids.filter(m => m !== id));
-  const addMember    = (id: string) => { setMemberIds(ids => [...ids, id]); };
 
   // Columns — current members
   const currentCols: ColumnDef<MemberRow>[] = [
@@ -392,7 +387,7 @@ const TeamManagePage = ({ team, onBack }: { team: TeamType; onBack: () => void }
         {/* Save footer */}
         <div className="px-5 py-4 border-t border-[#1e2a4a] flex items-center justify-between bg-[#07112b]/30">
           <p className="text-[11px] text-[#4B5578]">Changes will be saved when you click Save.</p>
-          <Button onClick={() => { console.log('[API TODO] PATCH /api/teams/', team.id, { memberIds }); onBack(); }}
+          <Button onClick={() => { onBack(); }}
             size="sm" className="bg-gradient-to-r from-[#8735C9] to-[#6a29a0] hover:opacity-90 text-white gap-1.5 text-xs h-8 font-semibold">
             Save Changes
           </Button>
@@ -436,7 +431,7 @@ const TeamManagePage = ({ team, onBack }: { team: TeamType; onBack: () => void }
             </button>
           ) : (
             <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-              <button onClick={() => { console.log('[API TODO] DELETE /api/teams/', team.id); onBack(); }}
+              <button onClick={() => { onBack(); }}
                 className="text-xs font-bold text-white bg-red-500 hover:bg-red-600 px-3 py-1.5 rounded-lg transition-colors">
                 Confirm Delete
               </button>

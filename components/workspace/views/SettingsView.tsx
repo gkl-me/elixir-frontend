@@ -2,14 +2,12 @@
 
 import React, { useState } from 'react';
 import {
-  User, Shield, Bell, Plug,
+  User, Shield,
   ChevronRight, CreditCard, Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ProfileTab } from './settings/ProfileTab';
 import { SecurityTab } from './settings/SecurityTab';
-import { NotificationsTab } from './settings/NotificationsTab';
-import { IntegrationsTab } from './settings/IntegrationsTab';
 import { UsageTab } from './settings/UsageTab';
 import { BillingTab } from './settings/BillingTab';
 

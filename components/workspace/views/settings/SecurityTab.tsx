@@ -2,7 +2,7 @@
 
 import React, { startTransition, useEffect } from 'react';
 import { z } from 'zod';
-import { Globe, LogOut, Key } from 'lucide-react';
+import { Globe, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CustomForm } from '@/components/form/CustomForm';
 import { PasswordInput } from '@/components/ui/password-input';
@@ -11,7 +11,6 @@ import { handleChangePassword } from '@/app/actions/user.action';
 import { toastHandler } from '@/lib/toastHandler';
 import { useApi } from '@/hooks/useApi';
 import { NEXT_API_ROUTES } from '@/constants/routeHandler';
-import { set } from 'react-hook-form';
 
 // ─── Zod schema ───────────────────────────────────────────
 const passwordSchema = z
@@ -51,20 +50,19 @@ export const SecurityTab = () => {
   };
 
 
-  const { execute, isLoading } = useApi({
+  const { execute } = useApi({
     url: NEXT_API_ROUTES.LIST_ACTIVE_SESSIONS,
     method: "GET"
   })
 
 
-  const [sessions, setSessions] = React.useState<any[]>([])
+  const [sessions, setSessions] = React.useState([])
 
 
   useEffect(() => {
     (async () => {
       const res = await execute()
       setSessions(res.data.activeSessions)
-      console.log(sessions)
     })()
   }, [])
 
@@ -128,7 +126,7 @@ export const SecurityTab = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => console.log('[API TODO] POST /api/auth/sessions/revoke')}
+                  onClick={() => {}}
                   className="text-xs text-red-400 hover:text-white hover:bg-red-500/20 h-7 px-2"
                 >
                   Revoke

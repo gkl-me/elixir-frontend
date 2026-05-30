@@ -28,7 +28,7 @@ export default function PaymentVerifyPage() {
           setStatus("success")
           setMessage(res.message)
           setTimeout(() => {
-            router.push(USER_CLIENT_ROUTES.DASHBOARD)
+            router.push(USER_CLIENT_ROUTES.WORKSPACE)
           }, 2000)
         } else if (paymentData.paymentStatus === "incomplete") {
           setStatus("incomplete")
@@ -122,7 +122,7 @@ export default function PaymentVerifyPage() {
                 <p className="text-gray-400">{message}</p>
               </div>
               <button
-                onClick={() => router.push(USER_CLIENT_ROUTES.DASHBOARD)}
+                onClick={() => router.push(USER_CLIENT_ROUTES.WORKSPACE)}
                 className="w-full py-4 bg-purple hover:bg-purpleDark text-white rounded-2xl font-bold transition-all flex items-center justify-center gap-2 group"
               >
                 Go to Dashboard

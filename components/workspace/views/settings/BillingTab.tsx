@@ -43,7 +43,7 @@ const InvoiceModal = ({
   invoice: Invoice | null;
   onClose: () => void;
 }) => {
-  if (!invoice) return null;
+  if (!invoice) {return null;}
   return (
     <CustomModal
       isOpen={!!invoice}
@@ -103,8 +103,6 @@ const InvoiceModal = ({
         <div className="flex gap-2 pt-1">
           <Button
             onClick={() => {
-              console.log('[API TODO] Download invoice', invoice.id);
-              alert(`Downloading ${invoice.invoiceNumber}…`);
             }}
             className="flex-1 bg-[#8735C9] hover:bg-[#6a29a0] text-white gap-2"
           >
@@ -224,7 +222,7 @@ export const BillingTab = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => console.log('[API TODO] Download', row.original.id)}
+            onClick={() => {}}
             className="h-7 px-2 text-[#6b7db3] hover:text-white hover:bg-[#0f1d3d] text-xs"
           >
             <Download className="w-3.5 h-3.5" />
@@ -311,9 +309,7 @@ export const BillingTab = () => {
                     <Feature ok={plan.id === 'enterprise'} text="SSO / SAML" />
                   </ul>
                   <Button
-                    onClick={() =>
-                      console.log('[API TODO] Upgrade to', plan.id)
-                    }
+                    onClick={() => {}}
                     className="w-full bg-gradient-to-r from-[#8735C9] to-[#6a29a0] hover:opacity-90 text-white gap-2 mt-auto shadow"
                   >
                     Upgrade to {plan.name}
@@ -332,7 +328,7 @@ export const BillingTab = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => console.log('[API TODO] Download all')}
+            onClick={() => {}}
             className="text-[#6b7db3] hover:text-white border border-[#1e2a4a] hover:bg-[#0f1d3d] gap-1.5 text-xs h-7"
           >
             <Download className="w-3.5 h-3.5" />

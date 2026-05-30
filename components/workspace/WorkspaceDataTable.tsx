@@ -13,11 +13,11 @@ import { AxiosErrorHandler } from "@/lib/errorHandler"
 
 // Dummy data for initial dev
 const DUMMY_WORKSPACES: Workspace[] = [
-    { id: "1", name: "Acme Corp", ownerEmail: "admin@acme.com", plan: "enterprise", status: "active", userCount: 42, createdAt: "2024-01-10" },
+    { id: "1", name: "Acme Corp", ownerEmail: "admin@acme.com", plan: "enterprice", status: "active", userCount: 42, createdAt: "2024-01-10" },
     { id: "2", name: "Freelancer Hub", ownerEmail: "john@freelancer.com", plan: "pro", status: "active", userCount: 1, createdAt: "2024-02-15" },
     { id: "3", name: "Startup Inc", ownerEmail: "founder@startup.io", plan: "free", status: "suspended", userCount: 5, createdAt: "2024-03-01" },
     { id: "4", name: "Beta Testers", ownerEmail: "beta@test.com", plan: "free", status: "active", userCount: 10, createdAt: "2024-03-05" },
-    { id: "5", name: "Global Reach", ownerEmail: "ceo@globalreach.net", plan: "enterprise", status: "blocked", userCount: 120, createdAt: "2023-11-20" },
+    { id: "5", name: "Global Reach", ownerEmail: "ceo@globalreach.net", plan: "enterprice", status: "blocked", userCount: 120, createdAt: "2023-11-20" },
 ]
 
 export default function WorkspaceDataTable() {

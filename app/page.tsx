@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import GradientWithGrid from "@/components/landing/GradientWithGrid";
 import LandingHeader from "@/components/landing/LandingHeader";
 import CodeDesign from "@/components/landing/CodeDesign";

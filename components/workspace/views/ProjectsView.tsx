@@ -3,10 +3,9 @@
 import React, { useState } from 'react';
 import {
   FolderKanban, Plus, Search, LayoutGrid, List,
-  ArrowRight, Star, Target, Users, Calendar,
-  CheckCircle2, Clock, Archive, MoreHorizontal,
-  Tag, Lock, Globe, ChevronDown, Check, X, Zap,
-  BookOpen, TrendingUp, Filter
+  ArrowRight, Star, Users, Calendar,
+  CheckCircle2, ChevronDown, Check, Zap,
+  BookOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -102,14 +101,14 @@ const CreateProjectModal = ({ onClose }: CreateProjectModalProps) => {
 
   const validateStep1 = () => {
     const e: Record<string, string> = {};
-    if (!form.name.trim())       e.name = 'Project name is required';
-    if (form.name.length > 60)   e.name = 'Max 60 characters';
+    if (!form.name.trim())       {e.name = 'Project name is required';}
+    if (form.name.length > 60)   {e.name = 'Max 60 characters';}
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleNext    = () => { if (validateStep1()) setStep(2); };
-  const handleCreate  = () => { console.log('[API TODO] Create project', form); onClose(); };
+  const handleNext    = () => { if (validateStep1()){ setStep(2); }}
+  const handleCreate  = () => { onClose(); };
 
   const selectedLabel    = PROJECT_LABELS.find(l => l.id === form.label);
   const selectedTeam     = demoTeams.find(t => t.id === form.teamId);

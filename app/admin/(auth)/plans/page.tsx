@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import CreateCardModal from "@/components/plans/CreateCardModal"
 import { AxiosErrorHandler } from "@/lib/errorHandler"
 import { planService } from "@/services/plan.service";

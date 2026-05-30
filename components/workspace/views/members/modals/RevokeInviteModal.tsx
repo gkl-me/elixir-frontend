@@ -26,7 +26,7 @@ export const RevokeInviteModal = ({
       </p>
       <div className="flex gap-2 pt-1 border-t border-[#1e2a4a]">
         <Button
-          onClick={() => { console.log('[API TODO] DELETE /api/invites/', invite.id); onClose(); }}
+          onClick={() => {onClose(); }}
           className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold gap-2"
         >
           <X className="w-4 h-4" />Revoke Invite

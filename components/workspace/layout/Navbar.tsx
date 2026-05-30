@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import {
   Bell, Search, X, CheckCheck,
   FolderKanban, CheckSquare, Users, UserCircle,
-  AtSign, Zap, Timer, Menu, LogOut
+  AtSign, Menu, LogOut
 } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { demoNotifications, demoSearchIndex, demoUsers, Notification, SearchResult } from '../../../data/demoData';
+import { demoNotifications, demoSearchIndex, SearchResult } from '../../../data/demoData';
 import { cn } from '@/lib/utils';
 import { NOTIFICATION_CONFIG, NotificationType } from '../../../lib/theme';
 import { logoutAction } from '@/app/actions/auth.action';
@@ -28,7 +28,6 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  sidebarOpen,
   onToggleSidebar,
 }) => {
   const router = useRouter();
@@ -76,9 +75,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setSearchFocused(false);
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {setSearchFocused(false);}
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {setNotifOpen(false);}
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {setUserMenuOpen(false);}
     };
     document.addEventListener('mousedown', handler);
     window.addEventListener("keydown", handleKeyDown)

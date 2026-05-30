@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import UsersListForm from "@/components/users/UserDataTable";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { userService } from "@/services/user.service";

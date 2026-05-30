@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import CompanyDataTable from "@/components/company/CompanyDataTable";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { companyService } from "@/services/company.service";

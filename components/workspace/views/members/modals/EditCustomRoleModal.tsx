@@ -22,8 +22,7 @@ export const EditCustomRoleModal = ({
     <RoleForm
       initialName={role.name}
       initialPerms={role.permissions}
-      onSave={(name, perms) => {
-        console.log('[API TODO] PATCH /api/roles/', role.id, { name, permissions: perms });
+      onSave={() => {
         onClose();
       }}
       onClose={onClose}

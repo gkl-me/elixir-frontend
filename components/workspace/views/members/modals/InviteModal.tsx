@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { z } from 'zod';
-import { Mail } from 'lucide-react';
 import { CustomModal } from '@/components/modal/CustomModal';
 import { CustomForm } from '@/components/form/CustomForm';
 import { Button } from '@/components/ui/button';
@@ -18,8 +17,7 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
   const [role, setRole] = useState('member');
   const roles = allRoles();
 
-  const handleSubmit = (values: InviteValues) => {
-    console.log('[API TODO] POST /api/members/invite', { email: values.email, role });
+  const handleSubmit = () => {
     onClose();
   };
 

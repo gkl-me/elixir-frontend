@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
 import { handlerServerError } from "@/lib/authHelper";
 import { AxiosErrorHandler } from "@/lib/errorHandler";

@@ -223,15 +223,15 @@ export function getCapabilities(
   if (permissions) {
     for (const perm of permissions) {
       const capKey = PERM_TO_CAP[perm as Permission];
-      if (capKey) base[capKey] = true;
+      if (capKey) {base[capKey] = true;}
     }
     // Ensure that manage → view is always implied
-    if (base.canManageBilling) base.canViewBilling = true;
-    if (base.canManageMembers) base.canViewMembers = true;
-    if (base.canManageProjects) base.canViewProjects = true;
-    if (base.canManageBacklog) base.canViewBacklog = true;
-    if (base.canManageAutomations) base.canViewAutomations = true;
-    if (base.canManageStorage) base.canViewStorage = true;
+    if (base.canManageBilling) {base.canViewBilling = true;}
+    if (base.canManageMembers) {base.canViewMembers = true;}
+    if (base.canManageProjects) {base.canViewProjects = true;}
+    if (base.canManageBacklog) {base.canViewBacklog = true;}
+    if (base.canManageAutomations) {base.canViewAutomations = true;}
+    if (base.canManageStorage) {base.canViewStorage = true;}
   }
 
   return base;

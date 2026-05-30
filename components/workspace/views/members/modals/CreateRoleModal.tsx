@@ -13,8 +13,7 @@ export const CreateRoleModal = ({ onClose }: { onClose: () => void }) => (
     className="sm:max-w-xl"
   >
     <RoleForm
-      onSave={(name, perms) => {
-        console.log('[API TODO] POST /api/roles', { name, permissions: perms });
+      onSave={() => {
         onClose();
       }}
       onClose={onClose}
