@@ -60,7 +60,7 @@ export async function proxy(req: NextRequest) {
         req,
         session,
         data.accessToken,
-        data.refreshToken,
+        data.refreshToken
       );
     }
     //re verify accessToken
@@ -99,7 +99,7 @@ export async function proxy(req: NextRequest) {
   if (!isAuthenticated && !isPublicRoutes(pathname)) {
     return redirect(
       AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.UNAUTHORIZED}`,
-      req,
+      req
     );
   }
 

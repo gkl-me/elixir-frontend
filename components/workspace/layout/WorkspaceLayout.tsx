@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import { Navbar } from './Navbar';
-import { MainSidebar } from './MainSidebar';
-import { ProjectSidebar } from './ProjectSidebar';
+import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { Navbar } from "./Navbar";
+import { MainSidebar } from "./MainSidebar";
+import { ProjectSidebar } from "./ProjectSidebar";
 
 interface WorkspaceLayoutProps {
   children: React.ReactNode;
@@ -19,17 +19,20 @@ export const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({
   const [isMobile, setIsMobile] = useState(false);
 
   const pathname = usePathname();
-  const pathParts = pathname?.split('/').filter(Boolean) || [];
+  const pathParts = pathname?.split("/").filter(Boolean) || [];
   // e.g. ['demo', 'projects', 'p1', 'backlogs']
-  const isProjectView = pathParts[0] === 'workspace' && pathParts[1] === 'projects' && pathParts.length >= 2;
+  const isProjectView =
+    pathParts[0] === "workspace" &&
+    pathParts[1] === "projects" &&
+    pathParts.length >= 2;
   const activeProjectId = isProjectView ? pathParts[2] : null;
 
   // Detect mobile breakpoint
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
   // Close mobile sidebar on navigation
@@ -45,9 +48,7 @@ export const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({
       collapsed={!sidebarOpen && !isMobile}
     />
   ) : (
-    <MainSidebar
-      collapsed={!sidebarOpen && !isMobile}
-    />
+    <MainSidebar collapsed={!sidebarOpen && !isMobile} />
   );
 
   return (
@@ -63,28 +64,31 @@ export const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({
       {/* ── Sidebar ─────────────────────────────────────────────── */}
       <aside
         className={[
-          'flex-shrink-0 flex flex-col border-r border-[#1e2a4a] overflow-hidden transition-all duration-300 ease-in-out',
-          !isMobile && (sidebarOpen ? 'w-60' : 'w-[60px]'),
+          "flex flex-shrink-0 flex-col overflow-hidden border-r border-[#1e2a4a] transition-all duration-300 ease-in-out",
+          !isMobile && (sidebarOpen ? "w-60" : "w-[60px]"),
           isMobile
-            ? `fixed left-0 top-0 h-full z-40 w-72 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300`
-            : 'relative',
-        ].filter(Boolean).join(' ')}
+            ? `fixed left-0 top-0 z-40 h-full w-72 ${mobileOpen ? "translate-x-0" : "-translate-x-full"} transition-transform duration-300`
+            : "relative",
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
         {sidebarContent}
       </aside>
 
       {/* ── Main Area ───────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col overflow-hidden bg-[#040A1D] min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[#040A1D]">
         <Navbar
           isProjectView={isProjectView}
           sidebarOpen={sidebarOpen}
-          onToggleSidebar={() => isMobile ? setMobileOpen(p => !p) : setSidebarOpen(p => !p)}
+          onToggleSidebar={() =>
+            isMobile ? setMobileOpen((p) => !p) : setSidebarOpen((p) => !p)
+          }
         />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 scrollbar-hide">
+        <main className="scrollbar-hide flex-1 overflow-y-auto p-4 md:p-6">
           {children}
         </main>
       </div>
     </div>
   );
 };
-

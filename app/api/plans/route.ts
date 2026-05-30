@@ -21,7 +21,7 @@ export async function GET() {
       },
       {
         status: err.statusCode ?? 500,
-      },
+      }
     );
   }
 }

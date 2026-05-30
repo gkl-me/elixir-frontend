@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Shield, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { PERMISSION_GROUPS, ROLE_PRESETS } from './shared';
+import React, { useState } from "react";
+import { Shield, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { PERMISSION_GROUPS, ROLE_PRESETS } from "./shared";
 
 interface RoleFormProps {
   initialName?: string;
@@ -15,69 +15,78 @@ interface RoleFormProps {
 }
 
 export const RoleForm = ({
-  initialName = '',
+  initialName = "",
   initialPerms = [...ROLE_PRESETS.member],
   onSave,
   onClose,
-  saveLabel = 'Create Role',
+  saveLabel = "Create Role",
 }: RoleFormProps) => {
-  const [name,   setName]   = useState(initialName);
-  const [perms,  setPerms]  = useState<string[]>(initialPerms);
-  const [preset, setPreset] = useState<'blank' | 'member' | 'admin'>('member');
-  const [err,    setErr]    = useState('');
+  const [name, setName] = useState(initialName);
+  const [perms, setPerms] = useState<string[]>(initialPerms);
+  const [preset, setPreset] = useState<"blank" | "member" | "admin">("member");
+  const [err, setErr] = useState("");
 
   const toggle = (id: string) =>
-    setPerms(ps => ps.includes(id) ? ps.filter(p => p !== id) : [...ps, id]);
+    setPerms((ps) =>
+      ps.includes(id) ? ps.filter((p) => p !== id) : [...ps, id]
+    );
 
-  const applyPreset = (p: 'blank' | 'member' | 'admin') => {
+  const applyPreset = (p: "blank" | "member" | "admin") => {
     setPreset(p);
-    setPerms(p === 'blank' ? [] : [...ROLE_PRESETS[p]]);
+    setPerms(p === "blank" ? [] : [...ROLE_PRESETS[p]]);
   };
 
   const handleSave = () => {
-    if (!name.trim()) { setErr('Role name is required'); return; }
+    if (!name.trim()) {
+      setErr("Role name is required");
+      return;
+    }
     onSave(name, perms);
   };
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="overflow-y-auto max-h-[65vh] pr-1 space-y-5">
-
+      <div className="max-h-[65vh] space-y-5 overflow-y-auto pr-1">
         {/* Name */}
         <div>
-          <label className="block text-xs font-semibold text-[#8b9cc8] mb-1.5 uppercase tracking-wider">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#8b9cc8]">
             Role Name *
           </label>
           <input
             value={name}
-            onChange={e => { setName(e.target.value); setErr(''); }}
+            onChange={(e) => {
+              setName(e.target.value);
+              setErr("");
+            }}
             placeholder="e.g. Guest Developer"
             className={cn(
-              'w-full bg-[#07112b] border rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-[#4B5578] outline-none transition-colors',
-              err ? 'border-red-400/50' : 'border-[#1e2a4a] focus:border-[#8735C9]'
+              "w-full rounded-xl border bg-[#07112b] px-4 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-[#4B5578]",
+              err
+                ? "border-red-400/50"
+                : "border-[#1e2a4a] focus:border-[#8735C9]"
             )}
           />
-          {err && <p className="text-red-400 text-[11px] mt-1">{err}</p>}
+          {err && <p className="mt-1 text-[11px] text-red-400">{err}</p>}
         </div>
 
         {/* Preset selector */}
         <div>
-          <label className="block text-xs font-semibold text-[#8b9cc8] mb-2 uppercase tracking-wider">
+          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[#8b9cc8]">
             Start From
           </label>
           <div className="flex gap-2">
-            {(['blank', 'member', 'admin'] as const).map(p => (
+            {(["blank", "member", "admin"] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => applyPreset(p)}
                 className={cn(
-                  'flex-1 py-2 rounded-xl border text-xs font-semibold capitalize transition-all',
+                  "flex-1 rounded-xl border py-2 text-xs font-semibold capitalize transition-all",
                   preset === p
-                    ? 'border-[#8735C9] bg-[#8735C9]/15 text-[#c084fc]'
-                    : 'border-[#1e2a4a] text-[#6b7db3] hover:border-[#293d6b] hover:text-white bg-[#07112b]'
+                    ? "border-[#8735C9] bg-[#8735C9]/15 text-[#c084fc]"
+                    : "border-[#1e2a4a] bg-[#07112b] text-[#6b7db3] hover:border-[#293d6b] hover:text-white"
                 )}
               >
-                {p === 'blank' ? 'Blank' : p === 'member' ? 'Member' : 'Admin'}
+                {p === "blank" ? "Blank" : p === "member" ? "Member" : "Admin"}
               </button>
             ))}
           </div>
@@ -85,41 +94,56 @@ export const RoleForm = ({
 
         {/* Permissions */}
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-xs font-semibold text-[#8b9cc8] uppercase tracking-wider">
+          <div className="mb-2 flex items-center justify-between">
+            <label className="text-xs font-semibold uppercase tracking-wider text-[#8b9cc8]">
               Permissions
             </label>
-            <span className="text-[10px] text-[#c084fc] font-semibold">{perms.length} selected</span>
+            <span className="text-[10px] font-semibold text-[#c084fc]">
+              {perms.length} selected
+            </span>
           </div>
           <div className="space-y-4">
-            {PERMISSION_GROUPS.map(g => (
+            {PERMISSION_GROUPS.map((g) => (
               <div key={g.group}>
-                <p className="text-[10px] font-bold text-[#4B5578] uppercase tracking-widest mb-2">
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-[#4B5578]">
                   {g.group}
                 </p>
                 <div className="space-y-1">
-                  {g.items.map(item => {
+                  {g.items.map((item) => {
                     const on = perms.includes(item.id);
                     return (
                       <button
                         key={item.id}
                         onClick={() => toggle(item.id)}
                         className={cn(
-                          'w-full flex items-center gap-3 px-3 py-2 rounded-lg border text-left transition-all',
-                          on ? 'border-[#8735C9]/50 bg-[#8735C9]/08' : 'border-[#1e2a4a] hover:border-[#293d6b]'
+                          "flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left transition-all",
+                          on
+                            ? "bg-[#8735C9]/08 border-[#8735C9]/50"
+                            : "border-[#1e2a4a] hover:border-[#293d6b]"
                         )}
                       >
-                        <div className={cn(
-                          'w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-all',
-                          on ? 'bg-[#8735C9] border-[#8735C9]' : 'border-[#293d6b]'
-                        )}>
-                          {on && <Check className="w-2.5 h-2.5 text-white" />}
+                        <div
+                          className={cn(
+                            "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-all",
+                            on
+                              ? "border-[#8735C9] bg-[#8735C9]"
+                              : "border-[#293d6b]"
+                          )}
+                        >
+                          {on && <Check className="h-2.5 w-2.5 text-white" />}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={cn('text-xs font-medium', on ? 'text-white' : 'text-[#8b9cc8]')}>
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className={cn(
+                              "text-xs font-medium",
+                              on ? "text-white" : "text-[#8b9cc8]"
+                            )}
+                          >
                             {item.label}
                           </p>
-                          <p className="text-[10px] text-[#4B5578]">{item.desc}</p>
+                          <p className="text-[10px] text-[#4B5578]">
+                            {item.desc}
+                          </p>
                         </div>
                       </button>
                     );
@@ -132,17 +156,18 @@ export const RoleForm = ({
       </div>
 
       {/* Footer */}
-      <div className="flex gap-2 pt-2 border-t border-[#1e2a4a]">
+      <div className="flex gap-2 border-t border-[#1e2a4a] pt-2">
         <Button
           onClick={handleSave}
-          className="flex-1 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] hover:opacity-90 text-white gap-2 font-semibold"
+          className="flex-1 gap-2 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] font-semibold text-white hover:opacity-90"
         >
-          <Shield className="w-4 h-4" />{saveLabel}
+          <Shield className="h-4 w-4" />
+          {saveLabel}
         </Button>
         <Button
           variant="outline"
           onClick={onClose}
-          className="border-[#1e2a4a] text-[#8b9cc8] hover:text-white hover:bg-[#0f1d3d]"
+          className="border-[#1e2a4a] text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
         >
           Cancel
         </Button>

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { CustomModal } from '@/components/modal/CustomModal';
-import { RoleForm } from '../RoleForm';
-import { CustomRole } from '../shared';
+import React from "react";
+import { CustomModal } from "@/components/modal/CustomModal";
+import { RoleForm } from "../RoleForm";
+import { CustomRole } from "../shared";
 
 export const EditCustomRoleModal = ({
   role,

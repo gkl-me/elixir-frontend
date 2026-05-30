@@ -1,16 +1,12 @@
-'use client';
+"use client";
 
-import { HomeView } from '@/components/workspace/views/HomeView';
-import { useEffect } from 'react';
+import { HomeView } from "@/components/workspace/views/HomeView";
+import { useEffect } from "react";
 
 export default function HomePage() {
-
   useEffect(() => {
-    (
-      async () => {
-      }
-    )()
-  },[])
+    (async () => {})();
+  }, []);
 
-  return <HomeView/>;
+  return <HomeView />;
 }

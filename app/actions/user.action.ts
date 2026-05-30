@@ -1,59 +1,47 @@
-"use server"
+"use server";
 
 import { handlerServerError } from "@/lib/authHelper";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { userService } from "@/services/user.service";
 
+export async function toggleUserStatusAction(userId: string) {
+  try {
+    const res = await userService.toggleUserStatus({
+      userId,
+    });
 
-export async function toggleUserStatusAction(
-    userId: string
-) {
-    try {
-
-        const res = await userService.toggleUserStatus({
-            userId
-        })
-
-        return {
-            success: res.data.success,
-            message: res.data.message
-        }
-
-    } catch (error) {
-        handlerServerError(error)
-        return {
-            success: false,
-            error: AxiosErrorHandler(error).message
-        }
-    }
+    return {
+      success: res.data.success,
+      message: res.data.message,
+    };
+  } catch (error) {
+    handlerServerError(error);
+    return {
+      success: false,
+      error: AxiosErrorHandler(error).message,
+    };
+  }
 }
-
 
 export async function handleChangePassword(
-    currentPassword: string,
-    newPassword: string
+  currentPassword: string,
+  newPassword: string
 ) {
+  try {
+    const res = await userService.handleChangePassword({
+      currentPassword,
+      newPassword,
+    });
 
-    try {
-
-        const res = await userService.handleChangePassword({
-            currentPassword,
-            newPassword
-        })
-
-        return {
-            success: res.data.success,
-            message: res.data.message
-        }
-
-    } catch (error) {
-        handlerServerError(error)
-        return {
-            success: false,
-            error: AxiosErrorHandler(error).message
-        }
-    }
-
+    return {
+      success: res.data.success,
+      message: res.data.message,
+    };
+  } catch (error) {
+    handlerServerError(error);
+    return {
+      success: false,
+      error: AxiosErrorHandler(error).message,
+    };
+  }
 }
-
-

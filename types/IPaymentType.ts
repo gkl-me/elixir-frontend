@@ -1,5 +1,3 @@
-
-
-export interface IVerifyPaymentData{
-    sessionId?:string
+export interface IVerifyPaymentData {
+  sessionId?: string;
 }

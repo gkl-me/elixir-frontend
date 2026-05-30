@@ -3,7 +3,7 @@ import { jwtVerify } from "jose";
 
 const access_secret = new TextEncoder().encode(process.env.ACCESS_TOKEN_SECRET);
 const refresh_secret = new TextEncoder().encode(
-  process.env.REFRESH_TOKEN_SECRET,
+  process.env.REFRESH_TOKEN_SECRET
 );
 
 export async function verifyAccessToken(token?: string) {

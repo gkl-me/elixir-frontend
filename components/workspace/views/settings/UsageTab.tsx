@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { FolderKanban, Users, HardDrive } from 'lucide-react';
-import { demoWorkspace, demoSubscriptions } from '../../../../data/demoData';
-import { Section } from './shared';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { FolderKanban, Users, HardDrive } from "lucide-react";
+import { demoWorkspace, demoSubscriptions } from "../../../../data/demoData";
+import { Section } from "./shared";
+import { cn } from "@/lib/utils";
 
 // ─── Usage Meter ──────────────────────────────────────────
 const UsageMeter = ({
   label,
   used,
   limit,
-  unit = '',
+  unit = "",
   icon: Icon,
-  color = '#8735C9',
+  color = "#8735C9",
 }: {
   label: string;
   used: number;
@@ -22,22 +22,28 @@ const UsageMeter = ({
   icon: React.ElementType;
   color?: string;
 }) => {
-  const pct = limit === -1 ? 0 : Math.min(100, Math.round((used / limit) * 100));
+  const pct =
+    limit === -1 ? 0 : Math.min(100, Math.round((used / limit) * 100));
   const warn = pct >= 80;
-  const barColor = pct >= 90 ? '#ef4444' : pct >= 70 ? '#f59e0b' : color;
+  const barColor = pct >= 90 ? "#ef4444" : pct >= 70 ? "#f59e0b" : color;
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Icon className="w-3.5 h-3.5" style={{ color }} />
+          <Icon className="h-3.5 w-3.5" style={{ color }} />
           <span className="text-sm font-medium text-[#c9d3ed]">{label}</span>
         </div>
-        <span className={cn('text-xs font-semibold', warn ? 'text-amber-400' : 'text-[#6b7db3]')}>
+        <span
+          className={cn(
+            "text-xs font-semibold",
+            warn ? "text-amber-400" : "text-[#6b7db3]"
+          )}
+        >
           {limit === -1 ? `${used} / ∞` : `${used} / ${limit}${unit}`}
         </span>
       </div>
-      <div className="h-2 bg-[#07112b] rounded-full overflow-hidden">
+      <div className="h-2 overflow-hidden rounded-full bg-[#07112b]">
         {limit !== -1 && (
           <div
             className="h-full rounded-full transition-all duration-500"
@@ -45,11 +51,16 @@ const UsageMeter = ({
           />
         )}
         {limit === -1 && (
-          <div className="h-full rounded-full bg-emerald-500/40" style={{ width: '100%' }} />
+          <div
+            className="h-full rounded-full bg-emerald-500/40"
+            style={{ width: "100%" }}
+          />
         )}
       </div>
       {warn && limit !== -1 && (
-        <p className="text-[10px] text-amber-400">⚠ Approaching limit — consider upgrading</p>
+        <p className="text-[10px] text-amber-400">
+          ⚠ Approaching limit — consider upgrading
+        </p>
       )}
     </div>
   );
@@ -72,7 +83,7 @@ export const UsageTab = () => {
         title="Usage & Limits"
         description="Seats = active members who can log in and collaborate. Each person using the workspace counts as one seat."
       >
-        <div className="grid sm:grid-cols-2 gap-6">
+        <div className="grid gap-6 sm:grid-cols-2">
           <UsageMeter
             label="Projects"
             used={projectsUsed}
@@ -103,31 +114,36 @@ export const UsageTab = () => {
             unit=" MB"
           />
         </div>
-        <p className="text-xs text-[#4B5578] mt-4 pt-4 border-t border-[#1e2a4a]">
-          💡{' '}
-          <strong className="text-[#6b7db3]">What is a seat?</strong> A seat is one named user
-          in your workspace. If you have 3 members (Alice, Bob, Charlie), you&apos;re using 3
-          seats. Removing a member frees a seat immediately.
+        <p className="mt-4 border-t border-[#1e2a4a] pt-4 text-xs text-[#4B5578]">
+          💡 <strong className="text-[#6b7db3]">What is a seat?</strong> A seat
+          is one named user in your workspace. If you have 3 members (Alice,
+          Bob, Charlie), you&apos;re using 3 seats. Removing a member frees a
+          seat immediately.
         </p>
       </Section>
 
-      <Section title="Custom Roles" description="Manage custom roles available in your plan.">
+      <Section
+        title="Custom Roles"
+        description="Manage custom roles available in your plan."
+      >
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-[#c9d3ed]">Custom Roles Used</p>
-            <p className="text-2xl font-black text-white mt-1">
-              {demoWorkspace.customRoles.length}{' '}
+            <p className="mt-1 text-2xl font-black text-white">
+              {demoWorkspace.customRoles.length}{" "}
               <span className="text-sm font-normal text-[#6b7db3]">
-                /{' '}
+                /{" "}
                 {currentPlan.limits.customRoles === -1
-                  ? '∞'
+                  ? "∞"
                   : currentPlan.limits.customRoles}
               </span>
             </p>
           </div>
           <div className="text-right">
             <p className="text-xs text-[#6b7db3]">Plan: {currentPlan.name}</p>
-            <p className="text-xs text-[#4B5578] mt-0.5">Upgrade for more roles</p>
+            <p className="mt-0.5 text-xs text-[#4B5578]">
+              Upgrade for more roles
+            </p>
           </div>
         </div>
       </Section>

@@ -20,7 +20,7 @@ export const USER_API_ROUTES = {
   GET_ALL_USER: "/users/",
   TOGGLE_USER_STATUS: "/users",
   CHANGE_PASSWORD: "/users/change-password",
-  ACTIVE_SESSIONS: "/users/active-sessions"
+  ACTIVE_SESSIONS: "/users/active-sessions",
 };
 
 export const PLAN_API_ROUTES = {
@@ -45,8 +45,6 @@ export const PAYMENT_API_ROUTES = {
 export const COMPANY_API_ROUTES = {
   GET_ALL_COMPANY: "/company",
 };
-
-
 
 export const WORKSPACE_API_ROUTES = {
   GET_WORKSPACE_CONTEXT: "/workspace/context",

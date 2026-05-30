@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { CustomModal } from '@/components/modal/CustomModal';
-import { cn } from '@/lib/utils';
-import { Member, grad, initials } from '../shared';
+import React from "react";
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CustomModal } from "@/components/modal/CustomModal";
+import { cn } from "@/lib/utils";
+import { Member, grad, initials } from "../shared";
 
 export const RemoveMemberModal = ({
   member,
@@ -22,8 +22,13 @@ export const RemoveMemberModal = ({
     className="sm:max-w-sm"
   >
     <div className="space-y-4">
-      <div className="flex items-center gap-3 px-4 py-3 bg-[#07112b] border border-[#1e2a4a] rounded-xl">
-        <div className={cn('w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center text-white text-xs font-bold', grad(member.user.name))}>
+      <div className="flex items-center gap-3 rounded-xl border border-[#1e2a4a] bg-[#07112b] px-4 py-3">
+        <div
+          className={cn(
+            "flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br text-xs font-bold text-white",
+            grad(member.user.name)
+          )}
+        >
           {initials(member.user.name)}
         </div>
         <div>
@@ -34,17 +39,18 @@ export const RemoveMemberModal = ({
       <p className="text-xs text-[#6b7db3]">
         This will revoke their workspace access. This action cannot be undone.
       </p>
-      <div className="flex gap-2 pt-1 border-t border-[#1e2a4a]">
+      <div className="flex gap-2 border-t border-[#1e2a4a] pt-1">
         <Button
-          onClick={() => { }}
-          className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold gap-2"
+          onClick={() => {}}
+          className="flex-1 gap-2 bg-red-500 font-semibold text-white hover:bg-red-600"
         >
-          <Trash2 className="w-4 h-4" />Remove Member
+          <Trash2 className="h-4 w-4" />
+          Remove Member
         </Button>
         <Button
           variant="outline"
           onClick={onClose}
-          className="border-[#1e2a4a] text-[#8b9cc8] hover:text-white hover:bg-[#0f1d3d]"
+          className="border-[#1e2a4a] text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
         >
           Cancel
         </Button>

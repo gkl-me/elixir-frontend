@@ -1,15 +1,22 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { usePathname} from 'next/navigation';
-import Link from 'next/link';
+import React from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import {
-  BarChart2, KanbanSquare,
-  Timer, Activity, Users, ChevronLeft,
-  Zap, GitBranch, Layers, Target
-} from 'lucide-react';
-import { demoProjects, demoSprints } from '../../../data/demoData';
-import { cn } from '@/lib/utils';
+  BarChart2,
+  KanbanSquare,
+  Timer,
+  Activity,
+  Users,
+  ChevronLeft,
+  Zap,
+  GitBranch,
+  Layers,
+  Target,
+} from "lucide-react";
+import { demoProjects, demoSprints } from "../../../data/demoData";
+import { cn } from "@/lib/utils";
 
 interface ProjectSidebarProps {
   activeProjectId?: string | null;
@@ -20,63 +27,100 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
   activeProjectId,
 }) => {
   const pathname = usePathname();
-  const pathParts = pathname?.split('/').filter(Boolean) || [];
+  const pathParts = pathname?.split("/").filter(Boolean) || [];
   // For `/demo/projects/p1/backlogs`, pathParts[3] is 'backlogs'
-  const activeView = pathParts.length > 3 ? pathParts[3] : 'overview';
+  const activeView = pathParts.length > 3 ? pathParts[3] : "overview";
 
-  const project = demoProjects.find(p => p.id === activeProjectId);
-  const activeSprint = demoSprints.find(s => s.projectId === activeProjectId && s.status === 'active');
+  const project = demoProjects.find((p) => p.id === activeProjectId);
+  const activeSprint = demoSprints.find(
+    (s) => s.projectId === activeProjectId && s.status === "active"
+  );
 
   const sections = [
     {
-      label: 'Planning',
+      label: "Planning",
       links: [
-        { id: 'overview',  label: 'Overview',   icon: Target,       description: 'Project metrics' },
-        { id: 'backlogs',  label: 'Backlog',    icon: Layers,       description: 'Issue backlog' },
+        {
+          id: "overview",
+          label: "Overview",
+          icon: Target,
+          description: "Project metrics",
+        },
+        {
+          id: "backlogs",
+          label: "Backlog",
+          icon: Layers,
+          description: "Issue backlog",
+        },
       ],
     },
     {
-      label: 'Active Sprint',
+      label: "Active Sprint",
       links: [
-        { id: 'board',             label: 'Board',        icon: KanbanSquare, description: 'Kanban view' },
-        { id: 'sprint',            label: 'Sprint',       icon: Timer,        description: 'Sprint goals' },
-        { id: 'sprint-performance', label: 'Performance', icon: BarChart2,    description: 'Velocity & history' },
+        {
+          id: "board",
+          label: "Board",
+          icon: KanbanSquare,
+          description: "Kanban view",
+        },
+        {
+          id: "sprint",
+          label: "Sprint",
+          icon: Timer,
+          description: "Sprint goals",
+        },
+        {
+          id: "sprint-performance",
+          label: "Performance",
+          icon: BarChart2,
+          description: "Velocity & history",
+        },
       ],
     },
     {
-      label: 'Collaboration',
+      label: "Collaboration",
       links: [
-        { id: 'project-teams', label: 'Teams',    icon: Users,     description: 'Team members' },
-        { id: 'project-tasks', label: 'Activity', icon: Activity,  description: 'Recent activity' },
+        {
+          id: "project-teams",
+          label: "Teams",
+          icon: Users,
+          description: "Team members",
+        },
+        {
+          id: "project-tasks",
+          label: "Activity",
+          icon: Activity,
+          description: "Recent activity",
+        },
       ],
     },
   ];
 
   return (
-    <div className="flex flex-col h-full bg-[#07112b]">
+    <div className="flex h-full flex-col bg-[#07112b]">
       {/* Back button */}
-      <div className="px-4 pt-4 pb-2">
+      <div className="px-4 pb-2 pt-4">
         <Link
           href="/workspace"
-          className="flex items-center gap-1.5 text-xs text-[#6b7db3] hover:text-white transition-colors mb-4 group"
+          className="group mb-4 flex items-center gap-1.5 text-xs text-[#6b7db3] transition-colors hover:text-white"
         >
-          <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+          <ChevronLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
           All projects
         </Link>
 
         {/* Project card */}
-        <div className="bg-gradient-to-br from-[#0C1635] to-[#0a1020] border border-[#1e2a4a] rounded-xl p-3">
+        <div className="rounded-xl border border-[#1e2a4a] bg-gradient-to-br from-[#0C1635] to-[#0a1020] p-3">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#8735C9] to-[#4B2070] flex items-center justify-center font-bold text-sm flex-shrink-0 shadow-[0_0_14px_rgba(135,53,201,0.3)]">
-              {project?.name.charAt(0) ?? 'P'}
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8735C9] to-[#4B2070] text-sm font-bold shadow-[0_0_14px_rgba(135,53,201,0.3)]">
+              {project?.name.charAt(0) ?? "P"}
             </div>
             <div className="min-w-0">
-              <h2 className="font-bold text-sm text-white truncate leading-tight">
-                {project?.name ?? 'Project'}
+              <h2 className="truncate text-sm font-bold leading-tight text-white">
+                {project?.name ?? "Project"}
               </h2>
-              <div className="flex items-center gap-1.5 mt-1">
-                <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="mt-1 flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
                   Active
                 </span>
               </div>
@@ -85,14 +129,20 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
 
           {/* Sprint info */}
           {activeSprint && (
-            <div className="mt-3 pt-3 border-t border-[#1e2a4a]">
+            <div className="mt-3 border-t border-[#1e2a4a] pt-3">
               <div className="flex items-center gap-1.5 text-[11px] text-[#6b7db3]">
-                <GitBranch className="w-3 h-3 text-[#8735C9]" />
-                <span className="font-medium text-white truncate">{activeSprint.name}</span>
+                <GitBranch className="h-3 w-3 text-[#8735C9]" />
+                <span className="truncate font-medium text-white">
+                  {activeSprint.name}
+                </span>
               </div>
-              <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[#4B5578]">
-                <Timer className="w-3 h-3" />
-                Ends {new Date(activeSprint.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              <div className="mt-1 flex items-center gap-1.5 text-[10px] text-[#4B5578]">
+                <Timer className="h-3 w-3" />
+                Ends{" "}
+                {new Date(activeSprint.endDate).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })}
               </div>
             </div>
           )}
@@ -100,33 +150,43 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
       </div>
 
       {/* Sectioned nav */}
-      <div className="flex-1 px-3 py-2 overflow-y-auto scrollbar-hide space-y-4">
-        {sections.map(section => (
+      <div className="scrollbar-hide flex-1 space-y-4 overflow-y-auto px-3 py-2">
+        {sections.map((section) => (
           <div key={section.label}>
-            <p className="text-[10px] font-semibold text-[#4B5578] uppercase tracking-widest px-2 mb-1.5">{section.label}</p>
+            <p className="mb-1.5 px-2 text-[10px] font-semibold uppercase tracking-widest text-[#4B5578]">
+              {section.label}
+            </p>
             <div className="space-y-0.5">
-              {section.links.map(link => {
+              {section.links.map((link) => {
                 const Icon = link.icon;
                 const isActive = activeView === link.id;
-                const targetUrl = link.id === 'overview' 
-                  ? `/demo/projects/${activeProjectId}`
-                  : `/demo/projects/${activeProjectId}/${link.id}`;
+                const targetUrl =
+                  link.id === "overview"
+                    ? `/demo/projects/${activeProjectId}`
+                    : `/demo/projects/${activeProjectId}/${link.id}`;
                 return (
                   <Link
                     key={link.id}
                     href={targetUrl}
                     className={cn(
-                      'flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 group',
+                      "group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
                       isActive
-                        ? 'bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-white shadow-[0_2px_10px_rgba(135,53,201,0.3)]'
-                        : 'text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white'
+                        ? "bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-white shadow-[0_2px_10px_rgba(135,53,201,0.3)]"
+                        : "text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
                     )}
                   >
-                    <Icon className={cn('w-4 h-4 shrink-0 transition-colors', isActive ? 'text-white' : 'text-[#6b7db3] group-hover:text-purple-300')} />
+                    <Icon
+                      className={cn(
+                        "h-4 w-4 shrink-0 transition-colors",
+                        isActive
+                          ? "text-white"
+                          : "group-hover:text-purple-300 text-[#6b7db3]"
+                      )}
+                    />
                     <div className="flex-1 text-left">
                       <span>{link.label}</span>
                     </div>
-                    {isActive && <Zap className="w-3 h-3 text-white/50" />}
+                    {isActive && <Zap className="h-3 w-3 text-white/50" />}
                   </Link>
                 );
               })}

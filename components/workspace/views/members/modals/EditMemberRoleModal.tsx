@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { CustomModal } from '@/components/modal/CustomModal';
-import { Member, allRoles } from '../shared';
-import { RoleSelector } from '../RoleSelector';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { CustomModal } from "@/components/modal/CustomModal";
+import { Member, allRoles } from "../shared";
+import { RoleSelector } from "../RoleSelector";
 
 export const EditMemberRoleModal = ({
   member,
@@ -14,7 +14,9 @@ export const EditMemberRoleModal = ({
   onClose: () => void;
 }) => {
   const roles = allRoles();
-  const [role, setRole] = useState(member.role === 'owner' ? 'admin' : member.role);
+  const [role, setRole] = useState(
+    member.role === "owner" ? "admin" : member.role
+  );
 
   return (
     <CustomModal
@@ -25,20 +27,22 @@ export const EditMemberRoleModal = ({
       className="sm:max-w-sm"
     >
       <div className="space-y-4">
-        <div className="overflow-y-auto max-h-[50vh]">
+        <div className="max-h-[50vh] overflow-y-auto">
           <RoleSelector roles={roles} value={role} onChange={setRole} />
         </div>
-        <div className="flex gap-2 pt-1 border-t border-[#1e2a4a]">
+        <div className="flex gap-2 border-t border-[#1e2a4a] pt-1">
           <Button
-            onClick={() => { onClose(); }}
-            className="flex-1 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] hover:opacity-90 text-white gap-2 font-semibold"
+            onClick={() => {
+              onClose();
+            }}
+            className="flex-1 gap-2 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] font-semibold text-white hover:opacity-90"
           >
             Save Role
           </Button>
           <Button
             variant="outline"
             onClick={onClose}
-            className="border-[#1e2a4a] text-[#8b9cc8] hover:text-white hover:bg-[#0f1d3d]"
+            className="border-[#1e2a4a] text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
           >
             Cancel
           </Button>

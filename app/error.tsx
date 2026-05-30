@@ -18,7 +18,7 @@ export default function Error({
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#040A1D] flex items-center justify-center overflow-hidden px-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#040A1D] px-4">
       {/* Animated grid background */}
       <div
         className="pointer-events-none absolute inset-0"
@@ -42,7 +42,7 @@ export default function Error({
 
       {/* Purple corner glows */}
       <div
-        className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full opacity-20"
+        className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full opacity-20"
         style={{
           background: "radial-gradient(circle, #8735C9 0%, transparent 70%)",
         }}
@@ -56,8 +56,9 @@ export default function Error({
 
       {/* Card */}
       <div
-        className={`relative z-10 w-full max-w-lg transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+        className={`relative z-10 w-full max-w-lg transition-all duration-700 ${
+          mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+        }`}
       >
         {/* Glass card */}
         <div
@@ -69,7 +70,10 @@ export default function Error({
             <div className="relative">
               <div className="absolute inset-0 animate-ping rounded-full bg-red-500/20" />
               <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-red-500/30 bg-red-500/10">
-                <AlertTriangle className="h-10 w-10 text-red-400" strokeWidth={1.5} />
+                <AlertTriangle
+                  className="h-10 w-10 text-red-400"
+                  strokeWidth={1.5}
+                />
               </div>
             </div>
           </div>
@@ -79,14 +83,14 @@ export default function Error({
             Something went wrong
           </h1>
           <p className="mb-6 text-center text-sm leading-relaxed text-white/50">
-            An unexpected error occurred. Don&apos;t worry — your data is safe. You can try
-            recovering or head back home.
+            An unexpected error occurred. Don&apos;t worry — your data is safe.
+            You can try recovering or head back home.
           </p>
 
           {/* Error message pill */}
           {error.message && (
             <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3">
-              <p className="text-center text-sm font-medium text-red-300 break-words">
+              <p className="break-words text-center text-sm font-medium text-red-300">
                 {error.message}
               </p>
               {error.digest && (
@@ -102,7 +106,7 @@ export default function Error({
             <button
               id="error-reset-btn"
               onClick={reset}
-              className="group flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#8735C9] px-5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#8735C9]/80 hover:shadow-lg hover:shadow-purple-500/20 active:scale-95"
+              className="hover:shadow-purple-500/20 group flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#8735C9] px-5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#8735C9]/80 hover:shadow-lg active:scale-95"
             >
               <RefreshCw className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />
               Try again

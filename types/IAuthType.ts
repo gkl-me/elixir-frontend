@@ -1,52 +1,50 @@
 import { LoginSchema, RegisterSchema } from "@/validator/AuthSchema";
 import { z } from "zod";
 
-
-
-export type LoginData = z.infer<typeof LoginSchema>
-export type RegisterData = z.infer<typeof RegisterSchema>
+export type LoginData = z.infer<typeof LoginSchema>;
+export type RegisterData = z.infer<typeof RegisterSchema>;
 
 export interface VerifyEmailData {
-    token:string,
-    email:string
+  token: string;
+  email: string;
 }
 
 export interface ResendVerifyEmailData {
-    email:string
+  email: string;
 }
 
 export interface ForgotPasswordData {
-    email:string
+  email: string;
 }
 
-export interface VerifyOtpData{
-    otp:string,
-    email:string
+export interface VerifyOtpData {
+  otp: string;
+  email: string;
 }
 
-export interface ResendOtpData{
-    email:string
+export interface ResendOtpData {
+  email: string;
 }
 
 export interface ResetPasswordData {
-    email:string,
-    newPassword:string
-    resetPasswordToken?:string
+  email: string;
+  newPassword: string;
+  resetPasswordToken?: string;
 }
 
 export interface LogoutData {
-    refreshToken:string
+  refreshToken: string;
 }
 
-export interface GoogleAuthData{
-    idToken:string
+export interface GoogleAuthData {
+  idToken: string;
 }
 
-export interface GithubAuthData{
-    access_token:string,
-    githubId:string,
-    githubUsername:string,
-    name:string,
-    email:string,
-    image:string
+export interface GithubAuthData {
+  access_token: string;
+  githubId: string;
+  githubUsername: string;
+  name: string;
+  email: string;
+  image: string;
 }

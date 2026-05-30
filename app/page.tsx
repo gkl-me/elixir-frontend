@@ -16,43 +16,53 @@ import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { planService } from "@/services/plan.service";
 
 export default async function Home() {
-
   let plans;
   try {
-    const res = await planService.getAllPlans({})
-    plans = res.data.data.plans
+    const res = await planService.getAllPlans({});
+    plans = res.data.data.plans;
   } catch (error) {
-    const err = AxiosErrorHandler(error)
-    throw new Error(err.message)
+    const err = AxiosErrorHandler(error);
+    throw new Error(err.message);
   }
 
   return (
-    <div className="bg-navyDark min-h-screen">
+    <div className="min-h-screen bg-navyDark">
       <LandingHeader />
-      
+
       <main className="flex flex-col items-center justify-center text-center">
         {/* Hero Section with Grid Background */}
         <GradientWithGrid>
-            <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 sm:pt-24 pb-12 w-full">
-                <h1 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight drop-shadow-2xl mt-8">
-                Automated Project Management
-                </h1>
-                <p className="text-base md:text-xl text-gray-300 max-w-2xl mb-10 leading-relaxed">
-                Streamline your workflow, automate tasks, and boost team productivity
-                with our intelligent project management platform.
-                </p>
-                <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-16">
-                <Link href={AUTH_CLIENT_ROUTES.REGISTER}>
-                    <Button size="lg" className="bg-purple hover:bg-purple/90 text-white w-full sm:w-auto px-8">Get Started</Button>
-                </Link>
-                <Link href={AUTH_CLIENT_ROUTES.LOGIN}>
-                    <Button variant="white" size="lg" className="w-full sm:w-auto px-8">Login</Button>
-                </Link>
-                </div>
-                <div className="relative animate-in fade-in slide-in-from-bottom-8 duration-700 w-full max-w-5xl">
-                <CodeDesign />
-                </div>
-            </section>
+          <section className="flex min-h-screen w-full flex-col items-center justify-center px-4 pb-12 pt-20 sm:pt-24">
+            <h1 className="xs:text-4xl mb-6 mt-8 text-3xl font-extrabold leading-tight text-white drop-shadow-2xl sm:text-5xl md:text-7xl">
+              Automated Project Management
+            </h1>
+            <p className="mb-10 max-w-2xl text-base leading-relaxed text-gray-300 md:text-xl">
+              Streamline your workflow, automate tasks, and boost team
+              productivity with our intelligent project management platform.
+            </p>
+            <div className="mb-16 flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+              <Link href={AUTH_CLIENT_ROUTES.REGISTER}>
+                <Button
+                  size="lg"
+                  className="w-full bg-purple px-8 text-white hover:bg-purple/90 sm:w-auto"
+                >
+                  Get Started
+                </Button>
+              </Link>
+              <Link href={AUTH_CLIENT_ROUTES.LOGIN}>
+                <Button
+                  variant="white"
+                  size="lg"
+                  className="w-full px-8 sm:w-auto"
+                >
+                  Login
+                </Button>
+              </Link>
+            </div>
+            <div className="relative w-full max-w-5xl duration-700 animate-in fade-in slide-in-from-bottom-8">
+              <CodeDesign />
+            </div>
+          </section>
         </GradientWithGrid>
 
         {/* Features Section */}
@@ -66,9 +76,6 @@ export default async function Home() {
 
         {/* CTA Banner */}
         <CTABanner />
-
-
-
       </main>
       <Footer />
     </div>

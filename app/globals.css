@@ -27,7 +27,8 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem}
+    --radius: 0.5rem;
+  }
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -52,7 +53,8 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%}
+    --chart-5: 340 75% 55%;
+  }
 }
 @layer base {
   * {
@@ -72,22 +74,21 @@
   }
 }
 
-
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* Sonner Toast Overrides - Ensuring "Elixir" Theme */
 @layer components {
   :where([data-sonner-toast]) {
-    background-color: #0C1635 !important;
+    background-color: #0c1635 !important;
     /* Navy */
-    border-color: #4B2070 !important;
+    border-color: #4b2070 !important;
     /* Purple Dark */
     color: #ffffff !important;
     box-shadow: 0 10px 15px -3px rgb(135 53 201 / 0.1) !important;
@@ -145,7 +146,7 @@
 
   /* Buttons */
   :where([data-sonner-toast]) [data-button] {
-    background-color: #8735C9 !important;
+    background-color: #8735c9 !important;
     /* Purple */
     color: white !important;
   }

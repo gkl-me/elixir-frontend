@@ -23,7 +23,7 @@ export async function deleteSession() {
   const cookieStore = await cookies();
   const session = await getIronSession<IAuthSession>(
     cookieStore,
-    sessionOptions,
+    sessionOptions
   );
   session.destroy();
 }

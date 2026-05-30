@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { CustomModal } from '@/components/modal/CustomModal';
-import { RoleForm } from '../RoleForm';
+import React from "react";
+import { CustomModal } from "@/components/modal/CustomModal";
+import { RoleForm } from "../RoleForm";
 
 export const CreateRoleModal = ({ onClose }: { onClose: () => void }) => (
   <CustomModal

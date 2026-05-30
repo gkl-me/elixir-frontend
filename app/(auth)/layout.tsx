@@ -1,19 +1,7 @@
-
-
-
 export default async function AuthenticatedLayout({
-    children
-}:{
-    children:React.ReactNode
-})
-
-
-
-{
-
-    return (
-        <>
-        {children}
-        </>
-    )
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
 }

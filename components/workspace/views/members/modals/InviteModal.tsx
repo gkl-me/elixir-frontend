@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { z } from 'zod';
-import { CustomModal } from '@/components/modal/CustomModal';
-import { CustomForm } from '@/components/form/CustomForm';
-import { Button } from '@/components/ui/button';
-import { allRoles } from '../shared';
-import { RoleSelector } from '../RoleSelector';
+import React, { useState } from "react";
+import { z } from "zod";
+import { CustomModal } from "@/components/modal/CustomModal";
+import { CustomForm } from "@/components/form/CustomForm";
+import { Button } from "@/components/ui/button";
+import { allRoles } from "../shared";
+import { RoleSelector } from "../RoleSelector";
 
 const inviteSchema = z.object({
-  email: z.string().email('Enter a valid email address'),
+  email: z.string().email("Enter a valid email address"),
 });
 type InviteValues = z.infer<typeof inviteSchema>;
 
 export const InviteModal = ({ onClose }: { onClose: () => void }) => {
-  const [role, setRole] = useState('member');
+  const [role, setRole] = useState("member");
   const roles = allRoles();
 
   const handleSubmit = () => {
@@ -33,25 +33,25 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
         {/* Email — CustomForm with zod validation */}
         <CustomForm<InviteValues>
           schema={inviteSchema}
-          defaultValues={{ email: '' }}
+          defaultValues={{ email: "" }}
           onSubmit={handleSubmit}
           submitText="Send Invitation"
           fields={[
             {
-              name: 'email',
-              label: 'Email Address',
-              type: 'email',
-              placeholder: 'colleague@company.com',
+              name: "email",
+              label: "Email Address",
+              type: "email",
+              placeholder: "colleague@company.com",
             },
           ]}
         />
 
         {/* Role selector — outside the form since it's custom UI */}
         <div>
-          <label className="block text-xs font-semibold text-[#8b9cc8] mb-2 uppercase tracking-wider">
+          <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[#8b9cc8]">
             Assign Role
           </label>
-          <div className="overflow-y-auto max-h-[30vh]">
+          <div className="max-h-[30vh] overflow-y-auto">
             <RoleSelector roles={roles} value={role} onChange={setRole} />
           </div>
         </div>
@@ -59,7 +59,7 @@ export const InviteModal = ({ onClose }: { onClose: () => void }) => {
         <Button
           variant="outline"
           onClick={onClose}
-          className="w-full border-[#1e2a4a] text-[#8b9cc8] hover:text-white hover:bg-[#0f1d3d]"
+          className="w-full border-[#1e2a4a] text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
         >
           Cancel
         </Button>

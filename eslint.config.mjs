@@ -4,6 +4,7 @@ import tseslint from "typescript-eslint";
 import importPlugin from "eslint-plugin-import";
 import unusedImports from "eslint-plugin-unused-imports";
 import reactPlugin from "eslint-plugin-react";
+import prettier from "eslint-config-prettier";
 
 export default [
   // Ignore files
@@ -23,6 +24,7 @@ export default [
 
   //TypeScript setup
   ...tseslint.configs.recommended,
+  prettier,
 
   //Next.js plugin
   {
@@ -30,14 +32,14 @@ export default [
       "@next/next": nextPlugin,
       import: importPlugin,
       "unused-imports": unusedImports,
-      react:reactPlugin
+      react: reactPlugin,
     },
     rules: {
       //General
       "no-console": "warn",
       "no-debugger": "error",
-      "eqeqeq": ["error", "always"],
-      "curly": "error",
+      eqeqeq: ["error", "always"],
+      curly: "error",
       "prefer-const": "error",
 
       //TypeScript

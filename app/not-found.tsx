@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="relative min-h-screen bg-[#040A1D] flex items-center justify-center overflow-hidden px-4">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#040A1D] px-4">
       {/* Animated grid */}
       <div
         className="pointer-events-none absolute inset-0"
@@ -33,22 +33,22 @@ export default function NotFound() {
 
       {/* Floating blobs */}
       <div
-        className="pointer-events-none absolute top-1/4 left-1/4 h-72 w-72 rounded-full opacity-10 blur-3xl animate-pulse"
+        className="pointer-events-none absolute left-1/4 top-1/4 h-72 w-72 animate-pulse rounded-full opacity-10 blur-3xl"
         style={{ background: "#8735C9", animationDuration: "4s" }}
       />
       <div
-        className="pointer-events-none absolute bottom-1/4 right-1/4 h-56 w-56 rounded-full opacity-10 blur-3xl animate-pulse"
+        className="pointer-events-none absolute bottom-1/4 right-1/4 h-56 w-56 animate-pulse rounded-full opacity-10 blur-3xl"
         style={{ background: "#4B2070", animationDuration: "6s" }}
       />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="relative z-10 flex flex-col items-center text-center duration-700 animate-in fade-in slide-in-from-bottom-8">
         {/* 404 big display */}
         <div className="relative mb-4 select-none">
           {/* Shadow / glitch layer */}
           <span
             aria-hidden="true"
-            className="absolute inset-0 flex items-center justify-center text-[10rem] sm:text-[14rem] font-extrabold leading-none tracking-tighter"
+            className="absolute inset-0 flex items-center justify-center text-[10rem] font-extrabold leading-none tracking-tighter sm:text-[14rem]"
             style={{
               color: "transparent",
               WebkitTextStroke: "1px rgba(135,53,201,0.25)",
@@ -59,9 +59,10 @@ export default function NotFound() {
           </span>
           {/* Main text */}
           <span
-            className="relative text-[10rem] sm:text-[14rem] font-extrabold leading-none tracking-tighter"
+            className="relative text-[10rem] font-extrabold leading-none tracking-tighter sm:text-[14rem]"
             style={{
-              background: "linear-gradient(135deg, #a855f7 0%, #8735C9 40%, #4B2070 100%)",
+              background:
+                "linear-gradient(135deg, #a855f7 0%, #8735C9 40%, #4B2070 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -75,16 +76,17 @@ export default function NotFound() {
         <div
           className="mb-6 h-px w-24 rounded-full"
           style={{
-            background: "linear-gradient(90deg, transparent, #8735C9, transparent)",
+            background:
+              "linear-gradient(90deg, transparent, #8735C9, transparent)",
           }}
         />
 
-        <h1 className="mb-3 text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+        <h1 className="mb-3 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
           Page not found
         </h1>
         <p className="mb-8 max-w-md text-sm leading-relaxed text-white/50">
-          Looks like this page took an unexpected detour. The URL might be wrong, or the
-          page may have moved. Let&apos;s get you back on track.
+          Looks like this page took an unexpected detour. The URL might be
+          wrong, or the page may have moved. Let&apos;s get you back on track.
         </p>
 
         {/* Action buttons */}
@@ -92,7 +94,7 @@ export default function NotFound() {
           <Link
             id="not-found-home-btn"
             href="/"
-            className="group flex items-center justify-center gap-2 rounded-xl bg-[#8735C9] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#8735C9]/80 hover:shadow-lg hover:shadow-purple-500/25 active:scale-95"
+            className="hover:shadow-purple-500/25 group flex items-center justify-center gap-2 rounded-xl bg-[#8735C9] px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#8735C9]/80 hover:shadow-lg active:scale-95"
           >
             <Home className="h-4 w-4" />
             Back to home

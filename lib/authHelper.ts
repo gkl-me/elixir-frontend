@@ -26,13 +26,13 @@ export function handlerServerError(error: unknown) {
     errorCode === AUTH_ERROR_CODE.UNAUTHORIZED
   ) {
     return redirect(
-      AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`,
+      AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`
     );
   }
 
   if (status === STATUS_CODES.FORBIDDEN) {
     return redirect(
-      AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.BLOCKED}`,
+      AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.BLOCKED}`
     );
   }
 }
@@ -42,7 +42,7 @@ export async function updateSessionAndCookies(
   req: NextRequest,
   session: IronSession<IAuthSession>,
   accessToken: string,
-  refreshToken: string,
+  refreshToken: string
 ) {
   session.accessToken = accessToken;
   await session.save();
@@ -77,7 +77,7 @@ export async function updateSessionAndCookies(
   finalRes.cookies.set(
     sessionOptions.cookieName,
     sealedSession,
-    sessionOptions.cookieOptions,
+    sessionOptions.cookieOptions
   );
 
   //set refresh in client
@@ -105,8 +105,8 @@ export function handleRefreshFailure(req: NextRequest) {
   const response = NextResponse.redirect(
     new URL(
       AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`,
-      req.url,
-    ),
+      req.url
+    )
   );
   response.cookies.delete(sessionOptions.cookieName);
   response.cookies.delete("refreshToken");
