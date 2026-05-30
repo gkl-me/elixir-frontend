@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertTriangle, RefreshCw, Home, ChevronDown, ChevronUp, Copy, Check } from "lucide-react";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function Error({
@@ -11,27 +11,11 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const handleCopy = () => {
-    const details = [
-      `Error: ${error.message}`,
-      error.digest ? `Digest: ${error.digest}` : null,
-      error.stack ? `Stack:\n${error.stack}` : null,
-    ]
-      .filter(Boolean)
-      .join("\n\n");
-
-    navigator.clipboard.writeText(details).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
 
   return (
     <div className="relative min-h-screen bg-[#040A1D] flex items-center justify-center overflow-hidden px-4">
