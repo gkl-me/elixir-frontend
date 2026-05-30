@@ -55,11 +55,11 @@ export function useApi(config:useApiConfig){
 
                 const err = AxiosErrorHandler(error)
 
-                if(err.statusCode == STATUS_CODES.UNAUTHORIZED){
+                if(err.statusCode === STATUS_CODES.UNAUTHORIZED){
                     router.push(AUTH_CLIENT_ROUTES.LOGIN+`?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`)
                 }
 
-                if(err.statusCode == STATUS_CODES.FORBIDDEN){
+                if(err.statusCode === STATUS_CODES.FORBIDDEN){
                     router.push(AUTH_CLIENT_ROUTES.LOGIN+`?reason=${AUTH_ERROR_CODE.BLOCKED}`)
                 }
 

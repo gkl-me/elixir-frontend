@@ -25,7 +25,7 @@ function redirect(url: string, req: NextRequest) {
   return NextResponse.redirect(new URL(url, req.url));
 }
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const reason = req.nextUrl.searchParams.get("reason");
   const response = NextResponse.next();
@@ -86,7 +86,7 @@ export async function middleware(req: NextRequest) {
   //public routes
   if (isPublicRoutes(pathname)) {
     if (isAuthenticated && !reason) {
-      if (user.role == "superAdmin") {
+      if (user.role === "superAdmin") {
         return redirect(ADMIN_CLIENT_ROUTES.DASHBOARD, req);
       } else {
         return redirect(USER_CLIENT_ROUTES.ONBOARDING, req);
@@ -105,11 +105,11 @@ export async function middleware(req: NextRequest) {
 
   //admin routes
   if (pathname.startsWith(ADMIN_ROUTE)) {
-    if (user.role != "superAdmin") {
+    if (user.role !== "superAdmin") {
       return redirect(USER_CLIENT_ROUTES.ONBOARDING, req);
     }
 
-    if (pathname == "/admin") {
+    if (pathname === "/admin") {
       return redirect(ADMIN_CLIENT_ROUTES.DASHBOARD, req);
     }
   }
