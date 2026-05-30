@@ -56,9 +56,8 @@ export default function Error({
 
       {/* Card */}
       <div
-        className={`relative z-10 w-full max-w-lg transition-all duration-700 ${
-          mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-        }`}
+        className={`relative z-10 w-full max-w-lg transition-all duration-700 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+          }`}
       >
         {/* Glass card */}
         <div
@@ -86,20 +85,6 @@ export default function Error({
             An unexpected error occurred. Don&apos;t worry — your data is safe.
             You can try recovering or head back home.
           </p>
-
-          {/* Error message pill */}
-          {error.message && (
-            <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3">
-              <p className="break-words text-center text-sm font-medium text-red-300">
-                {error.message}
-              </p>
-              {error.digest && (
-                <p className="mt-1 text-center text-xs text-white/30">
-                  Digest: <span className="font-mono">{error.digest}</span>
-                </p>
-              )}
-            </div>
-          )}
 
           {/* Action buttons */}
           <div className="mb-4 flex flex-col gap-3 sm:flex-row">
