@@ -5,7 +5,6 @@ import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function Error({
-  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -56,8 +55,9 @@ export default function Error({
 
       {/* Card */}
       <div
-        className={`relative z-10 w-full max-w-lg transition-all duration-700 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-          }`}
+        className={`relative z-10 w-full max-w-lg transition-all duration-700 ${
+          mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+        }`}
       >
         {/* Glass card */}
         <div
