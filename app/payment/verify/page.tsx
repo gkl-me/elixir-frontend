@@ -23,6 +23,8 @@ import {
   changePlanAction,
   completeOnboadringPaymentAction,
 } from "@/app/actions/onboarding.action";
+import { useApi } from "@/hooks/useApi";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 
 type PaymentStatus = "pending" | "success" | "failed" | "incomplete";
 
@@ -30,6 +32,12 @@ export default function PaymentVerifyPage() {
   const [status, setStatus] = useState<PaymentStatus>("pending");
   const [message, setMessage] = useState("Verifying your payment...");
   const router = useRouter();
+
+
+  const { execute } = useApi({
+    method: 'POST',
+    url: NEXT_API_ROUTES.UPDATE_SESSION
+  })
 
   const handleVerify = useCallback(async () => {
     setStatus("pending");
@@ -39,11 +47,19 @@ export default function PaymentVerifyPage() {
 
     if (res.success) {
       const paymentData = res.data;
-      if (paymentData.paymentStatus === "success") {
+      if (paymentData.paymentStatus === "success" && paymentData?.workspaceSlug) {
+
+        //update the session with workspace slug 
+        await execute({
+          body: {
+            workspaceSlug: paymentData?.workspaceSlug
+          }
+        })
+
         setStatus("success");
         setMessage(res.message);
         setTimeout(() => {
-          router.push(USER_CLIENT_ROUTES.WORKSPACE);
+          router.push(`/workspace/${paymentData.workspaceSlug}`);
         }, 2000);
       } else if (paymentData.paymentStatus === "incomplete") {
         setStatus("incomplete");

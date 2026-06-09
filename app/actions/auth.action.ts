@@ -36,15 +36,20 @@ export async function loginAction(data: z.infer<typeof LoginSchema>) {
 
     const accessToken = res?.data.data.accessToken;
     const refreshToken = res?.data.data.refreshToken;
+    const workspace = res?.data.data.workspace
 
     setCookies(refreshToken);
     const session = await getSession();
+    session.hasWorkspace = Boolean(workspace)
+    session.workspaceSlug = workspace?.slug ?? undefined
     session.accessToken = accessToken;
     await session.save();
 
-    //redirect the user based on roles
+    //redirect the user based on roles and if workspace
     if (res?.data.data.user.role === "superAdmin") {
       redirect(ADMIN_CLIENT_ROUTES.DASHBOARD);
+    } else if (workspace?.slug) {
+      redirect(USER_CLIENT_ROUTES.WORKSPACE + "/" + workspace.slug)
     } else {
       redirect(USER_CLIENT_ROUTES.ONBOARDING);
     }
@@ -54,7 +59,7 @@ export async function loginAction(data: z.infer<typeof LoginSchema>) {
     if (err.errorCode === AUTH_ERROR_CODE.NOT_VERIFIED) {
       redirect(
         AUTH_CLIENT_ROUTES.VERIFY_ERROR +
-          `?email=${encodeURIComponent(data.email)}`
+        `?email=${encodeURIComponent(data.email)}`
       );
     }
 

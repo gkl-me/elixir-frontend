@@ -9,4 +9,6 @@ export const NEXT_API_ROUTES = {
 
   GOOGLE_AUTH: "/api/auth/google-verify",
   GITHUB_AUTH: "/api/auth/github-verify",
+
+  UPDATE_SESSION: "/api/auth/update-session"
 };

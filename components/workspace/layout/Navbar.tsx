@@ -24,7 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { NOTIFICATION_CONFIG, NotificationType } from "../../../lib/theme";
 import { logoutAction } from "@/app/actions/auth.action";
-import { useWorkspaceContext } from "@/store/useWorkspaceContext";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 
 const kindIcon: Record<SearchResult["kind"], React.ReactNode> = {
   project: <FolderKanban className="h-4 w-4 text-[#8735C9]" />,
@@ -50,12 +50,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
   const results =
     query.length > 1
       ? demoSearchIndex
-          .filter(
-            (r) =>
-              r.label.toLowerCase().includes(query.toLowerCase()) ||
-              r.sublabel?.toLowerCase().includes(query.toLowerCase())
-          )
-          .slice(0, 8)
+        .filter(
+          (r) =>
+            r.label.toLowerCase().includes(query.toLowerCase()) ||
+            r.sublabel?.toLowerCase().includes(query.toLowerCase())
+        )
+        .slice(0, 8)
       : [];
 
   const [notifications, setNotifications] = useState(demoNotifications);
@@ -66,7 +66,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  const currentUser = useWorkspaceContext((s) => s);
+  const userName = useWorkspaceStore((s) => s.context?.name);
+  const userEmail = useWorkspaceStore((s) => s.context?.email);
+  const userAvatar = useWorkspaceStore((s) => s.context?.avatarUrl);
+  const workspaceSlug = useWorkspaceStore((s) => s.context?.workspaceSlug)
 
   const handleKeyDown = (e: globalThis.KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
@@ -308,13 +311,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
             className="flex items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-[#0f1d3d]"
           >
             <Avatar className="h-7 w-7 border border-[#4B2070]">
-              <AvatarImage src={currentUser.avatarUrl} />
+              <AvatarImage src={userAvatar} />
               <AvatarFallback className="bg-[#4B2070] text-xs">
-                {currentUser.name.charAt(0)}
+                {userName?.charAt(0)}
               </AvatarFallback>
             </Avatar>
             <span className="hidden text-xs font-semibold capitalize text-[#8b9cc8] sm:block">
-              {currentUser.name}
+              {userName}
             </span>
           </button>
 
@@ -324,17 +327,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
               <div className="border-b border-[#1e2a4a] px-4 py-3">
                 <div className="flex items-center gap-2.5">
                   <Avatar className="h-8 w-8 flex-shrink-0 border border-[#4B2070]">
-                    <AvatarImage src={currentUser.avatarUrl} />
+                    <AvatarImage src={userAvatar} />
                     <AvatarFallback className="bg-[#4B2070] text-xs">
-                      {currentUser.name.charAt(0)}
+                      {userName?.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
                     <p className="truncate text-xs font-semibold text-white">
-                      {currentUser.name}
+                      {userName}
                     </p>
                     <p className="truncate text-[10px] text-[#4B5578]">
-                      {currentUser.email}
+                      {userEmail}
                     </p>
                   </div>
                 </div>
@@ -351,7 +354,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
                     <button
                       key={item.label}
                       onClick={() => {
-                        router.push(`/workspace/${item.view}`);
+                        router.push(`/workspace/${workspaceSlug}/${item.view}`);
                         setUserMenuOpen(false);
                       }}
                       className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-[#8b9cc8] transition-colors hover:bg-[#0f1d3d] hover:text-white"

@@ -4,13 +4,17 @@ import { useEffect, useState } from "react";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
 
-export default function Error({
-  reset,
-}: {
+export default function Error({ }: {
   error: Error & { digest?: string };
-  reset: () => void;
 }) {
   const [mounted, setMounted] = useState(false);
+
+  const handleRetry = () => {
+    try {
+      window.location.reload();
+    } catch {
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -55,9 +59,8 @@ export default function Error({
 
       {/* Card */}
       <div
-        className={`relative z-10 w-full max-w-lg transition-all duration-700 ${
-          mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-        }`}
+        className={`relative z-10 w-full max-w-lg transition-all duration-700 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+          }`}
       >
         {/* Glass card */}
         <div
@@ -90,7 +93,7 @@ export default function Error({
           <div className="mb-4 flex flex-col gap-3 sm:flex-row">
             <button
               id="error-reset-btn"
-              onClick={reset}
+              onClick={handleRetry}
               className="hover:shadow-purple-500/20 group flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#8735C9] px-5 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#8735C9]/80 hover:shadow-lg active:scale-95"
             >
               <RefreshCw className="h-4 w-4 transition-transform duration-300 group-hover:rotate-180" />

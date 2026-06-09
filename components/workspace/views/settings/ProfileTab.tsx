@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CustomForm } from "@/components/form/CustomForm";
 import { Section } from "./shared";
-import { useWorkspaceContext } from "@/store/useWorkspaceContext";
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 
 // ─── Zod schema ───────────────────────────────────────────
 const profileSchema = z.object({
@@ -36,12 +36,15 @@ TextareaField.displayName = "TextareaField";
 
 // ─── ProfileTab ───────────────────────────────────────────
 export const ProfileTab = () => {
-  const user = useWorkspaceContext((s) => s);
+
+  const userName = useWorkspaceStore((s) => s.context?.name)
+  const userEmail = useWorkspaceStore((s) => s.context?.email)
+  const userAvatarUrl = useWorkspaceStore((s) => s.context?.avatarUrl)
 
   const [userDetails, setUserDetails] = React.useState({
-    name: user.name,
-    email: user.email,
-    avatarUrl: user.avatarUrl,
+    name: userName,
+    email: userEmail,
+    avatarUrl: userAvatarUrl,
     jobTitle: "",
     bio: "",
   });
@@ -52,25 +55,25 @@ export const ProfileTab = () => {
     bio: userDetails.bio,
   };
 
-  const { execute } = useApi({
-    url: NEXT_API_ROUTES.USERS_ME_API,
-    method: "GET",
-  });
+  // const { execute } = useApi({
+  //   url: NEXT_API_ROUTES.USERS_ME_API,
+  //   method: "GET",
+  // });
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await execute();
-      setUserDetails({
-        name: data.name,
-        email: data.email,
-        avatarUrl: data.avatarUrl,
-        jobTitle: data.jobTitle,
-        bio: data.bio,
-      });
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const { data } = await execute();
+  //     setUserDetails({
+  //       name: data.name,
+  //       email: data.email,
+  //       avatarUrl: data.avatarUrl,
+  //       jobTitle: data.jobTitle,
+  //       bio: data.bio,
+  //     });
+  //   })();
+  // }, []);
 
-  const handleSubmit = () => {};
+  const handleSubmit = () => { };
 
   return (
     <div className="space-y-6">
@@ -83,10 +86,10 @@ export const ProfileTab = () => {
           <div className="group relative">
             <Avatar className="h-20 w-20 border-2 border-[#8735C9]/40">
               <AvatarImage
-                src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.name}`}
+                src={userAvatarUrl}
               />
               <AvatarFallback className="bg-[#8735C9] text-xl font-bold text-white">
-                {user.name.charAt(0)}
+                {userName?.charAt(0)}
               </AvatarFallback>
             </Avatar>
             <button className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
@@ -94,8 +97,7 @@ export const ProfileTab = () => {
             </button>
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">{user.name}</p>
-            <p className="mt-0.5 text-xs text-[#6b7db3]">Owner</p>
+            <p className="text-sm font-semibold text-white">{userName}</p>
             <Button
               size="sm"
               variant="ghost"

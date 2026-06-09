@@ -7,4 +7,6 @@ export interface ITokenPayload extends JWTPayload {
 
 export interface IAuthSession {
   accessToken?: string;
+  hasWorkspace?: boolean;
+  workspaceSlug?: string;
 }
