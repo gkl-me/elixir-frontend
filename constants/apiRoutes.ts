@@ -19,8 +19,10 @@ export const AUTH_API_ROUTES = {
 export const USER_API_ROUTES = {
   GET_ALL_USER: "/users/",
   TOGGLE_USER_STATUS: "/users",
+  GET_ME: "/users/me",
   CHANGE_PASSWORD: "/users/change-password",
   ACTIVE_SESSIONS: "/users/active-sessions",
+  UPDATE_PROFILE: "/users/update-profile",
 };
 
 export const PLAN_API_ROUTES = {
@@ -73,4 +75,13 @@ export const WORKSPACE_API_ROUTES = {
     `/workspace/${workspaceId}/invites/${inviteId}/revoke`,
   VALIDATE_INVITE: (token: string) => `/workspace/invites/validate/${token}`,
   ACCEPT_INVITE: "/workspace/invites/accept",
+
+  GET_TEAMS: (workspaceId: string) => `/workspace/${workspaceId}/teams`,
+  CREATE_TEAM: (workspaceId: string) => `/workspace/${workspaceId}/teams`,
+  ADD_MEMBERS: (workspaceId: string, teamId: string) =>
+    `/workspace/${workspaceId}/teams/${teamId}/members`,
+  REMOVE_TEAM_MEMBER: (workspaceId: string, teamId: string, memberId: string) =>
+    `/workspace/${workspaceId}/teams/${teamId}/members/${memberId}`,
+  GET_TEAM: (workspaceId: string, teamId: string) =>
+    `/workspace/${workspaceId}/teams/${teamId}`,
 };

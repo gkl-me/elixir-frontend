@@ -15,7 +15,6 @@ import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 // ─── Zod schema ───────────────────────────────────────────
 const passwordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Current password is required"),
     newPassword: z
       .string()
       .min(8, "Password must be at least 8 characters")
@@ -34,10 +33,7 @@ type PasswordValues = z.infer<typeof passwordSchema>;
 export const SecurityTab = () => {
   const handlePasswordSubmit = (values: PasswordValues) => {
     startTransition(async () => {
-      const res = await handleChangePassword(
-        values.currentPassword,
-        values.newPassword
-      );
+      const res = await handleChangePassword(values.newPassword);
 
       toastHandler({
         success: res.success,
@@ -70,19 +66,13 @@ export const SecurityTab = () => {
         <CustomForm<PasswordValues>
           schema={passwordSchema}
           defaultValues={{
-            currentPassword: "",
             newPassword: "",
             confirmPassword: "",
           }}
           onSubmit={handlePasswordSubmit}
           submitText="Update Password"
+          resetOnSubmit={true}
           fields={[
-            {
-              name: "currentPassword",
-              label: "Current Password",
-              placeholder: "••••••••",
-              component: PasswordInput,
-            },
             {
               name: "newPassword",
               label: "New Password",

@@ -44,5 +44,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL(`/invite/${inviteToken}`, req.url));
   }
 
-  return NextResponse.redirect(new URL(USER_CLIENT_ROUTES.ONBOARDING, req.url));
+  return NextResponse.redirect(
+    new URL(USER_CLIENT_ROUTES.WORKSPACE + "/" + session.workspaceSlug, req.url)
+  );
 }

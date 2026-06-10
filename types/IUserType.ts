@@ -12,6 +12,12 @@ export interface ToggleUserStatusData {
 }
 
 export interface ChangePasswordData {
-  currentPassword: string;
   newPassword: string;
+}
+
+export interface UpdateUserProfileData {
+  name?: string;
+  jobTitle?: string;
+  bio?: string;
+  avatarUrl?: string;
 }
