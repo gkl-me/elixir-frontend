@@ -12,7 +12,6 @@ import {
   HardDrive,
   Settings,
   ChevronDown,
-  Zap,
   Plus,
   Check,
   Bell,
@@ -20,13 +19,11 @@ import {
   X,
 } from "lucide-react";
 import {
-  demoWorkspaceList,
   demoProjects,
-  WorkspaceSummary,
 } from "../../../data/demoData";
-import { PLAN_CONFIG } from "../../../lib/theme";
 import { cn } from "@/lib/utils";
-import { useWorkspaceStore } from "@/store/useWorkspaceContext";
+import { useWorkspaceStore, WorkspaceList } from "@/store/useWorkspaceContext";
+import { USER_CLIENT_ROUTES } from "@/constants/clientRoutes";
 
 // ─── Types ────────────────────────────────────────────────
 interface NavLinkType {
@@ -45,23 +42,35 @@ interface MainSidebarProps {
   collapsed?: boolean;
 }
 
+const getAvatarBg = (name: string) => {
+  if (!name) return "from-purple-500 to-indigo-600";
+  const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const gradients = [
+    "from-purple-500 to-indigo-600",
+    "from-blue-500 to-cyan-600",
+    "from-emerald-500 to-teal-600",
+    "from-pink-500 to-rose-600",
+    "from-amber-500 to-orange-600",
+  ];
+  return gradients[hash % gradients.length];
+};
+
 // ─── Workspace Switcher Dropdown ─────────────────────────
 const SHOW_SEARCH_THRESHOLD = 4;
 
 const WorkspaceSwitcherDropdown: React.FC<{
-  workspaces: WorkspaceSummary[];
+  workspaces: WorkspaceList[];
   activeId: string;
   onSelect: (id: string) => void;
   onClose: () => void;
 }> = ({ workspaces, activeId, onSelect, onClose }) => {
   const [query, setQuery] = useState("");
   const showSearch = workspaces.length > SHOW_SEARCH_THRESHOLD;
+  const router = useRouter();
 
   const filtered = query.trim()
-    ? workspaces.filter(
-        (w) =>
-          w.name.toLowerCase().includes(query.toLowerCase()) ||
-          w.plan.toLowerCase().includes(query.toLowerCase())
+    ? workspaces.filter((w) =>
+        w.name.toLowerCase().includes(query.toLowerCase())
       )
     : workspaces;
 
@@ -70,6 +79,11 @@ const WorkspaceSwitcherDropdown: React.FC<{
   const ordered = [...active, ...others];
 
   const hasOwnWorkspace = useWorkspaceStore((s) => s.context?.hasOwnWorkspace);
+
+  const handleCreateWorkspace = () => {
+    onClose();
+    router.push(USER_CLIENT_ROUTES.ONBOARDING);
+  };
 
   return (
     <div className="absolute left-2 right-2 top-full z-50 mt-1 flex flex-col overflow-hidden rounded-xl border border-[#1e2a4a] bg-[#0C1635] shadow-2xl shadow-black/60">
@@ -108,7 +122,6 @@ const WorkspaceSwitcherDropdown: React.FC<{
           </div>
         ) : (
           ordered.map((ws) => {
-            const planCfg = PLAN_CONFIG[ws.plan];
             const isActive = ws.id === activeId;
             return (
               <button
@@ -120,8 +133,10 @@ const WorkspaceSwitcherDropdown: React.FC<{
                 )}
               >
                 <div
-                  className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold shadow-md"
-                  style={{ backgroundColor: ws.avatarColor }}
+                  className={cn(
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white shadow-md bg-gradient-to-br",
+                    getAvatarBg(ws.name)
+                  )}
                 >
                   {ws.name.charAt(0)}
                 </div>
@@ -136,20 +151,7 @@ const WorkspaceSwitcherDropdown: React.FC<{
                   >
                     {ws.name}
                   </div>
-                  <div className="mt-0.5 flex items-center gap-1.5">
-                    <span
-                      className="rounded-full px-1.5 py-0.5 text-[10px] font-medium"
-                      style={{
-                        color: planCfg?.textColor ?? "#9ca3af",
-                        backgroundColor: planCfg?.bg ?? "transparent",
-                      }}
-                    >
-                      {ws.plan}
-                    </span>
-                    <span className="text-[10px] text-[#4B5578]">
-                      · {ws.memberCount} member{ws.memberCount !== 1 ? "s" : ""}
-                    </span>
-                  </div>
+                  <p className="mt-0.5 text-[10px] text-[#4B5578]">Workspace</p>
                 </div>
                 {isActive && (
                   <Check className="h-3.5 w-3.5 flex-shrink-0 text-[#8735C9]" />
@@ -163,7 +165,7 @@ const WorkspaceSwitcherDropdown: React.FC<{
       {!hasOwnWorkspace && (
         <div className="border-t border-[#1e2a4a] p-1.5">
           <button
-            onClick={onClose}
+            onClick={handleCreateWorkspace}
             className="hover:text-purple-300 flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-[#8735C9] transition-colors hover:bg-[#132353]"
           >
             <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-[#8735C9]/30 bg-[#8735C9]/10">
@@ -187,13 +189,14 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   const activeView = pathParts[2] || "home";
 
   const [switcherOpen, setSwitcherOpen] = useState(false);
-  const [activeWorkspaceId, setActiveWorkspaceId] = useState("ws1");
   const switcherRef = useRef<HTMLDivElement>(null);
 
+  const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId);
+  const workspaceList = useWorkspaceStore((s) => s.context?.workspaces) || [];
+
   const activeWorkspace =
-    demoWorkspaceList.find((w) => w.id === activeWorkspaceId) ??
-    demoWorkspaceList[0];
-  const planCfg = PLAN_CONFIG[activeWorkspace.plan];
+    workspaceList.find((w) => w.id === workspaceId) ??
+    workspaceList[0];
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -318,29 +321,23 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
             "group flex w-full items-center rounded-xl transition-colors hover:bg-[#0f1d3d]",
             collapsed ? "justify-center p-2" : "gap-2.5 p-2"
           )}
-          title={collapsed ? activeWorkspace.name : undefined}
+          title={collapsed ? activeWorkspace?.name : undefined}
         >
           <div
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-base font-bold shadow-lg"
-            style={{ backgroundColor: activeWorkspace.avatarColor }}
+            className={cn(
+              "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-base font-bold shadow-lg text-white bg-gradient-to-br",
+              getAvatarBg(activeWorkspace?.name ?? "")
+            )}
           >
-            {activeWorkspace.name.charAt(0)}
+            {activeWorkspace?.name.charAt(0)}
           </div>
           {!collapsed && (
             <>
               <div className="min-w-0 flex-1 text-left">
                 <div className="truncate text-sm font-bold leading-tight text-white">
-                  {activeWorkspace.name}
+                  {activeWorkspace?.name}
                 </div>
-                <div
-                  className="mt-0.5 flex items-center gap-1"
-                  style={{ color: planCfg?.textColor ?? "#9ca3af" }}
-                >
-                  <Zap className="h-3 w-3" />
-                  <span className="text-[11px] font-medium">
-                    {activeWorkspace.plan} Plan
-                  </span>
-                </div>
+                <p className="mt-0.5 text-[10px] text-[#6b7db3]">Workspace</p>
               </div>
               <ChevronDown
                 className={cn(
@@ -354,11 +351,14 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
 
         {switcherOpen && !collapsed && (
           <WorkspaceSwitcherDropdown
-            workspaces={[]}
-            activeId={""}
+            workspaces={workspaceList}
+            activeId={workspaceId ?? ""}
             onSelect={(id) => {
-              setActiveWorkspaceId(id);
               setSwitcherOpen(false);
+              const target = workspaceList.find((w) => w.id === id);
+              if (target) {
+                router.push(`/workspace/${target.slug}`);
+              }
             }}
             onClose={() => setSwitcherOpen(false)}
           />

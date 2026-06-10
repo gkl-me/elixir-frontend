@@ -1,5 +1,12 @@
 import { create } from "zustand";
 
+export type WorkspaceList = {
+  id: string,
+  name: string,
+  slug: string,
+  isActive: boolean,
+}
+
 export type WorkspaceContext = {
   name: string;
   email: string;
@@ -16,6 +23,7 @@ export type WorkspaceContext = {
   allPermissions?: string[];
   permissionDependencies?: Record<string, string[]>;
   builtinRoles?: Record<string, string[]>;
+  workspaces?: WorkspaceList[];
 };
 
 interface WorkspaceStore {
