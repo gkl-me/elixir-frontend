@@ -11,8 +11,6 @@ interface TeamCardProps {
 }
 
 export const TeamCard = ({ team, onManage }: TeamCardProps) => {
-
-
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-[#1e2a4a] bg-[#0C1635] transition-all duration-200 hover:border-[#293d6b]">
       <div className="h-0.5 w-full bg-gradient-to-r from-[#8735C9] to-[#60a5fa] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

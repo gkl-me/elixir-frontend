@@ -24,9 +24,7 @@ export async function toggleUserStatusAction(userId: string) {
   }
 }
 
-export async function handleChangePassword(
-  newPassword: string
-) {
+export async function handleChangePassword(newPassword: string) {
   try {
     const res = await userService.handleChangePassword({
       newPassword,
@@ -44,9 +42,7 @@ export async function handleChangePassword(
     };
   }
 }
-export async function handleUpdateProfile(
-  data: UpdateUserProfileData
-) {
+export async function handleUpdateProfile(data: UpdateUserProfileData) {
   try {
     const res = await userService.handleUpdateProfile(data);
 

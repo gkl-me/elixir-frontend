@@ -39,7 +39,9 @@ export const AddMembersModal = ({
   });
 
   const loadMembers = useCallback(async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     try {
       const res = await fetchWorkspaceMembers({
         params: { workspaceId },
@@ -74,7 +76,9 @@ export const AddMembersModal = ({
     );
 
   const handleAdd = async () => {
-    if (selected.length === 0) return;
+    if (selected.length === 0) {
+      return;
+    }
     setLoading(true);
     try {
       const res = await addMembersAction({
@@ -87,10 +91,13 @@ export const AddMembersModal = ({
         onSuccess();
         onClose();
       } else {
-        toastHandler({ success: false, error: res.error || "Failed to add members" });
+        toastHandler({
+          success: false,
+          error: res.error || "Failed to add members",
+        });
       }
     } catch (error) {
-      toastHandler({ success: false, error: "Failed to add members" });
+      toastHandler({ success: false, error: AxiosErrorHandler(error).message });
     } finally {
       setLoading(false);
     }
@@ -117,21 +124,23 @@ export const AddMembersModal = ({
         </div>
 
         {/* Member checklist — scrollable */}
-        <div className="max-h-[50vh] space-y-1.5 overflow-y-auto pr-0.5 scrollbar-hide">
+        <div className="scrollbar-hide max-h-[50vh] space-y-1.5 overflow-y-auto pr-0.5">
           {membersLoading ? (
             <div className="flex items-center justify-center py-10">
               <Loader2 className="h-6 w-6 animate-spin text-[#8735C9]" />
             </div>
           ) : available.length === 0 ? (
             <p className="py-6 text-center text-[11px] text-[#4B5578]">
-              {members.filter((m) => !excludeIds.includes(m.userId)).length === 0
+              {members.filter((m) => !excludeIds.includes(m.userId)).length ===
+              0
                 ? "All workspace members are already in this team."
                 : "No members match your search."}
             </p>
           ) : (
             available.map((m) => {
               const sel = selected.includes(m.userId);
-              const badge = ROLE_BADGE[m.roleKey.toLowerCase()] ?? ROLE_BADGE.member;
+              const badge =
+                ROLE_BADGE[m.roleKey.toLowerCase()] ?? ROLE_BADGE.member;
               const Icon = badge.icon;
               return (
                 <button

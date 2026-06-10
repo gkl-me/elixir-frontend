@@ -10,6 +10,7 @@ import { TeamMember } from "./TeamManagePage";
 import { removeTeamMemberAction } from "@/app/actions/workspace.action";
 import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 import { toastHandler } from "@/lib/toastHandler";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
 
 interface RemoveTeamMemberModalProps {
   teamId: string;
@@ -42,10 +43,13 @@ export const RemoveTeamMemberModal = ({
         onSuccess();
         onClose();
       } else {
-        toastHandler({ success: false, error: res.error || "Failed to remove member" });
+        toastHandler({
+          success: false,
+          error: res.error || "Failed to remove member",
+        });
       }
     } catch (error) {
-      toastHandler({ success: false, error: "Failed to remove member" });
+      toastHandler({ success: false, error: AxiosErrorHandler(error).message });
     } finally {
       setLoading(false);
     }
@@ -75,7 +79,8 @@ export const RemoveTeamMemberModal = ({
           </div>
         </div>
         <p className="text-xs text-[#6b7db3]">
-          They will lose access to all team resources but remain a workspace member.
+          They will lose access to all team resources but remain a workspace
+          member.
         </p>
         <div className="flex gap-2 border-t border-[#1e2a4a] pt-1">
           <Button

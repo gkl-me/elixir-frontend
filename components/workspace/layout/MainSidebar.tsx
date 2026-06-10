@@ -18,9 +18,7 @@ import {
   Search,
   X,
 } from "lucide-react";
-import {
-  demoProjects,
-} from "../../../data/demoData";
+import { demoProjects } from "../../../data/demoData";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore, WorkspaceList } from "@/store/useWorkspaceContext";
 import { USER_CLIENT_ROUTES } from "@/constants/clientRoutes";
@@ -43,8 +41,12 @@ interface MainSidebarProps {
 }
 
 const getAvatarBg = (name: string) => {
-  if (!name) return "from-purple-500 to-indigo-600";
-  const hash = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  if (!name) {
+    return "from-purple-500 to-indigo-600";
+  }
+  const hash = name
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const gradients = [
     "from-purple-500 to-indigo-600",
     "from-blue-500 to-cyan-600",
@@ -134,7 +136,7 @@ const WorkspaceSwitcherDropdown: React.FC<{
               >
                 <div
                   className={cn(
-                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold text-white shadow-md bg-gradient-to-br",
+                    "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-sm font-bold text-white shadow-md",
                     getAvatarBg(ws.name)
                   )}
                 >
@@ -195,8 +197,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   const workspaceList = useWorkspaceStore((s) => s.context?.workspaces) || [];
 
   const activeWorkspace =
-    workspaceList.find((w) => w.id === workspaceId) ??
-    workspaceList[0];
+    workspaceList.find((w) => w.id === workspaceId) ?? workspaceList[0];
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -325,7 +326,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
         >
           <div
             className={cn(
-              "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-base font-bold shadow-lg text-white bg-gradient-to-br",
+              "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-base font-bold text-white shadow-lg",
               getAvatarBg(activeWorkspace?.name ?? "")
             )}
           >

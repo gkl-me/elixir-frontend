@@ -16,8 +16,8 @@ export interface ChangePasswordData {
 }
 
 export interface UpdateUserProfileData {
-  name?: string,
-  jobTitle?: string,
-  bio?: string,
-  avatarUrl?: string
+  name?: string;
+  jobTitle?: string;
+  bio?: string;
+  avatarUrl?: string;
 }

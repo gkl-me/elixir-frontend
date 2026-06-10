@@ -1,11 +1,11 @@
 import { create } from "zustand";
 
 export type WorkspaceList = {
-  id: string,
-  name: string,
-  slug: string,
-  isActive: boolean,
-}
+  id: string;
+  name: string;
+  slug: string;
+  isActive: boolean;
+};
 
 export type WorkspaceContext = {
   name: string;

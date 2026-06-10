@@ -31,13 +31,9 @@ type PasswordValues = z.infer<typeof passwordSchema>;
 
 // ─── SecurityTab ──────────────────────────────────────────
 export const SecurityTab = () => {
-
   const handlePasswordSubmit = (values: PasswordValues) => {
     startTransition(async () => {
-      const res = await handleChangePassword(
-        values.newPassword
-      );
-
+      const res = await handleChangePassword(values.newPassword);
 
       toastHandler({
         success: res.success,
@@ -122,7 +118,7 @@ export const SecurityTab = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => { }}
+                  onClick={() => {}}
                   className="h-7 px-2 text-xs text-red-400 hover:bg-red-500/20 hover:text-white"
                 >
                   Revoke

@@ -63,14 +63,15 @@ export function CustomForm<T extends FieldValues>({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(
-        async (values) => {
+      <form
+        onSubmit={form.handleSubmit(async (values) => {
           await onSubmit(values);
           if (resetOnSubmit) {
             form.reset();
           }
-        }
-      )} className="space-y-6">
+        })}
+        className="space-y-6"
+      >
         {fields.map((field) => (
           <FormField
             key={field.name}

@@ -2,7 +2,6 @@ export interface WorkspaceContextData {
   slug: string;
 }
 
-
 export interface ListTeamsData {
   workspaceId: string;
 }
@@ -27,16 +26,14 @@ export interface RemoveTeamMemberData {
   memberId: string;
 }
 
-
 export interface WorkspaceTeamsList {
-  id: string,
-  name: string,
-  memberCount: number,
-  memberName: string[]
+  id: string;
+  name: string;
+  memberCount: number;
+  memberName: string[];
 }
 
-
 export interface GetTeamData {
-  workspaceId: string,
-  teamId: string,
+  workspaceId: string;
+  teamId: string;
 }

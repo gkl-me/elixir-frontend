@@ -19,7 +19,10 @@ interface CreateTeamModalProps {
   onSuccess: () => void;
 }
 
-export const CreateTeamModal = ({ onClose, onSuccess }: CreateTeamModalProps) => {
+export const CreateTeamModal = ({
+  onClose,
+  onSuccess,
+}: CreateTeamModalProps) => {
   const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId ?? "");
   const [form, setForm] = useState({
     name: "",
@@ -37,7 +40,9 @@ export const CreateTeamModal = ({ onClose, onSuccess }: CreateTeamModalProps) =>
   });
 
   const fetchMembers = useCallback(async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     try {
       const res = await execute({
         params: { workspaceId },
@@ -90,10 +95,13 @@ export const CreateTeamModal = ({ onClose, onSuccess }: CreateTeamModalProps) =>
         onSuccess();
         onClose();
       } else {
-        toastHandler({ success: false, error: res.error || "Failed to create team" });
+        toastHandler({
+          success: false,
+          error: res.error || "Failed to create team",
+        });
       }
     } catch (error) {
-      toastHandler({ success: false, error: "Failed to create team" });
+      toastHandler({ success: false, error: AxiosErrorHandler(error).message });
     } finally {
       setLoading(false);
     }
@@ -167,53 +175,55 @@ export const CreateTeamModal = ({ onClose, onSuccess }: CreateTeamModalProps) =>
                 <div className="flex justify-center py-6">
                   <Loader2 className="h-5 w-5 animate-spin text-[#8b9cc8]" />
                 </div>
-              ) : filteredMembers.map((m) => {
-                const sel = form.memberIds.includes(m.userId);
-                return (
-                  <button
-                    key={m.memberId}
-                    onClick={() => toggle(m.userId)}
-                    className={cn(
-                      "flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left transition-all",
-                      sel
-                        ? "border-[#8735C9] bg-[#8735C9]/10"
-                        : "border-[#1e2a4a] bg-[#07112b] hover:border-[#293d6b]"
-                    )}
-                  >
-                    <div
+              ) : (
+                filteredMembers.map((m) => {
+                  const sel = form.memberIds.includes(m.userId);
+                  return (
+                    <button
+                      key={m.memberId}
+                      onClick={() => toggle(m.userId)}
                       className={cn(
-                        "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-[10px] font-bold text-white",
-                        grad(m.name)
+                        "flex w-full items-center gap-3 rounded-xl border px-3 py-2 text-left transition-all",
+                        sel
+                          ? "border-[#8735C9] bg-[#8735C9]/10"
+                          : "border-[#1e2a4a] bg-[#07112b] hover:border-[#293d6b]"
                       )}
                     >
-                      {initials(m.name)}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p
+                      <div
                         className={cn(
-                          "text-xs font-medium",
-                          sel ? "text-white" : "text-[#8b9cc8]"
+                          "flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-[10px] font-bold text-white",
+                          grad(m.name)
                         )}
                       >
-                        {m.name}
-                      </p>
-                      <p className="truncate text-[10px] text-[#4B5578]">
-                        {m.email}
-                      </p>
-                    </div>
-                    <div
-                      className={cn(
-                        "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-all",
-                        sel
-                          ? "border-[#8735C9] bg-[#8735C9]"
-                          : "border-[#293d6b]"
-                      )}
-                    >
-                      {sel && <Check className="h-2.5 w-2.5 text-white" />}
-                    </div>
-                  </button>
-                );
-              })}
+                        {initials(m.name)}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={cn(
+                            "text-xs font-medium",
+                            sel ? "text-white" : "text-[#8b9cc8]"
+                          )}
+                        >
+                          {m.name}
+                        </p>
+                        <p className="truncate text-[10px] text-[#4B5578]">
+                          {m.email}
+                        </p>
+                      </div>
+                      <div
+                        className={cn(
+                          "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-all",
+                          sel
+                            ? "border-[#8735C9] bg-[#8735C9]"
+                            : "border-[#293d6b]"
+                        )}
+                      >
+                        {sel && <Check className="h-2.5 w-2.5 text-white" />}
+                      </div>
+                    </button>
+                  );
+                })
+              )}
             </div>
             {form.memberIds.length > 0 && (
               <p className="mt-2 text-[11px] text-[#c084fc]">

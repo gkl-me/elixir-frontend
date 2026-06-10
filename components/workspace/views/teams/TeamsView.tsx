@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { demoTeams } from "@/data/demoData";
 import { TeamType } from "./shared";
 import { CreateTeamModal } from "./CreateTeamModal";
 import { TeamManagePage } from "./TeamManagePage";
@@ -19,19 +18,16 @@ export const TeamsView = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [managingTeam, setManagingTeam] = useState<TeamType | null>(null);
   const [search, setSearch] = useState("");
-  const [teams, setTeams] = useState<WorkspaceTeamsList[] | []>([])
+  const [teams, setTeams] = useState<WorkspaceTeamsList[] | []>([]);
 
-
-  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId)
-
+  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
 
   const { execute } = useApi({
     url: NEXT_API_ROUTES.GET_WORKSPACE_TEAMS,
-    method: "GET"
-  })
+    method: "GET",
+  });
 
   const fetchTeams = useCallback(async () => {
-
     if (!workspaceId) {
       return;
     }
@@ -40,27 +36,23 @@ export const TeamsView = () => {
       const res = await execute({
         params: {
           workspaceId,
-        }
-      })
+        },
+      });
 
-      console.log(res)
       if (res?.success) {
-        setTeams(res.data.teams || [])
+        setTeams(res.data.teams || []);
       }
-
     } catch (error) {
       toastHandler({
         success: false,
-        error: AxiosErrorHandler(error).message
-      })
+        error: AxiosErrorHandler(error).message,
+      });
     }
-  }, [workspaceId, execute])
+  }, [workspaceId, execute]);
 
   useEffect(() => {
-    fetchTeams()
-  }, [fetchTeams])
-
-
+    fetchTeams();
+  }, [fetchTeams]);
 
   if (managingTeam) {
     return (
@@ -70,7 +62,6 @@ export const TeamsView = () => {
       />
     );
   }
-
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">

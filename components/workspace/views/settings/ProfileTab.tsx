@@ -12,6 +12,7 @@ import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { handleUpdateProfile } from "@/app/actions/user.action";
 import { toastHandler } from "@/lib/toastHandler";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
 
 // ─── Zod schema ───────────────────────────────────────────
 const profileSchema = z.object({
@@ -82,7 +83,10 @@ export const ProfileTab = () => {
         });
       }
     } catch (error) {
-      console.error(error);
+      toastHandler({
+        success: false,
+        message: AxiosErrorHandler(error).message,
+      });
     } finally {
       setLoaded(true);
     }
@@ -131,7 +135,9 @@ export const ProfileTab = () => {
             </button>
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">{userDetails.name}</p>
+            <p className="text-sm font-semibold text-white">
+              {userDetails.name}
+            </p>
             <Button
               size="sm"
               variant="ghost"
@@ -171,7 +177,7 @@ export const ProfileTab = () => {
             ]}
           />
         ) : (
-          <div className="py-8 text-center text-sm text-[#4B5578] animate-pulse">
+          <div className="animate-pulse py-8 text-center text-sm text-[#4B5578]">
             Loading profile information...
           </div>
         )}

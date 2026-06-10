@@ -121,7 +121,7 @@ export const MembersView = () => {
         />
       )}
       {activeTab === "roles" && (
-        <RolesTab refreshTrigger={refreshTrigger} onCreateRole={() => { }} />
+        <RolesTab refreshTrigger={refreshTrigger} onCreateRole={() => {}} />
       )}
 
       {/* Global invite modal */}

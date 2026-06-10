@@ -14,6 +14,7 @@ import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { toastHandler } from "@/lib/toastHandler";
+import Image from "next/image";
 
 export interface TeamMember {
   id: string;
@@ -27,7 +28,9 @@ const MemberCell = ({ m }: { m: TeamMember }) => {
   return (
     <div className="flex items-center gap-3">
       {m.avatarUrl ? (
-        <img
+        <Image
+          width={40}
+          height={40}
           src={m.avatarUrl}
           alt={m.name}
           className="h-8 w-8 flex-shrink-0 rounded-xl object-cover"
@@ -43,9 +46,7 @@ const MemberCell = ({ m }: { m: TeamMember }) => {
         </div>
       )}
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-white">
-          {m.name}
-        </p>
+        <p className="truncate text-sm font-semibold text-white">{m.name}</p>
         <p className="truncate text-[11px] text-[#6b7db3]">{m.email}</p>
       </div>
     </div>
@@ -97,7 +98,9 @@ export const TeamManagePage = ({ team, onBack }: TeamManagePageProps) => {
   });
 
   const loadTeam = useCallback(async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     try {
       const res = await fetchTeamDetail({
         params: { workspaceId },
@@ -170,7 +173,10 @@ export const TeamManagePage = ({ team, onBack }: TeamManagePageProps) => {
     },
   ];
 
-  const excludeIds = useMemo(() => currentMembers.map((m) => m.id), [currentMembers]);
+  const excludeIds = useMemo(
+    () => currentMembers.map((m) => m.id),
+    [currentMembers]
+  );
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
@@ -184,7 +190,9 @@ export const TeamManagePage = ({ team, onBack }: TeamManagePageProps) => {
           Teams
         </button>
         <span className="text-[#1e2a4a]">/</span>
-        <span className="text-sm font-bold text-white">{teamDetail?.name ?? team.name}</span>
+        <span className="text-sm font-bold text-white">
+          {teamDetail?.name ?? team.name}
+        </span>
       </div>
 
       {isLoading && !teamDetail ? (
@@ -199,9 +207,13 @@ export const TeamManagePage = ({ team, onBack }: TeamManagePageProps) => {
               <Users className="h-7 w-7 text-white" />
             </div>
             <div className="flex-1">
-              <h1 className="text-xl font-black text-white">{teamDetail?.name ?? team.name}</h1>
+              <h1 className="text-xl font-black text-white">
+                {teamDetail?.name ?? team.name}
+              </h1>
               {teamDetail?.description && (
-                <p className="mt-1 text-xs text-[#8b9cc8]">{teamDetail.description}</p>
+                <p className="mt-1 text-xs text-[#8b9cc8]">
+                  {teamDetail.description}
+                </p>
               )}
               <p className="mt-2 text-sm text-[#6b7db3]">
                 {currentMembers.length} member

@@ -47,11 +47,14 @@ export function useApi(config: useApiConfig) {
         if (err.statusCode === STATUS_CODES.UNAUTHORIZED) {
           router.push(
             AUTH_CLIENT_ROUTES.LOGIN +
-            `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`
+              `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`
           );
         }
 
-        if (err.statusCode === STATUS_CODES.FORBIDDEN && err.errorCode === AUTH_ERROR_CODE.BLOCKED) {
+        if (
+          err.statusCode === STATUS_CODES.FORBIDDEN &&
+          err.errorCode === AUTH_ERROR_CODE.BLOCKED
+        ) {
           router.push(
             AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.BLOCKED}`
           );
