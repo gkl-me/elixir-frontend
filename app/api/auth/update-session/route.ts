@@ -1,15 +1,18 @@
 import { AxiosErrorHandler } from "@/lib/errorHandler";
-import { workspaceService } from "@/services/workspace.service";
-import { NextResponse } from "next/server";
+import { getSession } from "@/lib/session";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST(req: NextRequest) {
   try {
-    const res = await workspaceService.handleWorkspaceContext();
+    const { workspaceSlug } = await req.json();
+
+    const session = await getSession();
+    session.hasWorkspace = true;
+    session.workspaceSlug = workspaceSlug;
+    await session.save();
 
     return NextResponse.json({
-      success: res.data.success,
-      data: res.data.data,
-      message: res.data.message,
+      success: true,
     });
   } catch (error) {
     const err = AxiosErrorHandler(error);

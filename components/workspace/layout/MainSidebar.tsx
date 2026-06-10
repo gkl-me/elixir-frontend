@@ -26,6 +26,7 @@ import {
 } from "../../../data/demoData";
 import { PLAN_CONFIG } from "../../../lib/theme";
 import { cn } from "@/lib/utils";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 
 // ─── Types ────────────────────────────────────────────────
 interface NavLinkType {
@@ -67,6 +68,8 @@ const WorkspaceSwitcherDropdown: React.FC<{
   const active = filtered.filter((w) => w.id === activeId);
   const others = filtered.filter((w) => w.id !== activeId);
   const ordered = [...active, ...others];
+
+  const hasOwnWorkspace = useWorkspaceStore((s) => s.context?.hasOwnWorkspace);
 
   return (
     <div className="absolute left-2 right-2 top-full z-50 mt-1 flex flex-col overflow-hidden rounded-xl border border-[#1e2a4a] bg-[#0C1635] shadow-2xl shadow-black/60">
@@ -157,17 +160,19 @@ const WorkspaceSwitcherDropdown: React.FC<{
         )}
       </div>
 
-      <div className="border-t border-[#1e2a4a] p-1.5">
-        <button
-          onClick={onClose}
-          className="hover:text-purple-300 flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-[#8735C9] transition-colors hover:bg-[#132353]"
-        >
-          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-[#8735C9]/30 bg-[#8735C9]/10">
-            <Plus className="h-3.5 w-3.5" />
-          </div>
-          <span className="text-xs font-medium">Create new workspace</span>
-        </button>
-      </div>
+      {!hasOwnWorkspace && (
+        <div className="border-t border-[#1e2a4a] p-1.5">
+          <button
+            onClick={onClose}
+            className="hover:text-purple-300 flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-[#8735C9] transition-colors hover:bg-[#132353]"
+          >
+            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border border-[#8735C9]/30 bg-[#8735C9]/10">
+              <Plus className="h-3.5 w-3.5" />
+            </div>
+            <span className="text-xs font-medium">Create new workspace</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
@@ -179,7 +184,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   const pathname = usePathname();
   const router = useRouter();
   const pathParts = pathname?.split("/").filter(Boolean) || [];
-  const activeView = pathParts[1] || "home";
+  const activeView = pathParts[2] || "home";
 
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState("ws1");
@@ -257,9 +262,12 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
     const isActive =
       activeView === link.id || (activeView === "home" && link.id === "home");
 
-    // If id is 'home', we navigate to '/demo', otherwise '/demo/[id]'
+    const workspaceSlug = useWorkspaceStore((s) => s.context?.workspaceSlug);
+
     const navigateTo =
-      link.id === "home" ? "/workspace" : `/workspace/${link.id}`;
+      link.id === "home"
+        ? `/workspace/${workspaceSlug}`
+        : `/workspace/${workspaceSlug}/${link.id}`;
 
     return (
       <div>
@@ -346,8 +354,8 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
 
         {switcherOpen && !collapsed && (
           <WorkspaceSwitcherDropdown
-            workspaces={demoWorkspaceList}
-            activeId={activeWorkspaceId}
+            workspaces={[]}
+            activeId={""}
             onSelect={(id) => {
               setActiveWorkspaceId(id);
               setSwitcherOpen(false);

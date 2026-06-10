@@ -30,21 +30,34 @@ export async function registerAction(data: z.infer<typeof RegisterSchema>) {
   }
 }
 
-export async function loginAction(data: z.infer<typeof LoginSchema>) {
+export async function loginAction(
+  data: z.infer<typeof LoginSchema>,
+  inviteToken?: string
+) {
   try {
     const res = await authService.login(data);
 
     const accessToken = res?.data.data.accessToken;
     const refreshToken = res?.data.data.refreshToken;
+    const workspace = res?.data.data.workspace;
 
     setCookies(refreshToken);
     const session = await getSession();
+    session.hasWorkspace = Boolean(workspace);
+    session.workspaceSlug = workspace?.slug ?? undefined;
     session.accessToken = accessToken;
     await session.save();
 
-    //redirect the user based on roles
+    // If the user arrived from an invite link, redirect there first
+    if (inviteToken) {
+      redirect(`/invite/${inviteToken}`);
+    }
+
+    //redirect the user based on roles and if workspace
     if (res?.data.data.user.role === "superAdmin") {
       redirect(ADMIN_CLIENT_ROUTES.DASHBOARD);
+    } else if (workspace?.slug) {
+      redirect(USER_CLIENT_ROUTES.WORKSPACE + "/" + workspace.slug);
     } else {
       redirect(USER_CLIENT_ROUTES.ONBOARDING);
     }

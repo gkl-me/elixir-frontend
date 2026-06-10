@@ -3,55 +3,32 @@
 import React, { useState } from "react";
 import { UserPlus, Shield, Users, Crown, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  demoMembers,
-  demoInvites,
-  demoWorkspace,
-} from "../../../data/demoData";
 import { cn } from "@/lib/utils";
 import { MembersTab } from "./members/MembersTab";
 import { InvitesTab } from "./members/InvitesTab";
 import { RolesTab } from "./members/RolesTab";
 import { InviteModal } from "./members/modals/InviteModal";
+import { PermissionGate } from "@/components/workspace/PermissionGate";
 
 type ActiveTab = "members" | "invites" | "roles";
 
-const STATS = (pendingCount: number) => [
-  {
-    label: "Total Members",
-    value: demoMembers.length,
-    color: "#8735C9",
-    icon: Users,
-  },
-  {
-    label: "Owners",
-    value: demoMembers.filter((m) => m.role === "owner").length,
-    color: "#f59e0b",
-    icon: Crown,
-  },
-  {
-    label: "Admins",
-    value: demoMembers.filter((m) => m.role === "admin").length,
-    color: "#60a5fa",
-    icon: Shield,
-  },
-  {
-    label: "Pending Invites",
-    value: pendingCount,
-    color: "#c084fc",
-    icon: Mail,
-  },
+const STAT_CARDS = [
+  { label: "Total Members", color: "#8735C9", icon: Users },
+  { label: "Owners", color: "#f59e0b", icon: Crown },
+  { label: "Admins", color: "#60a5fa", icon: Shield },
+  { label: "Pending Invites", color: "#c084fc", icon: Mail },
 ];
 
 export const MembersView = () => {
   const [inviteOpen, setInviteOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<ActiveTab>("members");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const pendingCount = demoInvites.filter((i) => i.status === "pending").length;
+  const triggerRefresh = () => setRefreshTrigger((prev) => prev + 1);
 
   const TABS: [ActiveTab, string][] = [
     ["members", "Members"],
-    ["invites", pendingCount > 0 ? `Invites (${pendingCount})` : "Invites"],
+    ["invites", "Invites"],
     ["roles", "Custom Roles"],
   ];
 
@@ -64,34 +41,38 @@ export const MembersView = () => {
             Members
           </h1>
           <p className="mt-0.5 text-sm text-[#6b7db3]">
-            {demoMembers.length} members · {demoWorkspace.customRoles.length}{" "}
-            custom role{demoWorkspace.customRoles.length !== 1 ? "s" : ""}
+            Manage your workspace members, roles, and invitations.
           </p>
         </div>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setActiveTab("roles")}
-            className="h-9 gap-2 border-[#1e2a4a] text-sm text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
-          >
-            <Shield className="h-4 w-4" />
-            Manage Roles
-          </Button>
-          <Button
-            onClick={() => setInviteOpen(true)}
-            className="h-9 gap-2 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-sm text-white shadow-[0_2px_12px_rgba(135,53,201,0.35)] hover:opacity-90"
-          >
-            <UserPlus className="h-4 w-4" />
-            Invite Member
-          </Button>
+          <PermissionGate require="roles.view">
+            <Button
+              variant="outline"
+              onClick={() => setActiveTab("roles")}
+              className="h-9 gap-2 border-[#1e2a4a] text-sm text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
+            >
+              <Shield className="h-4 w-4" />
+              Manage Roles
+            </Button>
+          </PermissionGate>
+          <PermissionGate require="members.invite">
+            <Button
+              onClick={() => setInviteOpen(true)}
+              className="h-9 gap-2 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-sm text-white shadow-[0_2px_12px_rgba(135,53,201,0.35)] hover:opacity-90"
+            >
+              <UserPlus className="h-4 w-4" />
+              Invite Member
+            </Button>
+          </PermissionGate>
         </div>
       </div>
 
-      {/* Stat cards */}
+      {/* Stat cards — values are dynamic but placeholders for now, 
+          filled when tab data loads; using 0 as skeleton */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {STATS(pendingCount).map((s, i) => (
+        {STAT_CARDS.map((s) => (
           <div
-            key={i}
+            key={s.label}
             className="flex items-center gap-3 rounded-xl border border-[#1e2a4a] bg-[#0C1635] px-4 py-3"
           >
             <div
@@ -101,7 +82,7 @@ export const MembersView = () => {
               <s.icon className="h-4 w-4" style={{ color: s.color }} />
             </div>
             <div>
-              <p className="text-base font-black text-white">{s.value}</p>
+              <p className="text-base font-black text-white">—</p>
               <p className="text-[10px] text-[#6b7db3]">{s.label}</p>
             </div>
           </div>
@@ -128,15 +109,31 @@ export const MembersView = () => {
 
       {/* Tab content */}
       {activeTab === "members" && (
-        <MembersTab onInviteOpen={() => setInviteOpen(true)} />
+        <MembersTab
+          refreshTrigger={refreshTrigger}
+          onInviteOpen={() => setInviteOpen(true)}
+        />
       )}
       {activeTab === "invites" && (
-        <InvitesTab onInviteOpen={() => setInviteOpen(true)} />
+        <InvitesTab
+          refreshTrigger={refreshTrigger}
+          onInviteOpen={() => setInviteOpen(true)}
+        />
       )}
-      {activeTab === "roles" && <RolesTab onCreateRole={() => {}} />}
+      {activeTab === "roles" && (
+        <RolesTab refreshTrigger={refreshTrigger} onCreateRole={() => {}} />
+      )}
 
       {/* Global invite modal */}
-      {inviteOpen && <InviteModal onClose={() => setInviteOpen(false)} />}
+      {inviteOpen && (
+        <InviteModal
+          onClose={() => setInviteOpen(false)}
+          onSuccess={() => {
+            setInviteOpen(false);
+            triggerRefresh();
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -40,6 +40,8 @@ export const authOptions: NextAuthOptions = {
           });
           account.access_token = res.data.data.accessToken;
           account.refresh_token = res.data.data.refreshToken;
+          account.hasWorkspace = Boolean(res.data.data.workspace);
+          account.workspaceSlug = String(res.data.data.workspace?.slug) || "";
         }
 
         if (account?.provider === "github" && account?.access_token) {
@@ -53,6 +55,8 @@ export const authOptions: NextAuthOptions = {
           });
           account.access_token = res.data.data.accessToken;
           account.refresh_token = res.data.data.refreshToken;
+          account.hasWorkspace = Boolean(res.data.data.workspace);
+          account.workspaceSlug = String(res.data.data.workspace?.slug) || "";
         }
         return true;
       } catch (error) {
@@ -68,6 +72,8 @@ export const authOptions: NextAuthOptions = {
       if (account?.access_token && account?.refresh_token) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
+        token.hasWorkspace = Boolean(account.hasWorkspace);
+        token.workspaceSlug = account.workspaceSlug;
       }
       return token;
     },
@@ -76,6 +82,8 @@ export const authOptions: NextAuthOptions = {
       if (token.accessToken && token.refreshToken) {
         session.accessToken = token.accessToken;
         session.refreshToken = token.refreshToken;
+        session.hasWorkspace = Boolean(token.hasWorkspace);
+        session.workspaceSlug = String(token.workspaceSlug);
       }
       return session;
     },

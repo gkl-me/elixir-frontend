@@ -16,9 +16,14 @@ export default async function OnboardingLayout({
     const res = await onboardingService.getUserOnboarding();
     if (
       res.data.data.onboarding.isCompleted &&
-      res.data.data.onboarding.paymentStatus === "success"
+      res.data.data.onboarding.paymentStatus === "success" &&
+      res.data.data.onboarding.workspaceSlug
     ) {
-      redirect(USER_CLIENT_ROUTES.WORKSPACE);
+      redirect(
+        USER_CLIENT_ROUTES.WORKSPACE +
+          "/" +
+          res.data.data.onboarding.workspaceSlug
+      );
     }
   } catch (error) {
     handlerServerError(error);

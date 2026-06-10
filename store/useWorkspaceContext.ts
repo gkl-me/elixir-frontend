@@ -5,38 +5,49 @@ export type WorkspaceContext = {
   email: string;
   avatarUrl: string;
   workspaceId: string;
+  workspaceName: string;
+  workspaceSlug: string;
+  isOwner: boolean;
+  hasOwnWorkspace: boolean;
   memberId: string;
   roleId: string;
+  roleKey: string;
+  permissions: string[];
+  allPermissions?: string[];
+  permissionDependencies?: Record<string, string[]>;
+  builtinRoles?: Record<string, string[]>;
 };
 
-export const useWorkspaceContext = create<WorkspaceContext>()((set) => ({
-  name: "",
-  email: "",
-  avatarUrl: "",
-  workspaceId: "",
-  memberId: "",
-  roleId: "",
+interface WorkspaceStore {
+  context: WorkspaceContext | null;
+  setContext: (context: WorkspaceContext) => void;
+  clearContext: () => void;
 
-  setWorkspaceContext: (context) => {
-    set({
-      name: context.name,
-      email: context.email,
+  updateUser: (user: {
+    name?: string;
+    avatarUrl?: string;
+    email?: string;
+  }) => void;
+}
 
-      workspaceId: context.workspaceId,
-      memberId: context.memberId,
-      roleId: context.roleId,
-    });
-  },
+export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
+  context: null,
+  setContext: (context) => set({ context }),
 
-  updateUser: (name) => {
-    set({
-      name,
-    });
-  },
+  clearContext: () => set({ context: null }),
 
-  updateProfile: (avatarUrl) => {
-    set({
-      avatarUrl,
-    });
-  },
+  updateUser: (user) =>
+    set((state) => {
+      if (!state.context) {
+        return state;
+      }
+      return {
+        context: {
+          ...state.context,
+          name: user.name ?? state.context.name,
+          email: user.email ?? state.context.email,
+          avatarUrl: user.avatarUrl ?? state.context.avatarUrl,
+        },
+      };
+    }),
 }));
