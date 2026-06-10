@@ -37,7 +37,9 @@ export const MembersView = () => {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-white">Members</h1>
+          <h1 className="text-2xl font-black tracking-tight text-white">
+            Members
+          </h1>
           <p className="mt-0.5 text-sm text-[#6b7db3]">
             Manage your workspace members, roles, and invitations.
           </p>
@@ -107,13 +109,19 @@ export const MembersView = () => {
 
       {/* Tab content */}
       {activeTab === "members" && (
-        <MembersTab refreshTrigger={refreshTrigger} onInviteOpen={() => setInviteOpen(true)} />
+        <MembersTab
+          refreshTrigger={refreshTrigger}
+          onInviteOpen={() => setInviteOpen(true)}
+        />
       )}
       {activeTab === "invites" && (
-        <InvitesTab refreshTrigger={refreshTrigger} onInviteOpen={() => setInviteOpen(true)} />
+        <InvitesTab
+          refreshTrigger={refreshTrigger}
+          onInviteOpen={() => setInviteOpen(true)}
+        />
       )}
       {activeTab === "roles" && (
-        <RolesTab refreshTrigger={refreshTrigger} onCreateRole={() => { }} />
+        <RolesTab refreshTrigger={refreshTrigger} onCreateRole={() => {}} />
       )}
 
       {/* Global invite modal */}

@@ -36,16 +36,19 @@ function InviteInvalidView() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#040A1D]">
       <div className="w-full max-w-sm rounded-2xl border border-[#1e2a4a] bg-[#0C1635] p-8 text-center shadow-2xl">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-red-500/10 border border-red-500/20">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-red-500/20 bg-red-500/10">
           <span className="text-2xl">⚠️</span>
         </div>
-        <h1 className="text-lg font-bold text-white">Invalid or Expired Link</h1>
+        <h1 className="text-lg font-bold text-white">
+          Invalid or Expired Link
+        </h1>
         <p className="mt-2 text-sm text-[#6b7db3]">
-          This invite link is no longer valid. It may have expired or been revoked.
+          This invite link is no longer valid. It may have expired or been
+          revoked.
         </p>
         <a
           href="/login"
-          className="mt-6 block w-full rounded-xl border border-[#1e2a4a] py-2.5 text-sm font-semibold text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white transition-colors"
+          className="mt-6 block w-full rounded-xl border border-[#1e2a4a] py-2.5 text-sm font-semibold text-[#8b9cc8] transition-colors hover:bg-[#0f1d3d] hover:text-white"
         >
           Back to Login
         </a>

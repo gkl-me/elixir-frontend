@@ -50,12 +50,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
   const results =
     query.length > 1
       ? demoSearchIndex
-        .filter(
-          (r) =>
-            r.label.toLowerCase().includes(query.toLowerCase()) ||
-            r.sublabel?.toLowerCase().includes(query.toLowerCase())
-        )
-        .slice(0, 8)
+          .filter(
+            (r) =>
+              r.label.toLowerCase().includes(query.toLowerCase()) ||
+              r.sublabel?.toLowerCase().includes(query.toLowerCase())
+          )
+          .slice(0, 8)
       : [];
 
   const [notifications, setNotifications] = useState(demoNotifications);
@@ -69,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
   const userName = useWorkspaceStore((s) => s.context?.name);
   const userEmail = useWorkspaceStore((s) => s.context?.email);
   const userAvatar = useWorkspaceStore((s) => s.context?.avatarUrl);
-  const workspaceSlug = useWorkspaceStore((s) => s.context?.workspaceSlug)
+  const workspaceSlug = useWorkspaceStore((s) => s.context?.workspaceSlug);
 
   const handleKeyDown = (e: globalThis.KeyboardEvent) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {

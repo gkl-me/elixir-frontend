@@ -34,11 +34,7 @@ export const CreateRoleModal = ({
       description="Define a role with specific permissions."
       className="sm:max-w-xl"
     >
-      <RoleForm
-        onSave={handleSave}
-        onClose={onClose}
-        saveLabel="Create Role"
-      />
+      <RoleForm onSave={handleSave} onClose={onClose} saveLabel="Create Role" />
     </CustomModal>
   );
 };

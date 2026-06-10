@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Shield, Crown, Users, Edit3, Trash2, Plus, Loader2 } from "lucide-react";
+import {
+  Shield,
+  Crown,
+  Users,
+  Edit3,
+  Trash2,
+  Plus,
+  Loader2,
+} from "lucide-react";
 import { WorkspaceRole } from "./shared";
 import { CreateRoleModal } from "./modals/CreateRoleModal";
 import { EditCustomRoleModal } from "./modals/EditCustomRoleModal";
@@ -10,11 +18,28 @@ import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 import { PermissionGate } from "@/components/workspace/PermissionGate";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { toastHandler } from "@/lib/toastHandler";
 
-const BUILT_IN_META: Record<string, { color: string; icon: React.ElementType; desc: string }> = {
-  owner:  { color: "#f59e0b", icon: Crown,  desc: "Full control over the workspace." },
-  admin:  { color: "#60a5fa", icon: Shield, desc: "Manage projects, members and automations." },
-  member: { color: "#8b9cc8", icon: Users,  desc: "Standard contributor access." },
+const BUILT_IN_META: Record<
+  string,
+  { color: string; icon: React.ElementType; desc: string }
+> = {
+  owner: {
+    color: "#f59e0b",
+    icon: Crown,
+    desc: "Full control over the workspace.",
+  },
+  admin: {
+    color: "#60a5fa",
+    icon: Shield,
+    desc: "Manage projects, members and automations.",
+  },
+  member: {
+    color: "#8b9cc8",
+    icon: Users,
+    desc: "Standard contributor access.",
+  },
 };
 
 interface RolesTabProps {
@@ -25,29 +50,36 @@ interface RolesTabProps {
 export const RolesTab = ({ onCreateRole, refreshTrigger }: RolesTabProps) => {
   const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId ?? "");
 
-  const { data, isLoading, execute: refetch } = useApi({
+  const {
+    data,
+    isLoading,
+    execute: refetch,
+  } = useApi({
     url: NEXT_API_ROUTES.GET_WORKSPACE_ROLES,
     method: "GET",
   });
 
-  const allRoles: WorkspaceRole[] = (data as any)?.data?.roles ?? [];
-  const builtIn  = allRoles.filter((r) => !r.isEditable);
-  const custom   = allRoles.filter((r) => r.isEditable);
+  const allRoles: WorkspaceRole[] = data?.data?.roles ?? [];
+  const builtIn = allRoles.filter((r) => !r.isEditable);
+  const custom = allRoles.filter((r) => r.isEditable);
 
-  const [editRole, setEditRole]     = useState<WorkspaceRole | null>(null);
+  const [editRole, setEditRole] = useState<WorkspaceRole | null>(null);
   const [deleteRole, setDeleteRole] = useState<WorkspaceRole | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
 
   const fetchRoles = React.useCallback(async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     try {
       await refetch({
         params: {
-          workspaceId
-        }
+          workspaceId,
+        },
       });
     } catch (error) {
-      console.error("Failed to fetch roles:", error);
+      const err = AxiosErrorHandler(error);
+      toastHandler({ success: false, error: err.message });
     }
   }, [workspaceId, refetch]);
 
@@ -76,8 +108,8 @@ export const RolesTab = ({ onCreateRole, refreshTrigger }: RolesTabProps) => {
       </p>
       <div className="grid gap-3 md:grid-cols-3">
         {builtIn.map((r) => {
-          const meta  = BUILT_IN_META[r.key] ?? BUILT_IN_META.member;
-          const Icon  = meta.icon;
+          const meta = BUILT_IN_META[r.key] ?? BUILT_IN_META.member;
+          const Icon = meta.icon;
           return (
             <div
               key={r.key}
@@ -91,9 +123,13 @@ export const RolesTab = ({ onCreateRole, refreshTrigger }: RolesTabProps) => {
                   <Icon className="h-4 w-4" style={{ color: meta.color }} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white capitalize">{r.name}</p>
+                  <p className="text-sm font-bold capitalize text-white">
+                    {r.name}
+                  </p>
                   <p className="text-[10px]" style={{ color: meta.color }}>
-                    {r.permissions.length === 0 ? "All permissions" : `${r.permissions.length} permissions`}
+                    {r.permissions.length === 0
+                      ? "All permissions"
+                      : `${r.permissions.length} permissions`}
                   </p>
                 </div>
                 <span className="ml-auto rounded-full border border-[#1e2a4a] px-1.5 py-0.5 text-[9px] text-[#4B5578]">
@@ -125,8 +161,12 @@ export const RolesTab = ({ onCreateRole, refreshTrigger }: RolesTabProps) => {
       {custom.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-[#1e2a4a] bg-[#0C1635] py-12">
           <Shield className="mb-3 h-8 w-8 text-[#4B5578]" />
-          <p className="mb-1 text-sm font-semibold text-white">No custom roles yet</p>
-          <p className="mb-4 text-xs text-[#4B5578]">Create roles with specific permission sets.</p>
+          <p className="mb-1 text-sm font-semibold text-white">
+            No custom roles yet
+          </p>
+          <p className="mb-4 text-xs text-[#4B5578]">
+            Create roles with specific permission sets.
+          </p>
           <PermissionGate require="roles.create">
             <button
               onClick={openCreate}
@@ -141,7 +181,7 @@ export const RolesTab = ({ onCreateRole, refreshTrigger }: RolesTabProps) => {
         <div className="grid gap-3 md:grid-cols-3">
           {custom.map((r) => (
             <div
-              key={r._id ?? r.key}
+              key={r.id ?? r.key}
               className="group flex flex-col gap-3 rounded-xl border border-[#1e2a4a] bg-[#0C1635] p-4 transition-all hover:border-[#293d6b]"
             >
               <div className="flex items-center gap-2.5">
@@ -149,8 +189,12 @@ export const RolesTab = ({ onCreateRole, refreshTrigger }: RolesTabProps) => {
                   <Shield className="h-4 w-4 text-[#c084fc]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-bold text-white">{r.name}</p>
-                  <p className="text-[10px] text-[#c084fc]">{r.permissions.length} permissions</p>
+                  <p className="truncate text-sm font-bold text-white">
+                    {r.name}
+                  </p>
+                  <p className="text-[10px] text-[#c084fc]">
+                    {r.permissions.length} permissions
+                  </p>
                 </div>
                 <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                   <PermissionGate require="roles.update">
@@ -203,24 +247,33 @@ export const RolesTab = ({ onCreateRole, refreshTrigger }: RolesTabProps) => {
         </div>
       )}
 
-       {createOpen && (
+      {createOpen && (
         <CreateRoleModal
           onClose={() => setCreateOpen(false)}
-          onSuccess={() => { setCreateOpen(false); fetchRoles(); }}
+          onSuccess={() => {
+            setCreateOpen(false);
+            fetchRoles();
+          }}
         />
       )}
       {editRole && (
         <EditCustomRoleModal
           role={editRole}
           onClose={() => setEditRole(null)}
-          onSuccess={() => { setEditRole(null); fetchRoles(); }}
+          onSuccess={() => {
+            setEditRole(null);
+            fetchRoles();
+          }}
         />
       )}
       {deleteRole && (
         <DeleteRoleModal
           role={deleteRole}
           onClose={() => setDeleteRole(null)}
-          onSuccess={() => { setDeleteRole(null); fetchRoles(); }}
+          onSuccess={() => {
+            setDeleteRole(null);
+            fetchRoles();
+          }}
         />
       )}
     </div>

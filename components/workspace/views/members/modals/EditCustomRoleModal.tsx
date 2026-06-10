@@ -20,11 +20,13 @@ export const EditCustomRoleModal = ({
   const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId ?? "");
 
   const handleSave = async (name: string, permissions: string[]) => {
-    console.log(role)
     if (!role.id) {
       return;
     }
-    const result = await updateRoleAction(workspaceId, role.id, { name, permissions });
+    const result = await updateRoleAction(workspaceId, role.id, {
+      name,
+      permissions,
+    });
     if (result.success) {
       toast.success("Role updated!");
       onSuccess?.();

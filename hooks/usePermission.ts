@@ -1,7 +1,6 @@
 "use client";
 import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 
-
 export function usePermission(...required: string[]): boolean {
   const permissions = useWorkspaceStore((s) => s.context?.permissions) ?? [];
   if (permissions.includes("*")) {

@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import { acceptInviteAction } from "@/app/actions/workspace.action";
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
-
 
 interface Props {
   token: string;
@@ -14,23 +13,25 @@ interface Props {
   invitedEmail: string;
 }
 
-export function InviteAcceptClient({ token, workspaceName, invitedEmail }: Props) {
+export function InviteAcceptClient({
+  token,
+  workspaceName,
+  invitedEmail,
+}: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
 
-
   const { execute } = useApi({
     url: NEXT_API_ROUTES.UPDATE_SESSION,
-    method: "GET"
-  })
+    method: "GET",
+  });
 
   const handleAccept = async () => {
     setLoading(true);
     setError("");
     const result = await acceptInviteAction(token);
-
 
     if (!result.success) {
       setError(result.error ?? "Something went wrong. Please try again.");
@@ -43,8 +44,8 @@ export function InviteAcceptClient({ token, workspaceName, invitedEmail }: Props
     await execute({
       body: {
         workspaceSlug: result.data.workspaceSlug,
-      }
-    })
+      },
+    });
 
     setLoading(false);
 
@@ -61,15 +62,19 @@ export function InviteAcceptClient({ token, workspaceName, invitedEmail }: Props
       </div>
 
       <div className="relative z-10 w-full max-w-sm">
-        <div className="rounded-2xl border border-[#1e2a4a] bg-[#0C1635] p-8 shadow-2xl text-center">
+        <div className="rounded-2xl border border-[#1e2a4a] bg-[#0C1635] p-8 text-center shadow-2xl">
           {done ? (
             <>
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-emerald-500/20 bg-emerald-500/10">
                 <CheckCircle2 className="h-7 w-7 text-emerald-400" />
               </div>
               <h1 className="text-lg font-bold text-white">Joined!</h1>
               <p className="mt-2 text-sm text-[#6b7db3]">
-                Redirecting to <span className="font-semibold text-white">{workspaceName}</span>…
+                Redirecting to{" "}
+                <span className="font-semibold text-white">
+                  {workspaceName}
+                </span>
+                …
               </p>
               <div className="mt-4 flex justify-center">
                 <Loader2 className="h-5 w-5 animate-spin text-[#8735C9]" />
@@ -78,21 +83,35 @@ export function InviteAcceptClient({ token, workspaceName, invitedEmail }: Props
           ) : (
             <>
               {/* Icon */}
-              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#8735C9]/10 border border-[#8735C9]/20">
-                <svg className="h-8 w-8 text-[#c084fc]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+              <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#8735C9]/20 bg-[#8735C9]/10">
+                <svg
+                  className="h-8 w-8 text-[#c084fc]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
               </div>
 
-              <h1 className="text-xl font-bold text-white">You've been invited!</h1>
+              <h1 className="text-xl font-bold text-white">
+                You've been invited!
+              </h1>
               <p className="mt-2 text-sm text-[#6b7db3]">
                 Join{" "}
-                <span className="font-semibold text-white">{workspaceName}</span>
+                <span className="font-semibold text-white">
+                  {workspaceName}
+                </span>
               </p>
               {invitedEmail && (
-                <p className="mt-0.5 text-xs text-[#4B5578]">as {invitedEmail}</p>
+                <p className="mt-0.5 text-xs text-[#4B5578]">
+                  as {invitedEmail}
+                </p>
               )}
 
               {error && (
@@ -104,7 +123,7 @@ export function InviteAcceptClient({ token, workspaceName, invitedEmail }: Props
               <button
                 onClick={handleAccept}
                 disabled={loading}
-                className="mt-6 w-full rounded-xl bg-gradient-to-r from-[#8735C9] to-[#6a29a0] py-3 text-sm font-semibold text-white shadow-lg hover:opacity-90 disabled:opacity-50 transition-all"
+                className="mt-6 w-full rounded-xl bg-gradient-to-r from-[#8735C9] to-[#6a29a0] py-3 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -118,7 +137,7 @@ export function InviteAcceptClient({ token, workspaceName, invitedEmail }: Props
 
               <a
                 href="/login"
-                className="mt-3 block text-xs text-[#4B5578] hover:text-[#8b9cc8] transition-colors"
+                className="mt-3 block text-xs text-[#4B5578] transition-colors hover:text-[#8b9cc8]"
               >
                 Not you? Sign in with a different account →
               </a>

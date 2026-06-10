@@ -18,21 +18,19 @@ export type WorkspaceContext = {
   builtinRoles?: Record<string, string[]>;
 };
 
-
 interface WorkspaceStore {
-  context: WorkspaceContext | null,
-  setContext: (context: WorkspaceContext) => void
-  clearContext: () => void
+  context: WorkspaceContext | null;
+  setContext: (context: WorkspaceContext) => void;
+  clearContext: () => void;
 
   updateUser: (user: {
-    name?: string,
-    avatarUrl?: string
-    email?: string
-  }) => void
+    name?: string;
+    avatarUrl?: string;
+    email?: string;
+  }) => void;
 }
 
 export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
-
   context: null,
   setContext: (context) => set({ context }),
 
@@ -49,7 +47,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
           name: user.name ?? state.context.name,
           email: user.email ?? state.context.email,
           avatarUrl: user.avatarUrl ?? state.context.avatarUrl,
-        }
-      }
-    })
-}))
+        },
+      };
+    }),
+}));

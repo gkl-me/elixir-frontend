@@ -35,20 +35,25 @@ export const InviteModal = ({
     method: "GET",
   });
 
-  const allRoles: WorkspaceRole[] = (data as any)?.data?.roles ?? [];
+  const allRoles: WorkspaceRole[] = data?.data?.roles ?? [];
   const selectableRoles = allRoles
     .filter((r) => r.key !== "owner")
     .map((r) => {
       const badge = getRoleBadge(r.key);
-      return { id: r.id ?? r.key, label: r.name, desc: `${r.permissions.length} permissions`, color: badge.color };
+      return {
+        id: r.id ?? r.key,
+        label: r.name,
+        desc: `${r.permissions.length} permissions`,
+        color: badge.color,
+      };
     });
 
   useEffect(() => {
     if (workspaceId) {
       fetchRoles({
         params: {
-          workspaceId
-        }
+          workspaceId,
+        },
       });
     }
   }, [workspaceId, fetchRoles]);
@@ -69,7 +74,10 @@ export const InviteModal = ({
       return;
     }
     setSending(true);
-    const result = await sendInviteAction(workspaceId, { email: values.email, roleId });
+    const result = await sendInviteAction(workspaceId, {
+      email: values.email,
+      roleId,
+    });
     setSending(false);
     if (result.success) {
       toast.success("Invitation sent!");
@@ -113,7 +121,11 @@ export const InviteModal = ({
                 <Loader2 className="h-5 w-5 animate-spin text-[#8735C9]" />
               </div>
             ) : (
-              <RoleSelector roles={selectableRoles} value={roleId} onChange={setRoleId} />
+              <RoleSelector
+                roles={selectableRoles}
+                value={roleId}
+                onChange={setRoleId}
+              />
             )}
           </div>
         </div>

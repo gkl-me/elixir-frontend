@@ -8,13 +8,14 @@ import { cn } from "@/lib/utils";
 import { WorkspaceInvite, getRoleBadge, STATUS_BADGE } from "./shared";
 import { RevokeInviteModal } from "./modals/RevokeInviteModal";
 import { useApi } from "@/hooks/useApi";
-import { WORKSPACE_API_ROUTES } from "@/constants/apiRoutes";
 import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 import { PermissionGate } from "@/components/workspace/PermissionGate";
 import { NoPermissionInline } from "@/components/workspace/fallback/NoPermissionInline";
 import { resendInviteAction } from "@/app/actions/workspace.action";
 import { toast } from "sonner";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { toastHandler } from "@/lib/toastHandler";
 
 const PAGE = 10;
 
@@ -23,32 +24,44 @@ interface InvitesTabProps {
   refreshTrigger?: number;
 }
 
-export const InvitesTab = ({ onInviteOpen, refreshTrigger }: InvitesTabProps) => {
+export const InvitesTab = ({
+  onInviteOpen,
+  refreshTrigger,
+}: InvitesTabProps) => {
   const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId ?? "");
 
-  const { data, isLoading, execute: refetch } = useApi({
+  const {
+    data,
+    isLoading,
+    execute: refetch,
+  } = useApi({
     url: NEXT_API_ROUTES.GET_WORKSPACE_INVITES,
     method: "GET",
   });
 
-  const invites: WorkspaceInvite[] = (data as any)?.data?.invites ?? [];
+  const invites: WorkspaceInvite[] = data?.data?.invites ?? [];
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [revokeInvite, setRevokeInvite] = useState<WorkspaceInvite | null>(null);
+  const [revokeInvite, setRevokeInvite] = useState<WorkspaceInvite | null>(
+    null
+  );
   const [resending, setResending] = useState<string | null>(null);
 
   const fetchInvites = React.useCallback(async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     try {
       await refetch({
         params: {
-          workspaceId
-        }
+          workspaceId,
+        },
       });
     } catch (error) {
-      console.error("Failed to fetch invites:", error);
+      const err = AxiosErrorHandler(error);
+      toastHandler({ success: false, error: err.message });
     }
   }, [workspaceId, refetch]);
 
@@ -258,7 +271,10 @@ export const InvitesTab = ({ onInviteOpen, refreshTrigger }: InvitesTabProps) =>
         <RevokeInviteModal
           invite={revokeInvite}
           onClose={() => setRevokeInvite(null)}
-          onSuccess={() => { setRevokeInvite(null); fetchInvites(); }}
+          onSuccess={() => {
+            setRevokeInvite(null);
+            fetchInvites();
+          }}
         />
       )}
     </>

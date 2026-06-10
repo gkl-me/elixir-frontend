@@ -29,7 +29,9 @@ export const RoleForm = ({
 
   const [name, setName] = useState(initialName);
   const [perms, setPerms] = useState<string[]>(() => {
-    if (initialPerms !== undefined) return initialPerms;
+    if (initialPerms !== undefined) {
+      return initialPerms;
+    }
     return builtinRoles.member ?? [];
   });
   const [err, setErr] = useState("");
@@ -86,7 +88,7 @@ export const RoleForm = ({
                   key={roleKey}
                   type="button"
                   onClick={() => setPerms(rolePerms)}
-                  className="rounded-lg border border-[#1e2a4a] bg-[#07112b] px-3 py-1.5 text-xs font-semibold text-[#8b9cc8] transition-colors hover:border-[#8735C9] hover:text-white capitalize"
+                  className="rounded-lg border border-[#1e2a4a] bg-[#07112b] px-3 py-1.5 text-xs font-semibold capitalize text-[#8b9cc8] transition-colors hover:border-[#8735C9] hover:text-white"
                 >
                   {roleKey} Preset
                 </button>
@@ -123,16 +125,14 @@ export const RoleForm = ({
                   <div
                     className={cn(
                       "flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-all",
-                      on
-                        ? "border-[#8735C9] bg-[#8735C9]"
-                        : "border-[#293d6b]"
+                      on ? "border-[#8735C9] bg-[#8735C9]" : "border-[#293d6b]"
                     )}
                   >
                     {on && <Check className="h-2.5 w-2.5 text-white" />}
                   </div>
                   <p
                     className={cn(
-                      "text-xs font-medium truncate",
+                      "truncate text-xs font-medium",
                       on ? "text-white" : "text-[#8b9cc8]"
                     )}
                   >

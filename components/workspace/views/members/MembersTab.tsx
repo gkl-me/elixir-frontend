@@ -9,11 +9,13 @@ import { Member, getRoleBadge, grad, initials } from "./shared";
 import { EditMemberRoleModal } from "./modals/EditMemberRoleModal";
 import { RemoveMemberModal } from "./modals/RemoveMemberModal";
 import { useApi } from "@/hooks/useApi";
-import { WORKSPACE_API_ROUTES } from "@/constants/apiRoutes";
 import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 import { PermissionGate } from "@/components/workspace/PermissionGate";
 import { NoPermissionInline } from "@/components/workspace/fallback/NoPermissionInline";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { toastHandler } from "@/lib/toastHandler";
+import Image from "next/image";
 
 const PAGE = 10;
 
@@ -22,7 +24,10 @@ interface MembersTabProps {
   refreshTrigger?: number;
 }
 
-export const MembersTab = ({ onInviteOpen, refreshTrigger }: MembersTabProps) => {
+export const MembersTab = ({
+  onInviteOpen,
+  refreshTrigger,
+}: MembersTabProps) => {
   const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId ?? "");
 
   const { execute, isLoading } = useApi({
@@ -38,21 +43,22 @@ export const MembersTab = ({ onInviteOpen, refreshTrigger }: MembersTabProps) =>
   const [removeMember, setRemoveMember] = useState<Member | null>(null);
 
   const fetchMembers = React.useCallback(async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     try {
       const res = await execute({
         params: {
-          workspaceId
-        }
+          workspaceId,
+        },
       });
 
-      console.log(res)
       if (res?.success) {
-
         setMembers(res.data.members || []);
       }
     } catch (error) {
-      console.error("Failed to fetch members:", error);
+      const err = AxiosErrorHandler(error);
+      toastHandler({ success: false, error: err.message });
     }
   }, [workspaceId, execute]);
 
@@ -87,7 +93,9 @@ export const MembersTab = ({ onInviteOpen, refreshTrigger }: MembersTabProps) =>
         return (
           <div className="flex items-center gap-3">
             {m.avatarUrl ? (
-              <img
+              <Image
+                width={32}
+                height={32}
                 src={m.avatarUrl}
                 alt={m.name}
                 className="h-8 w-8 flex-shrink-0 rounded-xl object-cover"
@@ -103,7 +111,9 @@ export const MembersTab = ({ onInviteOpen, refreshTrigger }: MembersTabProps) =>
               </div>
             )}
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-white">{m.name}</p>
+              <p className="truncate text-sm font-semibold text-white">
+                {m.name}
+              </p>
               <p className="truncate text-[11px] text-[#6b7db3]">{m.email}</p>
             </div>
           </div>
@@ -231,14 +241,20 @@ export const MembersTab = ({ onInviteOpen, refreshTrigger }: MembersTabProps) =>
         <EditMemberRoleModal
           member={editMember}
           onClose={() => setEditMember(null)}
-          onSuccess={() => { setEditMember(null); fetchMembers(); }}
+          onSuccess={() => {
+            setEditMember(null);
+            fetchMembers();
+          }}
         />
       )}
       {removeMember && (
         <RemoveMemberModal
           member={removeMember}
           onClose={() => setRemoveMember(null)}
-          onSuccess={() => { setRemoveMember(null); fetchMembers(); }}
+          onSuccess={() => {
+            setRemoveMember(null);
+            fetchMembers();
+          }}
         />
       )}
     </>

@@ -32,8 +32,8 @@ export async function GET(req: NextRequest) {
   // save iron session
   const ironSession = await getSession();
   ironSession.accessToken = session.accessToken;
-  ironSession.hasWorkspace = session.hasWorkspace
-  ironSession.workspaceSlug = session.workspaceSlug
+  ironSession.hasWorkspace = session.hasWorkspace;
+  ironSession.workspaceSlug = session.workspaceSlug;
   await ironSession.save();
 
   // set refresh cookie

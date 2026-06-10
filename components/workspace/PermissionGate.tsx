@@ -10,7 +10,12 @@ interface Props {
   children: ReactNode;
 }
 
-export function PermissionGate({ require, mode = "hide", fallback = null, children }: Props) {
+export function PermissionGate({
+  require,
+  mode = "hide",
+  fallback = null,
+  children,
+}: Props) {
   const perms = Array.isArray(require) ? require : [require];
   const allowed = usePermission(...perms);
 

@@ -51,7 +51,9 @@ export const DeleteRoleModal = ({
           </div>
           <div>
             <p className="text-sm font-semibold text-white">{role.name}</p>
-            <p className="text-xs text-[#6b7db3]">{role.permissions.length} permissions</p>
+            <p className="text-xs text-[#6b7db3]">
+              {role.permissions.length} permissions
+            </p>
           </div>
         </div>
         <p className="text-xs text-[#6b7db3]">
@@ -64,7 +66,11 @@ export const DeleteRoleModal = ({
             disabled={loading}
             className="flex-1 gap-2 bg-red-500 font-semibold text-white hover:bg-red-600 disabled:opacity-50"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
             Delete Role
           </Button>
           <Button

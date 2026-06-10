@@ -30,27 +30,36 @@ export const EditMemberRoleModal = ({
     method: "GET",
   });
 
-  const allRoles: WorkspaceRole[] = (data as any)?.data?.roles ?? [];
+  const allRoles: WorkspaceRole[] = data?.data?.roles ?? [];
   const selectableRoles = allRoles
     .filter((r) => r.key !== "owner")
     .map((r) => {
       const badge = getRoleBadge(r.key);
-      return { id: r.id ?? r.key, label: r.name, desc: `${r.permissions.length} permissions`, color: badge.color };
+      return {
+        id: r.id ?? r.key,
+        label: r.name,
+        desc: `${r.permissions.length} permissions`,
+        color: badge.color,
+      };
     });
 
   useEffect(() => {
     if (workspaceId) {
       fetchRoles({
         params: {
-          workspaceId
-        }
+          workspaceId,
+        },
       });
     }
   }, [workspaceId, fetchRoles]);
 
   const handleSave = async () => {
     setSaving(true);
-    const result = await updateMemberRoleAction(workspaceId, member.memberId, roleId);
+    const result = await updateMemberRoleAction(
+      workspaceId,
+      member.memberId,
+      roleId
+    );
     setSaving(false);
     if (result.success) {
       toast.success("Role updated");
@@ -75,7 +84,11 @@ export const EditMemberRoleModal = ({
               <Loader2 className="h-5 w-5 animate-spin text-[#8735C9]" />
             </div>
           ) : (
-            <RoleSelector roles={selectableRoles} value={roleId} onChange={setRoleId} />
+            <RoleSelector
+              roles={selectableRoles}
+              value={roleId}
+              onChange={setRoleId}
+            />
           )}
         </div>
         <div className="flex gap-2 border-t border-[#1e2a4a] pt-1">

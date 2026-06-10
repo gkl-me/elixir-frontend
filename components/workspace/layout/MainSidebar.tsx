@@ -59,16 +59,15 @@ const WorkspaceSwitcherDropdown: React.FC<{
 
   const filtered = query.trim()
     ? workspaces.filter(
-      (w) =>
-        w.name.toLowerCase().includes(query.toLowerCase()) ||
-        w.plan.toLowerCase().includes(query.toLowerCase())
-    )
+        (w) =>
+          w.name.toLowerCase().includes(query.toLowerCase()) ||
+          w.plan.toLowerCase().includes(query.toLowerCase())
+      )
     : workspaces;
 
   const active = filtered.filter((w) => w.id === activeId);
   const others = filtered.filter((w) => w.id !== activeId);
   const ordered = [...active, ...others];
-
 
   const hasOwnWorkspace = useWorkspaceStore((s) => s.context?.hasOwnWorkspace);
 
@@ -161,7 +160,7 @@ const WorkspaceSwitcherDropdown: React.FC<{
         )}
       </div>
 
-      {!hasOwnWorkspace &&
+      {!hasOwnWorkspace && (
         <div className="border-t border-[#1e2a4a] p-1.5">
           <button
             onClick={onClose}
@@ -173,7 +172,7 @@ const WorkspaceSwitcherDropdown: React.FC<{
             <span className="text-xs font-medium">Create new workspace</span>
           </button>
         </div>
-      }
+      )}
     </div>
   );
 };
@@ -182,7 +181,6 @@ const WorkspaceSwitcherDropdown: React.FC<{
 export const MainSidebar: React.FC<MainSidebarProps> = ({
   collapsed = false,
 }) => {
-
   const pathname = usePathname();
   const router = useRouter();
   const pathParts = pathname?.split("/").filter(Boolean) || [];
@@ -264,10 +262,12 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
     const isActive =
       activeView === link.id || (activeView === "home" && link.id === "home");
 
-    const workspaceSlug = useWorkspaceStore((s) => s.context?.workspaceSlug)
+    const workspaceSlug = useWorkspaceStore((s) => s.context?.workspaceSlug);
 
     const navigateTo =
-      link.id === "home" ? `/workspace/${workspaceSlug}` : `/workspace/${workspaceSlug}/${link.id}`;
+      link.id === "home"
+        ? `/workspace/${workspaceSlug}`
+        : `/workspace/${workspaceSlug}/${link.id}`;
 
     return (
       <div>

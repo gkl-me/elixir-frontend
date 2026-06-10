@@ -1,5 +1,3 @@
-
-
 export interface WorkspaceContextData {
-    slug: string
+  slug: string;
 }

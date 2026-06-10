@@ -91,11 +91,13 @@ export async function proxy(req: NextRequest) {
       }
 
       if (session.hasWorkspace && session.workspaceSlug) {
-        return redirect(USER_CLIENT_ROUTES.WORKSPACE + "/" + session.workspaceSlug, req)
+        return redirect(
+          USER_CLIENT_ROUTES.WORKSPACE + "/" + session.workspaceSlug,
+          req
+        );
       } else {
-        return redirect(USER_CLIENT_ROUTES.ONBOARDING, req)
+        return redirect(USER_CLIENT_ROUTES.ONBOARDING, req);
       }
-
     }
     return response;
   }
@@ -116,9 +118,11 @@ export async function proxy(req: NextRequest) {
   //admin routes
   if (pathname.startsWith(ADMIN_ROUTE)) {
     if (user.role !== "superAdmin") {
-
       if (session.hasWorkspace && session.workspaceSlug) {
-        return redirect(USER_CLIENT_ROUTES.WORKSPACE + "/" + session.workspaceSlug, req)
+        return redirect(
+          USER_CLIENT_ROUTES.WORKSPACE + "/" + session.workspaceSlug,
+          req
+        );
       }
 
       return redirect(USER_CLIENT_ROUTES.ONBOARDING, req);

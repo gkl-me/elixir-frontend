@@ -1,5 +1,12 @@
 // ─── Types (from backend DTO) ──────────────────────────────
-import { Crown, Shield, Users, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Crown,
+  Shield,
+  Users,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 
 export type Member = {
   memberId: string;
@@ -120,35 +127,83 @@ export const PERMISSION_GROUPS = [
   {
     group: "Members",
     items: [
-      { id: "members.view", label: "View Members", desc: "See the member list" },
-      { id: "members.invite", label: "Invite Members", desc: "Send workspace invitations" },
-      { id: "members.remove", label: "Remove Members", desc: "Remove members from workspace" },
-      { id: "members.role.update", label: "Change Roles", desc: "Assign or change member roles" },
+      {
+        id: "members.view",
+        label: "View Members",
+        desc: "See the member list",
+      },
+      {
+        id: "members.invite",
+        label: "Invite Members",
+        desc: "Send workspace invitations",
+      },
+      {
+        id: "members.remove",
+        label: "Remove Members",
+        desc: "Remove members from workspace",
+      },
+      {
+        id: "members.role.update",
+        label: "Change Roles",
+        desc: "Assign or change member roles",
+      },
     ],
   },
   {
     group: "Roles",
     items: [
       { id: "roles.view", label: "View Roles", desc: "See all custom roles" },
-      { id: "roles.create", label: "Create Roles", desc: "Create new custom roles" },
-      { id: "roles.update", label: "Edit Roles", desc: "Edit existing custom roles" },
-      { id: "roles.delete", label: "Delete Roles", desc: "Delete custom roles" },
+      {
+        id: "roles.create",
+        label: "Create Roles",
+        desc: "Create new custom roles",
+      },
+      {
+        id: "roles.update",
+        label: "Edit Roles",
+        desc: "Edit existing custom roles",
+      },
+      {
+        id: "roles.delete",
+        label: "Delete Roles",
+        desc: "Delete custom roles",
+      },
     ],
   },
   {
     group: "Projects",
     items: [
       { id: "projects.view", label: "View Projects", desc: "See all projects" },
-      { id: "projects.create", label: "Create Projects", desc: "Create new projects" },
-      { id: "projects.update", label: "Update Projects", desc: "Edit project settings" },
-      { id: "projects.delete", label: "Delete Projects", desc: "Archive or delete projects" },
+      {
+        id: "projects.create",
+        label: "Create Projects",
+        desc: "Create new projects",
+      },
+      {
+        id: "projects.update",
+        label: "Update Projects",
+        desc: "Edit project settings",
+      },
+      {
+        id: "projects.delete",
+        label: "Delete Projects",
+        desc: "Archive or delete projects",
+      },
     ],
   },
   {
     group: "Billing",
     items: [
-      { id: "billing.view", label: "View Billing", desc: "See plan & invoices" },
-      { id: "billing.manage", label: "Manage Billing", desc: "Upgrade or cancel plan" },
+      {
+        id: "billing.view",
+        label: "View Billing",
+        desc: "See plan & invoices",
+      },
+      {
+        id: "billing.manage",
+        label: "Manage Billing",
+        desc: "Upgrade or cancel plan",
+      },
     ],
   },
 ];
@@ -168,7 +223,10 @@ export const PERMISSION_DEPS: Record<string, string[]> = {
 };
 
 /** Returns the full set of permissions (including auto-required parents) for a given selection. */
-export function resolveDepsForward(selected: string[], depsMap: Record<string, string[]> = PERMISSION_DEPS): string[] {
+export function resolveDepsForward(
+  selected: string[],
+  depsMap: Record<string, string[]> = PERMISSION_DEPS
+): string[] {
   const result = new Set(selected);
   let changed = true;
   while (changed) {
@@ -186,7 +244,11 @@ export function resolveDepsForward(selected: string[], depsMap: Record<string, s
 }
 
 /** When unchecking `perm`, also removes any permission that depends on it. */
-export function resolveRemoval(perm: string, current: string[], depsMap: Record<string, string[]> = PERMISSION_DEPS): string[] {
+export function resolveRemoval(
+  perm: string,
+  current: string[],
+  depsMap: Record<string, string[]> = PERMISSION_DEPS
+): string[] {
   const toRemove = new Set([perm]);
   let changed = true;
   while (changed) {

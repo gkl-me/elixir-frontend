@@ -83,7 +83,7 @@ export const authOptions: NextAuthOptions = {
         session.accessToken = token.accessToken;
         session.refreshToken = token.refreshToken;
         session.hasWorkspace = Boolean(token.hasWorkspace);
-        session.workspaceSlug = String(token.workspaceSlug)
+        session.workspaceSlug = String(token.workspaceSlug);
       }
       return session;
     },

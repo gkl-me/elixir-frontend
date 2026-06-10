@@ -53,7 +53,7 @@ export async function createRoleAction(
     const res = await workspaceService.createRole(workspaceId, data);
     return {
       success: res.data.success,
-      message: res.data.message
+      message: res.data.message,
     };
   } catch (error) {
     handlerServerError(error);
@@ -73,7 +73,7 @@ export async function updateRoleAction(
     const res = await workspaceService.updateRole(workspaceId, roleId, data);
     return {
       success: res.data.success,
-      message: res.data.message
+      message: res.data.message,
     };
   } catch (error) {
     handlerServerError(error);
@@ -89,7 +89,7 @@ export async function deleteRoleAction(workspaceId: string, roleId: string) {
     const res = await workspaceService.deleteRole(workspaceId, roleId);
     return {
       success: res.data.success,
-      message: res.data.message
+      message: res.data.message,
     };
   } catch (error) {
     handlerServerError(error);
@@ -108,10 +108,14 @@ export async function updateMemberRoleAction(
   roleId: string
 ) {
   try {
-    const res = await workspaceService.updateMemberRole(workspaceId, memberId, roleId);
+    const res = await workspaceService.updateMemberRole(
+      workspaceId,
+      memberId,
+      roleId
+    );
     return {
       success: res.data.success,
-      message: res.data.message
+      message: res.data.message,
     };
   } catch (error) {
     handlerServerError(error);
@@ -122,12 +126,15 @@ export async function updateMemberRoleAction(
   }
 }
 
-export async function removeMemberAction(workspaceId: string, memberId: string) {
+export async function removeMemberAction(
+  workspaceId: string,
+  memberId: string
+) {
   try {
     const res = await workspaceService.removeMember(workspaceId, memberId);
     return {
       success: res.data.success,
-      message: res.data.message
+      message: res.data.message,
     };
   } catch (error) {
     handlerServerError(error);
@@ -148,7 +155,7 @@ export async function sendInviteAction(
     const res = await workspaceService.sendInvite(workspaceId, data);
     return {
       success: res.data.success,
-      message: res.data.message
+      message: res.data.message,
     };
   } catch (error) {
     handlerServerError(error);
@@ -159,12 +166,15 @@ export async function sendInviteAction(
   }
 }
 
-export async function resendInviteAction(workspaceId: string, inviteId: string) {
+export async function resendInviteAction(
+  workspaceId: string,
+  inviteId: string
+) {
   try {
     const res = await workspaceService.resendInvite(workspaceId, inviteId);
     return {
       success: res.data.success,
-      message: res.data.message
+      message: res.data.message,
     };
   } catch (error) {
     handlerServerError(error);
@@ -175,12 +185,15 @@ export async function resendInviteAction(workspaceId: string, inviteId: string) 
   }
 }
 
-export async function revokeInviteAction(workspaceId: string, inviteId: string) {
+export async function revokeInviteAction(
+  workspaceId: string,
+  inviteId: string
+) {
   try {
     const res = await workspaceService.revokeInvite(workspaceId, inviteId);
     return {
       success: res.data.success,
-      message: res.data.message
+      message: res.data.message,
     };
   } catch (error) {
     handlerServerError(error);
@@ -197,7 +210,7 @@ export async function acceptInviteAction(inviteToken: string) {
     return {
       success: res.data.success,
       message: res.data.message,
-      data: res.data.data
+      data: res.data.data,
     };
   } catch (error) {
     handlerServerError(error);

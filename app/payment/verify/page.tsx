@@ -33,30 +33,28 @@ export default function PaymentVerifyPage() {
   const [message, setMessage] = useState("Verifying your payment...");
   const router = useRouter();
 
-
   const { execute } = useApi({
-    method: 'POST',
-    url: NEXT_API_ROUTES.UPDATE_SESSION
-  })
+    method: "POST",
+    url: NEXT_API_ROUTES.UPDATE_SESSION,
+  });
 
   const handleVerify = useCallback(async () => {
     setStatus("pending");
     const res = await verifyPaymentAction();
 
-    // console.log(res)
-
     if (res.success) {
       const paymentData = res.data;
-      console.log(paymentData);
 
-      if (paymentData.paymentStatus === "success" && paymentData?.workspaceSlug) {
-
-        //update the session with workspace slug 
+      if (
+        paymentData.paymentStatus === "success" &&
+        paymentData?.workspaceSlug
+      ) {
+        //update the session with workspace slug
         await execute({
           body: {
-            workspaceSlug: paymentData?.workspaceSlug
-          }
-        })
+            workspaceSlug: paymentData?.workspaceSlug,
+          },
+        });
 
         setStatus("success");
         setMessage(res.message);

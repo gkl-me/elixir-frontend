@@ -4,7 +4,9 @@ import { WorkspaceContextData } from "@/types/IWorkspaceType";
 
 export const workspaceService = {
   handleWorkspaceContext: async (data: WorkspaceContextData) => {
-    return api.get(WORKSPACE_API_ROUTES.GET_WORKSPACE_CONTEXT + "/" + data?.slug);
+    return api.get(
+      WORKSPACE_API_ROUTES.GET_WORKSPACE_CONTEXT + "/" + data?.slug
+    );
   },
 
   // ── Roles ──────────────────────────────────────────────────
@@ -12,12 +14,22 @@ export const workspaceService = {
     return api.get(WORKSPACE_API_ROUTES.GET_ROLES(workspaceId));
   },
 
-  createRole: async (workspaceId: string, payload: { name: string; permissions: string[] }) => {
+  createRole: async (
+    workspaceId: string,
+    payload: { name: string; permissions: string[] }
+  ) => {
     return api.post(WORKSPACE_API_ROUTES.CREATE_ROLE(workspaceId), payload);
   },
 
-  updateRole: async (workspaceId: string, roleId: string, payload: { name?: string; permissions?: string[] }) => {
-    return api.patch(WORKSPACE_API_ROUTES.UPDATE_ROLE(workspaceId, roleId), payload);
+  updateRole: async (
+    workspaceId: string,
+    roleId: string,
+    payload: { name?: string; permissions?: string[] }
+  ) => {
+    return api.patch(
+      WORKSPACE_API_ROUTES.UPDATE_ROLE(workspaceId, roleId),
+      payload
+    );
   },
 
   deleteRole: async (workspaceId: string, roleId: string) => {
@@ -29,12 +41,21 @@ export const workspaceService = {
     return api.get(WORKSPACE_API_ROUTES.GET_MEMBERS(workspaceId));
   },
 
-  updateMemberRole: async (workspaceId: string, memberId: string, roleId: string) => {
-    return api.patch(WORKSPACE_API_ROUTES.UPDATE_MEMBER_ROLE(workspaceId, memberId), { roleId });
+  updateMemberRole: async (
+    workspaceId: string,
+    memberId: string,
+    roleId: string
+  ) => {
+    return api.patch(
+      WORKSPACE_API_ROUTES.UPDATE_MEMBER_ROLE(workspaceId, memberId),
+      { roleId }
+    );
   },
 
   removeMember: async (workspaceId: string, memberId: string) => {
-    return api.delete(WORKSPACE_API_ROUTES.REMOVE_MEMBER(workspaceId, memberId));
+    return api.delete(
+      WORKSPACE_API_ROUTES.REMOVE_MEMBER(workspaceId, memberId)
+    );
   },
 
   // ── Invites ────────────────────────────────────────────────
@@ -42,7 +63,10 @@ export const workspaceService = {
     return api.get(WORKSPACE_API_ROUTES.GET_INVITES(workspaceId));
   },
 
-  sendInvite: async (workspaceId: string, payload: { email: string; roleId: string }) => {
+  sendInvite: async (
+    workspaceId: string,
+    payload: { email: string; roleId: string }
+  ) => {
     return api.post(WORKSPACE_API_ROUTES.SEND_INVITE(workspaceId), payload);
   },
 

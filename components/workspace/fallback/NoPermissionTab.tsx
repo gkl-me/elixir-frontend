@@ -14,7 +14,9 @@ export function NoPermissionTab({
       </div>
       <div>
         <p className="text-xs font-semibold text-white">Access Restricted</p>
-        <p className="mt-0.5 max-w-[240px] text-[11px] text-[#4B5578]">{message}</p>
+        <p className="mt-0.5 max-w-[240px] text-[11px] text-[#4B5578]">
+          {message}
+        </p>
       </div>
     </div>
   );

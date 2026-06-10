@@ -78,8 +78,12 @@ export default function SignupPage() {
           </h2>
           {inviteToken && (
             <div className="mt-2 rounded-xl border border-[#8735C9]/20 bg-[#8735C9]/10 px-4 py-2.5 text-center">
-              <p className="text-xs text-[#c084fc] font-medium">📩 You have a workspace invitation waiting</p>
-              <p className="text-[11px] text-[#8b9cc8] mt-0.5">Register to accept it and join the workspace</p>
+              <p className="text-xs font-medium text-[#c084fc]">
+                📩 You have a workspace invitation waiting
+              </p>
+              <p className="mt-0.5 text-[11px] text-[#8b9cc8]">
+                Register to accept it and join the workspace
+              </p>
             </div>
           )}
         </div>

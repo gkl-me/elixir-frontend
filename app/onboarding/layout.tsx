@@ -19,7 +19,11 @@ export default async function OnboardingLayout({
       res.data.data.onboarding.paymentStatus === "success" &&
       res.data.data.onboarding.workspaceSlug
     ) {
-      redirect(USER_CLIENT_ROUTES.WORKSPACE + "/" + res.data.data.onboarding.workspaceSlug);
+      redirect(
+        USER_CLIENT_ROUTES.WORKSPACE +
+          "/" +
+          res.data.data.onboarding.workspaceSlug
+      );
     }
   } catch (error) {
     handlerServerError(error);

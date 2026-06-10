@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { z } from "zod";
 import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,10 +34,9 @@ TextareaField.displayName = "TextareaField";
 
 // ─── ProfileTab ───────────────────────────────────────────
 export const ProfileTab = () => {
-
-  const userName = useWorkspaceStore((s) => s.context?.name)
-  const userEmail = useWorkspaceStore((s) => s.context?.email)
-  const userAvatarUrl = useWorkspaceStore((s) => s.context?.avatarUrl)
+  const userName = useWorkspaceStore((s) => s.context?.name);
+  const userEmail = useWorkspaceStore((s) => s.context?.email);
+  const userAvatarUrl = useWorkspaceStore((s) => s.context?.avatarUrl);
 
   const [userDetails, setUserDetails] = React.useState({
     name: userName,
@@ -58,20 +57,17 @@ export const ProfileTab = () => {
   //   method: "GET",
   // });
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const { data } = await execute();
-  //     setUserDetails({
-  //       name: data.name,
-  //       email: data.email,
-  //       avatarUrl: data.avatarUrl,
-  //       jobTitle: data.jobTitle,
-  //       bio: data.bio,
-  //     });
-  //   })();
-  // }, []);
+  useEffect(() => {
+    setUserDetails({
+      name: userName,
+      email: userEmail,
+      avatarUrl: userAvatarUrl,
+      jobTitle: "",
+      bio: "",
+    });
+  }, [userName, userEmail, userAvatarUrl]);
 
-  const handleSubmit = () => { };
+  const handleSubmit = () => {};
 
   return (
     <div className="space-y-6">
@@ -83,9 +79,7 @@ export const ProfileTab = () => {
         <div className="mb-6 flex items-center gap-5">
           <div className="group relative">
             <Avatar className="h-20 w-20 border-2 border-[#8735C9]/40">
-              <AvatarImage
-                src={userAvatarUrl}
-              />
+              <AvatarImage src={userAvatarUrl} />
               <AvatarFallback className="bg-[#8735C9] text-xl font-bold text-white">
                 {userName?.charAt(0)}
               </AvatarFallback>
