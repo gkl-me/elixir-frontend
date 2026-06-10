@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { z } from "zod";
 import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CustomForm } from "@/components/form/CustomForm";
 import { Section } from "./shared";
-import { useApi } from "@/hooks/useApi";
-import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 
 // ─── Zod schema ───────────────────────────────────────────

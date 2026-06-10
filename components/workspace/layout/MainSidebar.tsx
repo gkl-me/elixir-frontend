@@ -186,7 +186,7 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
   const pathname = usePathname();
   const router = useRouter();
   const pathParts = pathname?.split("/").filter(Boolean) || [];
-  const activeView = pathParts[1] || "home";
+  const activeView = pathParts[2] || "home";
 
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState("ws1");
@@ -266,7 +266,6 @@ export const MainSidebar: React.FC<MainSidebarProps> = ({
 
     const workspaceSlug = useWorkspaceStore((s) => s.context?.workspaceSlug)
 
-    // If id is 'home', we navigate to '/demo', otherwise '/demo/[id]'
     const navigateTo =
       link.id === "home" ? `/workspace/${workspaceSlug}` : `/workspace/${workspaceSlug}/${link.id}`;
 

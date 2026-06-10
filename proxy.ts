@@ -100,6 +100,11 @@ export async function proxy(req: NextRequest) {
     return response;
   }
 
+  // Invite routes handle their own auth check (redirect to /login?invite=TOKEN)
+  if (pathname.startsWith("/invite/")) {
+    return response;
+  }
+
   //private routes
   if (!isAuthenticated && !isPublicRoutes(pathname)) {
     return redirect(

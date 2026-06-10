@@ -24,6 +24,8 @@ export default function LoginPage() {
 
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
+  const inviteTokenUrl = searchParams.get("invite");
+  const [inviteToken, setInviteToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (reason) {
@@ -37,23 +39,37 @@ export default function LoginPage() {
     }
   }, [reason]);
 
+  useEffect(() => {
+    if (inviteTokenUrl) {
+      localStorage.setItem("elixir_invite_token", inviteTokenUrl);
+      setInviteToken(inviteTokenUrl);
+    } else {
+      const storedToken = localStorage.getItem("elixir_invite_token");
+      if (storedToken) {
+        setInviteToken(storedToken);
+      }
+    }
+  }, [inviteTokenUrl]);
+
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
     startTransition(async () => {
-      const res = await loginAction(data);
+      const res = await loginAction(data, inviteToken ?? undefined);
       toastHandler(res);
     });
   };
 
   const handleGoogle = () => {
-    signIn("google", {
-      callbackUrl: NEXT_API_ROUTES.GOOGLE_AUTH,
-    });
+    const callbackUrl = inviteToken
+      ? `${NEXT_API_ROUTES.GOOGLE_AUTH}?invite=${inviteToken}`
+      : NEXT_API_ROUTES.GOOGLE_AUTH;
+    signIn("google", { callbackUrl });
   };
 
   const handleGithub = () => {
-    signIn("github", {
-      callbackUrl: NEXT_API_ROUTES.GITHUB_AUTH,
-    });
+    const callbackUrl = inviteToken
+      ? `${NEXT_API_ROUTES.GITHUB_AUTH}?invite=${inviteToken}`
+      : NEXT_API_ROUTES.GITHUB_AUTH;
+    signIn("github", { callbackUrl });
   };
 
   return (
@@ -73,6 +89,12 @@ export default function LoginPage() {
           </div>
           <h1 className="text-3xl font-bold text-white">Elixir</h1>
           <h2 className="text-xl font-medium text-gray-200">Login to Elixir</h2>
+          {inviteToken && (
+            <div className="mt-2 rounded-xl border border-[#8735C9]/20 bg-[#8735C9]/10 px-4 py-2.5 text-center">
+              <p className="text-xs text-[#c084fc] font-medium">📩 You have a workspace invitation waiting</p>
+              <p className="text-[11px] text-[#8b9cc8] mt-0.5">Login to accept it and join the workspace</p>
+            </div>
+          )}
         </div>
 
         <div className="w-full space-y-4 rounded-xl border border-blueDark bg-navy/50 p-8 backdrop-blur-sm">

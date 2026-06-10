@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { ArrowLeft, Github, Mail } from "lucide-react";
 import { z } from "zod";
 import { CustomForm } from "@/components/form/CustomForm";
@@ -12,12 +12,29 @@ import { registerAction } from "../actions/auth.action";
 import { RegisterSchema } from "@/validator/AuthSchema";
 import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
 import { toastHandler } from "@/lib/toastHandler";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 
 export default function SignupPage() {
   const [showEmail, setShowEmail] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  const searchParams = useSearchParams();
+  const inviteTokenUrl = searchParams.get("invite");
+  const [inviteToken, setInviteToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (inviteTokenUrl) {
+      localStorage.setItem("elixir_invite_token", inviteTokenUrl);
+      setInviteToken(inviteTokenUrl);
+    } else {
+      const storedToken = localStorage.getItem("elixir_invite_token");
+      if (storedToken) {
+        setInviteToken(storedToken);
+      }
+    }
+  }, [inviteTokenUrl]);
 
   const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
     startTransition(async () => {
@@ -27,15 +44,17 @@ export default function SignupPage() {
   };
 
   const handleGoogle = () => {
-    signIn("google", {
-      callbackUrl: NEXT_API_ROUTES.GOOGLE_AUTH,
-    });
+    const callbackUrl = inviteToken
+      ? `${NEXT_API_ROUTES.GOOGLE_AUTH}?invite=${inviteToken}`
+      : NEXT_API_ROUTES.GOOGLE_AUTH;
+    signIn("google", { callbackUrl });
   };
 
   const handleGithub = () => {
-    signIn("github", {
-      callbackUrl: NEXT_API_ROUTES.GITHUB_AUTH,
-    });
+    const callbackUrl = inviteToken
+      ? `${NEXT_API_ROUTES.GITHUB_AUTH}?invite=${inviteToken}`
+      : NEXT_API_ROUTES.GITHUB_AUTH;
+    signIn("github", { callbackUrl });
   };
 
   return (
@@ -57,6 +76,12 @@ export default function SignupPage() {
           <h2 className="text-xl font-medium text-gray-200">
             Create an account
           </h2>
+          {inviteToken && (
+            <div className="mt-2 rounded-xl border border-[#8735C9]/20 bg-[#8735C9]/10 px-4 py-2.5 text-center">
+              <p className="text-xs text-[#c084fc] font-medium">📩 You have a workspace invitation waiting</p>
+              <p className="text-[11px] text-[#8b9cc8] mt-0.5">Register to accept it and join the workspace</p>
+            </div>
+          )}
         </div>
 
         <div className="w-full space-y-4 rounded-xl border border-blueDark bg-navy/50 p-8 backdrop-blur-sm">

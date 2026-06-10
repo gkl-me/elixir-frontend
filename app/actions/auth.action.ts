@@ -30,7 +30,10 @@ export async function registerAction(data: z.infer<typeof RegisterSchema>) {
   }
 }
 
-export async function loginAction(data: z.infer<typeof LoginSchema>) {
+export async function loginAction(
+  data: z.infer<typeof LoginSchema>,
+  inviteToken?: string
+) {
   try {
     const res = await authService.login(data);
 
@@ -44,6 +47,11 @@ export async function loginAction(data: z.infer<typeof LoginSchema>) {
     session.workspaceSlug = workspace?.slug ?? undefined
     session.accessToken = accessToken;
     await session.save();
+
+    // If the user arrived from an invite link, redirect there first
+    if (inviteToken) {
+      redirect(`/invite/${inviteToken}`);
+    }
 
     //redirect the user based on roles and if workspace
     if (res?.data.data.user.role === "superAdmin") {

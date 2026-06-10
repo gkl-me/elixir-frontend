@@ -8,6 +8,7 @@ interface RoleOption {
   id: string;
   label: string;
   desc: string;
+  color?: string;
 }
 
 interface RoleSelectorProps {

@@ -47,6 +47,8 @@ export default function PaymentVerifyPage() {
 
     if (res.success) {
       const paymentData = res.data;
+      console.log(paymentData);
+
       if (paymentData.paymentStatus === "success" && paymentData?.workspaceSlug) {
 
         //update the session with workspace slug 

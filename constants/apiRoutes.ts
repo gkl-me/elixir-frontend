@@ -48,4 +48,24 @@ export const COMPANY_API_ROUTES = {
 
 export const WORKSPACE_API_ROUTES = {
   GET_WORKSPACE_CONTEXT: "/workspace/context",
+
+  // Roles
+  GET_ROLES: (workspaceId: string) => `/workspace/${workspaceId}/roles`,
+  CREATE_ROLE: (workspaceId: string) => `/workspace/${workspaceId}/roles`,
+  UPDATE_ROLE: (workspaceId: string, roleId: string) => `/workspace/${workspaceId}/roles/${roleId}`,
+  DELETE_ROLE: (workspaceId: string, roleId: string) => `/workspace/${workspaceId}/roles/${roleId}`,
+
+  // Members
+  GET_MEMBERS: (workspaceId: string) => `/workspace/${workspaceId}/members`,
+  UPDATE_MEMBER_ROLE: (workspaceId: string, memberId: string) => `/workspace/${workspaceId}/members/${memberId}`,
+  REMOVE_MEMBER: (workspaceId: string, memberId: string) => `/workspace/${workspaceId}/members/${memberId}`,
+
+  // Invites
+  GET_INVITES: (workspaceId: string) => `/workspace/${workspaceId}/invites`,
+  SEND_INVITE: (workspaceId: string) => `/workspace/${workspaceId}/invites`,
+  RESEND_INVITE: (workspaceId: string, inviteId: string) => `/workspace/${workspaceId}/invites/${inviteId}/resend`,
+  REVOKE_INVITE: (workspaceId: string, inviteId: string) => `/workspace/${workspaceId}/invites/${inviteId}/revoke`,
+  VALIDATE_INVITE: (token: string) => `/workspace/invites/validate/${token}`,
+  ACCEPT_INVITE: "/workspace/invites/accept",
 };
+

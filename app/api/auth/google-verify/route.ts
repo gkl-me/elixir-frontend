@@ -39,5 +39,10 @@ export async function GET(req: NextRequest) {
   // set refresh cookie
   setCookies(session.refreshToken);
 
+  const inviteToken = req.nextUrl.searchParams.get("invite");
+  if (inviteToken) {
+    return NextResponse.redirect(new URL(`/invite/${inviteToken}`, req.url));
+  }
+
   return NextResponse.redirect(new URL(USER_CLIENT_ROUTES.ONBOARDING, req.url));
 }

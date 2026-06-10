@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
 
-export default function Error({ }: {
+export default function Error({
+  error,
+}: {
   error: Error & { digest?: string };
 }) {
   const [mounted, setMounted] = useState(false);
@@ -12,7 +14,8 @@ export default function Error({ }: {
   const handleRetry = () => {
     try {
       window.location.reload();
-    } catch {
+    } catch (err) {
+      console.error("Retry failed:", err);
     }
   };
 

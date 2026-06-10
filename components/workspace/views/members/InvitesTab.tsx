@@ -1,40 +1,70 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
-import { Mail, RefreshCw, X, UserPlus } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Mail, RefreshCw, X, UserPlus, Loader2 } from "lucide-react";
 import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { DataTable } from "@/components/table/DataTable";
-import {
-  demoInvites,
-  demoWorkspace,
-  type Invite,
-} from "../../../../data/demoData";
 import { cn } from "@/lib/utils";
-import { ROLE_BADGE, STATUS_BADGE } from "./shared";
+import { WorkspaceInvite, getRoleBadge, STATUS_BADGE } from "./shared";
 import { RevokeInviteModal } from "./modals/RevokeInviteModal";
+import { useApi } from "@/hooks/useApi";
+import { WORKSPACE_API_ROUTES } from "@/constants/apiRoutes";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
+import { PermissionGate } from "@/components/workspace/PermissionGate";
+import { NoPermissionInline } from "@/components/workspace/fallback/NoPermissionInline";
+import { resendInviteAction } from "@/app/actions/workspace.action";
+import { toast } from "sonner";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 
 const PAGE = 10;
 
 interface InvitesTabProps {
   onInviteOpen: () => void;
+  refreshTrigger?: number;
 }
 
-export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
+export const InvitesTab = ({ onInviteOpen, refreshTrigger }: InvitesTabProps) => {
+  const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId ?? "");
+
+  const { data, isLoading, execute: refetch } = useApi({
+    url: NEXT_API_ROUTES.GET_WORKSPACE_INVITES,
+    method: "GET",
+  });
+
+  const invites: WorkspaceInvite[] = (data as any)?.data?.invites ?? [];
+
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [revokeInvite, setRevokeInvite] = useState<Invite | null>(null);
+  const [revokeInvite, setRevokeInvite] = useState<WorkspaceInvite | null>(null);
+  const [resending, setResending] = useState<string | null>(null);
+
+  const fetchInvites = React.useCallback(async () => {
+    if (!workspaceId) return;
+    try {
+      await refetch({
+        params: {
+          workspaceId
+        }
+      });
+    } catch (error) {
+      console.error("Failed to fetch invites:", error);
+    }
+  }, [workspaceId, refetch]);
+
+  useEffect(() => {
+    fetchInvites();
+  }, [fetchInvites, refreshTrigger]);
 
   const filtered = useMemo(
     () =>
-      demoInvites.filter(
+      invites.filter(
         (inv) =>
           !search ||
           inv.email.toLowerCase().includes(search.toLowerCase()) ||
-          inv.role.toLowerCase().includes(search.toLowerCase()) ||
           inv.status.toLowerCase().includes(search.toLowerCase())
       ),
-    [search]
+    [invites, search]
   );
 
   const paged = useMemo(
@@ -42,7 +72,22 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
     [filtered, page]
   );
 
-  const columns: ColumnDef<Invite>[] = [
+  const handleResend = async (inv: WorkspaceInvite) => {
+    if (!inv.id) {
+      return;
+    }
+    setResending(inv.id);
+    const result = await resendInviteAction(workspaceId, inv.id);
+    setResending(null);
+    if (result.success) {
+      toast.success("Invite resent successfully");
+      fetchInvites();
+    } else {
+      toast.error(result.error ?? "Failed to resend invite");
+    }
+  };
+
+  const columns: ColumnDef<WorkspaceInvite>[] = [
     {
       accessorKey: "email",
       header: "Email",
@@ -56,13 +101,10 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
       ),
     },
     {
-      accessorKey: "role",
+      accessorKey: "roleId",
       header: "Role",
-      cell: ({ row }) => {
-        const roleId = row.original.role;
-        const custom = demoWorkspace.customRoles.find((r) => r.id === roleId);
-        const label = custom ? custom.name : roleId;
-        const badge = ROLE_BADGE[roleId] ?? ROLE_BADGE.member;
+      cell: () => {
+        const badge = getRoleBadge("member");
         const Icon = badge.icon;
         return (
           <span
@@ -73,7 +115,7 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
             style={{ color: badge.color }}
           >
             <Icon className="h-2.5 w-2.5" />
-            {label}
+            Invited
           </span>
         );
       },
@@ -82,7 +124,7 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
-        const s = STATUS_BADGE[row.original.status];
+        const s = STATUS_BADGE[row.original.status] ?? STATUS_BADGE.pending;
         const Icon = s.icon;
         return (
           <span
@@ -99,18 +141,24 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
       },
     },
     {
-      accessorKey: "invitedBy",
-      header: "Invited By",
-      cell: ({ row }) => (
-        <span className="text-xs text-[#6b7db3]">{row.original.invitedBy}</span>
-      ),
-    },
-    {
       accessorKey: "sentAt",
       header: "Sent",
       cell: ({ row }) => (
         <span className="text-xs text-[#6b7db3]">
           {new Date(row.original.sentAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "expiresAt",
+      header: "Expires",
+      cell: ({ row }) => (
+        <span className="text-xs text-[#6b7db3]">
+          {new Date(row.original.expiresAt).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
             year: "numeric",
@@ -128,25 +176,50 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
         }
         return (
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => {}}
-              className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-[#6b7db3] transition-all hover:bg-[#1e2a4a] hover:text-[#c084fc]"
+            <PermissionGate
+              require="members.invite"
+              mode="fallback"
+              fallback={<NoPermissionInline label="Resend" />}
             >
-              <RefreshCw className="h-3 w-3" />
-              Resend
-            </button>
-            <button
-              onClick={() => setRevokeInvite(inv)}
-              className="hover:bg-red-400/08 flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-red-400/60 transition-all hover:text-red-400"
+              <button
+                onClick={() => handleResend(inv)}
+                disabled={resending === inv.id}
+                className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-[#6b7db3] transition-all hover:bg-[#1e2a4a] hover:text-[#c084fc] disabled:opacity-50"
+              >
+                {resending === inv.id ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-3 w-3" />
+                )}
+                Resend
+              </button>
+            </PermissionGate>
+            <PermissionGate
+              require="members.invite"
+              mode="fallback"
+              fallback={<NoPermissionInline label="Revoke" />}
             >
-              <X className="h-3 w-3" />
-              Revoke
-            </button>
+              <button
+                onClick={() => setRevokeInvite(inv)}
+                className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-red-400/60 transition-all hover:bg-red-400/10 hover:text-red-400"
+              >
+                <X className="h-3 w-3" />
+                Revoke
+              </button>
+            </PermissionGate>
           </div>
         );
       },
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-6 w-6 animate-spin text-[#8735C9]" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -165,13 +238,19 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
         }}
         onSortingChange={setSorting}
         renderFilters={() => (
-          <button
-            onClick={onInviteOpen}
-            className="flex items-center gap-1.5 rounded-xl border border-[#8735C9]/30 px-3 py-2 text-xs font-medium text-[#8735C9] transition-all hover:border-[#8735C9]/60 hover:text-[#c084fc]"
+          <PermissionGate
+            require="members.invite"
+            mode="fallback"
+            fallback={<NoPermissionInline label="New Invite" />}
           >
-            <UserPlus className="h-3.5 w-3.5" />
-            New Invite
-          </button>
+            <button
+              onClick={onInviteOpen}
+              className="flex items-center gap-1.5 rounded-xl border border-[#8735C9]/30 px-3 py-2 text-xs font-medium text-[#8735C9] transition-all hover:border-[#8735C9]/60 hover:text-[#c084fc]"
+            >
+              <UserPlus className="h-3.5 w-3.5" />
+              New Invite
+            </button>
+          </PermissionGate>
         )}
       />
 
@@ -179,6 +258,7 @@ export const InvitesTab = ({ onInviteOpen }: InvitesTabProps) => {
         <RevokeInviteModal
           invite={revokeInvite}
           onClose={() => setRevokeInvite(null)}
+          onSuccess={() => { setRevokeInvite(null); fetchInvites(); }}
         />
       )}
     </>
