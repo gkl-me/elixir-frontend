@@ -4,6 +4,7 @@ import {
   ChangePasswordData,
   GetAllUsersData,
   ToggleUserStatusData,
+  UpdateUserProfileData,
 } from "@/types/IUserType";
 
 export const userService = {
@@ -19,11 +20,16 @@ export const userService = {
   },
   handleChangePassword: async (data: ChangePasswordData) => {
     return api.patch(USER_API_ROUTES.CHANGE_PASSWORD, {
-      currentPassword: data.currentPassword,
       newPassword: data.newPassword,
     });
   },
   handleListActiveSessions: async () => {
     return api.get(USER_API_ROUTES.ACTIVE_SESSIONS);
+  },
+  handleGetMe: async () => {
+    return api.get(USER_API_ROUTES.GET_ME);
+  },
+  handleUpdateProfile: async (data: UpdateUserProfileData) => {
+    return api.put(USER_API_ROUTES.UPDATE_PROFILE, data);
   },
 };

@@ -19,8 +19,10 @@ export const AUTH_API_ROUTES = {
 export const USER_API_ROUTES = {
   GET_ALL_USER: "/users/",
   TOGGLE_USER_STATUS: "/users",
+  GET_ME: "/users/me",
   CHANGE_PASSWORD: "/users/change-password",
   ACTIVE_SESSIONS: "/users/active-sessions",
+  UPDATE_PROFILE: "/users/update-profile",
 };
 
 export const PLAN_API_ROUTES = {

@@ -42,6 +42,7 @@ interface CustomFormProps<T extends FieldValues> {
   fields: FieldConfig<T>[];
   submitText?: string;
   disabled?: boolean;
+  resetOnSubmit?: boolean;
 }
 
 /* ---------------- Component ---------------- */
@@ -53,6 +54,7 @@ export function CustomForm<T extends FieldValues>({
   fields,
   submitText = "Submit",
   disabled,
+  resetOnSubmit = false,
 }: CustomFormProps<T>) {
   const form = useForm<T>({
     resolver: zodResolver(schema),
@@ -61,7 +63,14 @@ export function CustomForm<T extends FieldValues>({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(
+        async (values) => {
+          await onSubmit(values);
+          if (resetOnSubmit) {
+            form.reset();
+          }
+        }
+      )} className="space-y-6">
         {fields.map((field) => (
           <FormField
             key={field.name}

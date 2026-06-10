@@ -18,4 +18,6 @@ export const NEXT_API_ROUTES = {
   GET_WORKSPACE_TEAMS: "/api/workspace/teams",
   GET_WORKSPACE_TEAM: (teamId: string) => `/api/workspace/teams/${teamId}`,
 
+  GET_USER_ME: "/api/users/me",
+
 };
