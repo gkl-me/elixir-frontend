@@ -1,6 +1,6 @@
 import { WORKSPACE_API_ROUTES } from "@/constants/apiRoutes";
 import api from "@/lib/api";
-import { WorkspaceContextData } from "@/types/IWorkspaceType";
+import { AddMembersData, CreateTeamData, GetTeamData, ListTeamsData, RemoveTeamMemberData, WorkspaceContextData } from "@/types/IWorkspaceType";
 
 export const workspaceService = {
   handleWorkspaceContext: async (data: WorkspaceContextData) => {
@@ -9,7 +9,7 @@ export const workspaceService = {
     );
   },
 
-  // ── Roles ──────────────────────────────────────────────────
+
   getRoles: async (workspaceId: string) => {
     return api.get(WORKSPACE_API_ROUTES.GET_ROLES(workspaceId));
   },
@@ -36,7 +36,7 @@ export const workspaceService = {
     return api.delete(WORKSPACE_API_ROUTES.DELETE_ROLE(workspaceId, roleId));
   },
 
-  // ── Members ────────────────────────────────────────────────
+
   getMembers: async (workspaceId: string) => {
     return api.get(WORKSPACE_API_ROUTES.GET_MEMBERS(workspaceId));
   },
@@ -58,7 +58,7 @@ export const workspaceService = {
     );
   },
 
-  // ── Invites ────────────────────────────────────────────────
+
   getInvites: async (workspaceId: string) => {
     return api.get(WORKSPACE_API_ROUTES.GET_INVITES(workspaceId));
   },
@@ -84,5 +84,26 @@ export const workspaceService = {
 
   acceptInvite: async (inviteToken: string) => {
     return api.post(WORKSPACE_API_ROUTES.ACCEPT_INVITE, { inviteToken });
+  },
+
+
+  listTeams: async (data: ListTeamsData) => {
+    return api.get(WORKSPACE_API_ROUTES.GET_TEAMS(data?.workspaceId));
+  },
+
+  createTeam: async (data: CreateTeamData) => {
+    return api.post(WORKSPACE_API_ROUTES.CREATE_TEAM(data?.workspaceId), { ...data });
+  },
+
+  addMembers: async (data: AddMembersData) => {
+    return api.patch(WORKSPACE_API_ROUTES.ADD_MEMBERS(data?.workspaceId, data?.teamId), { ...data });
+  },
+
+  removeTeamMember: async (data: RemoveTeamMemberData) => {
+    return api.delete(WORKSPACE_API_ROUTES.REMOVE_TEAM_MEMBER(data?.workspaceId, data?.teamId, data?.memberId));
+  },
+
+  getTeam: async (data: GetTeamData) => {
+    return api.get(WORKSPACE_API_ROUTES.GET_TEAM(data?.workspaceId, data?.teamId));
   },
 };

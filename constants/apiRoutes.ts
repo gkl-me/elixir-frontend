@@ -73,4 +73,13 @@ export const WORKSPACE_API_ROUTES = {
     `/workspace/${workspaceId}/invites/${inviteId}/revoke`,
   VALIDATE_INVITE: (token: string) => `/workspace/invites/validate/${token}`,
   ACCEPT_INVITE: "/workspace/invites/accept",
+
+
+  GET_TEAMS: (workspaceId: string) => (`/workspace/${workspaceId}/teams`),
+  CREATE_TEAM: (workspaceId: string) => (`/workspace/${workspaceId}/teams`),
+  ADD_MEMBERS: (workspaceId: string, teamId: string) => (`/workspace/${workspaceId}/teams/${teamId}/members`),
+  REMOVE_TEAM_MEMBER: (workspaceId: string, teamId: string, memberId: string) => (`/workspace/${workspaceId}/teams/${teamId}/members/${memberId}`),
+  GET_TEAM: (workspaceId: string, teamId: string) => (`/workspace/${workspaceId}/teams/${teamId}`),
+
 };
+

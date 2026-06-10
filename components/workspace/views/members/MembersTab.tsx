@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Edit3, Trash2, Plus, Loader2 } from "lucide-react";
 import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { DataTable } from "@/components/table/DataTable";
@@ -42,7 +42,7 @@ export const MembersTab = ({
   const [editMember, setEditMember] = useState<Member | null>(null);
   const [removeMember, setRemoveMember] = useState<Member | null>(null);
 
-  const fetchMembers = React.useCallback(async () => {
+  const fetchMembers = useCallback(async () => {
     if (!workspaceId) {
       return;
     }

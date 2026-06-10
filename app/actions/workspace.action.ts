@@ -3,6 +3,7 @@
 import { workspaceService } from "@/services/workspace.service";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { handlerServerError } from "@/lib/authHelper";
+import { AddMembersData, CreateTeamData, RemoveTeamMemberData } from "@/types/IWorkspaceType";
 
 // // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -218,5 +219,58 @@ export async function acceptInviteAction(inviteToken: string) {
       success: false,
       error: AxiosErrorHandler(error).message,
     };
+  }
+}
+
+
+
+export async function createTeamAction(data: CreateTeamData) {
+  try {
+    const res = await workspaceService.createTeam(data);
+    return {
+      success: res.data.success,
+      message: res.data.message,
+    };
+  } catch (error) {
+    handlerServerError(error);
+    return {
+      success: false,
+      error: AxiosErrorHandler(error).message,
+    };
+  }
+}
+
+export async function addMembersAction(data: AddMembersData) {
+  try {
+    const res = await workspaceService.addMembers(data)
+    return {
+      success: res.data.success,
+      message: res.data.message,
+      data: res.data.data,
+    }
+  } catch (error) {
+    handlerServerError(error)
+    return {
+      success: false,
+      error: AxiosErrorHandler(error).message,
+    }
+  }
+}
+
+
+export async function removeTeamMemberAction(data: RemoveTeamMemberData) {
+  try {
+    const res = await workspaceService.removeTeamMember(data)
+    return {
+      success: res.data.success,
+      message: res.data.message,
+      data: res.data.data,
+    }
+  } catch (error) {
+    handlerServerError(error)
+    return {
+      success: false,
+      error: AxiosErrorHandler(error).message,
+    }
   }
 }
