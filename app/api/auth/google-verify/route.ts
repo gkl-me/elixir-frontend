@@ -44,7 +44,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL(`/invite/${inviteToken}`, req.url));
   }
 
+  if(session.hasWorkspace && session.workspaceSlug){
+    return NextResponse.redirect(
+      new URL(USER_CLIENT_ROUTES.WORKSPACE + "/" + session.workspaceSlug, req.url)
+    );
+  }
+
   return NextResponse.redirect(
-    new URL(USER_CLIENT_ROUTES.WORKSPACE + "/" + session.workspaceSlug, req.url)
-  );
+    new URL(USER_CLIENT_ROUTES.ONBOARDING, req.url)
+  )
 }

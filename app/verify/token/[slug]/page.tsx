@@ -11,11 +11,11 @@ export default async function VerifyPage({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams: { email?: string };
+  params: Promise<{slug:string}>
+  searchParams: Promise<{ email?: string }>;
 }) {
-  const { slug } = params;
-  const { email } = searchParams;
+  const { slug } = await params;
+  const { email } = await searchParams;
 
   try {
     await authService.verifyEmail({ email, token: slug });
