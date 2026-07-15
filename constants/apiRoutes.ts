@@ -23,6 +23,7 @@ export const USER_API_ROUTES = {
   CHANGE_PASSWORD: "/users/change-password",
   ACTIVE_SESSIONS: "/users/active-sessions",
   UPDATE_PROFILE: "/users/update-profile",
+  REVOKE_SESSION: "/users/revoke-session"
 };
 
 export const PLAN_API_ROUTES = {

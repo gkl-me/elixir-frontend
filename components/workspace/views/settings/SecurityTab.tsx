@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { CustomForm } from "@/components/form/CustomForm";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Section } from "./shared";
-import { handleChangePassword } from "@/app/actions/user.action";
+import { handleChangePassword, handleRevokeSessionAction, } from "@/app/actions/user.action";
 import { toastHandler } from "@/lib/toastHandler";
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { RevokeSessionData } from "@/types/IUserType";
 
 // ─── Zod schema ───────────────────────────────────────────
 const passwordSchema = z
@@ -41,6 +42,17 @@ export const SecurityTab = () => {
       });
     });
   };
+
+  const handleSession = (data: RevokeSessionData) => {
+    startTransition(async () => {
+      const res = await handleRevokeSessionAction(data)
+      toastHandler({
+        success: res.success,
+        message: res.message,
+      });
+      execute()
+    })
+  }
 
   const { execute } = useApi({
     url: NEXT_API_ROUTES.LIST_ACTIVE_SESSIONS,
@@ -118,7 +130,9 @@ export const SecurityTab = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => {}}
+                  onClick={() => {
+                    handleSession({ sessionId: s.sessionId })
+                  }}
                   className="h-7 px-2 text-xs text-red-400 hover:bg-red-500/20 hover:text-white"
                 >
                   Revoke
