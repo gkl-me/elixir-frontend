@@ -20,4 +20,6 @@ export const NEXT_API_ROUTES = {
   GET_WORKSPACE_LIMITS: "/api/workspace/limits",
 
   GET_USER_ME: "/api/users/me",
+
+  GET_BILLING_INFO: '/api/payment'
 };

@@ -44,6 +44,7 @@ export const ONBOARDING_API_ROUTES = {
 export const PAYMENT_API_ROUTES = {
   VERIFY_PAYMENT: "/payment/verify",
   RETRY_PAYMENT: "/payment/retry",
+  BILLING_INFO: '/payment/billing'
 };
 
 export const COMPANY_API_ROUTES = {
