@@ -67,7 +67,7 @@ export async function loginAction(
     if (err.errorCode === AUTH_ERROR_CODE.NOT_VERIFIED) {
       redirect(
         AUTH_CLIENT_ROUTES.VERIFY_ERROR +
-          `?email=${encodeURIComponent(data.email)}`
+        `?email=${encodeURIComponent(data.email)}`
       );
     }
 
@@ -230,6 +230,22 @@ export async function logoutAction() {
     const refreshToken = (await cookies()).get("refreshToken")?.value;
 
     await authService.logout({ refreshToken });
+    await deleteSession();
+    await deleteCookies();
+
+    redirect(AUTH_CLIENT_ROUTES.LOGIN);
+  } catch (error) {
+    await deleteSession();
+    await deleteCookies();
+    handlerServerError(error);
+    redirect(AUTH_CLIENT_ROUTES.LOGIN);
+  }
+}
+
+export async function handleLogoutAllDevicesAction() {
+  try {
+
+    await authService.logoutAllDevices()
     await deleteSession();
     await deleteCookies();
 

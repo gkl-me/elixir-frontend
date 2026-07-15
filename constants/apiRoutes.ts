@@ -5,6 +5,7 @@ export const AUTH_API_ROUTES = {
   GITHUB_AUTH: "/auth/github-auth",
   REFRESH: "/auth/refresh",
   LOGOUT: "/auth/logout",
+  LOGOUT_ALL: "/auth/logout-all",
 
   VERIFY_EMAIL: "/auth/verify",
   RESEND_EMAIL: "/auth/resend-email",

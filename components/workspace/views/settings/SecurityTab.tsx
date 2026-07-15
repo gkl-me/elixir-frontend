@@ -12,6 +12,7 @@ import { toastHandler } from "@/lib/toastHandler";
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { RevokeSessionData } from "@/types/IUserType";
+import { handleLogoutAllDevicesAction } from "@/app/actions/auth.action";
 
 // ─── Zod schema ───────────────────────────────────────────
 const passwordSchema = z
@@ -51,6 +52,12 @@ export const SecurityTab = () => {
         message: res.message,
       });
       execute()
+    })
+  }
+
+  const handleLogoutAllDevices = () => {
+    startTransition(async () => {
+      const res = await handleLogoutAllDevicesAction()
     })
   }
 
@@ -145,7 +152,9 @@ export const SecurityTab = () => {
 
       {/* Sign out all */}
       <div className="flex justify-end">
-        <Button className="gap-2 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white">
+        <Button
+          onClick={() => handleLogoutAllDevices()}
+          className="gap-2 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white">
           <LogOut className="h-4 w-4" />
           Sign Out of All Devices
         </Button>
