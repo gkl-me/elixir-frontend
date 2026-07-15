@@ -37,3 +37,8 @@ export interface GetTeamData {
   workspaceId: string;
   teamId: string;
 }
+
+
+export interface WorkspaceLimitsData {
+  workspaceId: string
+}
