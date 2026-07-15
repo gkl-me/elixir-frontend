@@ -51,7 +51,9 @@ export const SecurityTab = () => {
         success: res.success,
         message: res.message,
       });
-      execute()
+      if (res.success) {
+        await fetchSessions();
+      }
     })
   }
 
@@ -68,12 +70,16 @@ export const SecurityTab = () => {
 
   const [sessions, setSessions] = React.useState([]);
 
+  const fetchSessions = async () => {
+    const res = await execute();
+    setSessions(res.data.activeSessions);
+  };
+
   useEffect(() => {
-    (async () => {
-      const res = await execute();
-      setSessions(res.data.activeSessions);
-    })();
+    fetchSessions();
   }, []);
+
+
 
   return (
     <div className="space-y-6">

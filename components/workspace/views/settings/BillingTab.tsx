@@ -135,7 +135,7 @@ const InvoiceModal = ({
 
         <div className="flex gap-2 pt-1">
           <Button
-            onClick={() => {}}
+            onClick={() => { }}
             className="flex-1 gap-2 bg-[#8735C9] text-white hover:bg-[#6a29a0]"
           >
             <Download className="h-4 w-4" />
@@ -261,7 +261,7 @@ export const BillingTab = () => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {}}
+            onClick={() => { }}
             className="h-7 px-2 text-xs text-[#6b7db3] hover:bg-[#0f1d3d] hover:text-white"
           >
             <Download className="h-3.5 w-3.5" />
@@ -353,7 +353,7 @@ export const BillingTab = () => {
                     <Feature ok={plan.id === "enterprise"} text="SSO / SAML" />
                   </ul>
                   <Button
-                    onClick={() => {}}
+                    onClick={() => { }}
                     className="mt-auto w-full gap-2 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-white shadow hover:opacity-90"
                   >
                     Upgrade to {plan.name}
@@ -366,7 +366,7 @@ export const BillingTab = () => {
         </Section>
       )}
 
-      {/* Invoice history */}
+      {/* Invoice history
       <Section
         title="Billing History"
         description="All your past invoices and receipts."
@@ -399,7 +399,7 @@ export const BillingTab = () => {
         />
       </Section>
 
-      <InvoiceModal invoice={selected} onClose={() => setSelected(null)} />
+      <InvoiceModal invoice={selected} onClose={() => setSelected(null)} /> */}
     </div>
   );
 };
