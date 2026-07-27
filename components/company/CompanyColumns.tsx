@@ -22,7 +22,10 @@ export type Company = {
   id: string;
   name: string;
   email: string;
+  type?: string;
+  size?: number | string;
   status: "active" | "pending" | "blocked" | "suspended";
+  isBlocked?: boolean;
   logo?: string;
   description?: string;
   website?: string;
@@ -151,7 +154,7 @@ export function getCompanyColumns(
                   className="cursor-pointer text-white hover:!bg-purple/20 hover:!text-white focus:bg-purple/20 focus:text-white"
                 >
                   {company.status === "suspended" ||
-                  company.status === "blocked" ? (
+                    company.status === "blocked" ? (
                     <>
                       <CheckCircle className="mr-2 h-4 w-4 text-green-400" />
                       Activate Company

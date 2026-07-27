@@ -49,6 +49,7 @@ export const PAYMENT_API_ROUTES = {
 
 export const COMPANY_API_ROUTES = {
   GET_ALL_COMPANY: "/company",
+  TOGGLE_COMPANY_STATUS: (companyId: string) => `/company/${companyId}/status`
 };
 
 export const WORKSPACE_API_ROUTES = {

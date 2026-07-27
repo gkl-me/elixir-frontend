@@ -1,5 +1,5 @@
 export const NEXT_API_ROUTES = {
-  USERS_LIST_API: "/api/users",
+  USERS_LIST_API: '/api/users',
 
   USERS_ME_API: "/api/users/me",
 
@@ -21,5 +21,7 @@ export const NEXT_API_ROUTES = {
 
   GET_USER_ME: "/api/users/me",
 
-  GET_BILLING_INFO: '/api/payment'
+  GET_BILLING_INFO: '/api/payment',
+
+  GET_ALL_COMPANY: '/api/company'
 };

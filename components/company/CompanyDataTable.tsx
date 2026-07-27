@@ -13,10 +13,12 @@ import {
 import { SortingState } from "@tanstack/react-table";
 import { useApi } from "@/hooks/useApi";
 import { useDebounce } from "@/hooks/useDebounce";
-import { CustomModal } from "@/components/modal/CustomModal";
-import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
+import { CompanyDetailsModal } from "./CompanyDetailsModal";
+import { SuspendCompanyModal } from "./SuspendCompanyModal";
 import { toastHandler } from "@/lib/toastHandler";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { toggleCompanyStatusAction } from "@/app/actions/company.action";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 
 export default function CompanyDataTable({
   initialData = [],
@@ -47,7 +49,7 @@ export default function CompanyDataTable({
   // API Hook Setup (Space left here to call the API later)
 
   const { execute, isLoading } = useApi({
-    url: "/api/companies", // Replace with your actual API route constants if available
+    url: NEXT_API_ROUTES.GET_ALL_COMPANY, // Replace with your actual API route constants if available
     method: "GET",
   });
 
@@ -130,12 +132,13 @@ export default function CompanyDataTable({
     }
 
     try {
-      // CALL API: await execute({ method: 'PATCH', url: `/api/companies/${companyToSuspend.id}/suspend` ... })
-      // Mocking for now:
+
+      const res = await toggleCompanyStatusAction(companyToSuspend.id)
+
       toastHandler({
-        success: true,
-        message: `Company successfully ${companyToSuspend.status === "blocked" || companyToSuspend.status === "suspended" ? "activated" : "suspended"}.`,
-      });
+        success: res.success,
+        message: res.message
+      })
       setIsSuspendModalOpen(false);
       fetchData();
     } catch (error) {
@@ -205,80 +208,17 @@ export default function CompanyDataTable({
         renderFilters={renderFilters}
       />
 
-      <CustomModal
+      <CompanyDetailsModal
         isOpen={isModalOpen}
+        company={selectedCompany}
         onClose={() => setIsModalOpen(false)}
-        title="Company Details"
-        description={`Viewing details for ${selectedCompany?.name}`}
-      >
-        {selectedCompany && (
-          <div className="mt-4 space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">Company Name</span>
-                <span className="font-medium text-white">
-                  {selectedCompany.name}
-                </span>
-              </div>
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">Status</span>
-                <span className="font-medium capitalize text-white">
-                  {selectedCompany.status}
-                </span>
-              </div>
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">Contact Email</span>
-                <span className="font-medium text-white">
-                  {selectedCompany.email}
-                </span>
-              </div>
-              {selectedCompany.phone && (
-                <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                  <span className="mb-1 block text-gray-400">Phone Number</span>
-                  <span className="font-medium text-white">
-                    {selectedCompany.phone}
-                  </span>
-                </div>
-              )}
-              {selectedCompany.website && (
-                <div className="col-span-2 rounded-lg border border-purple/20 bg-navy/50 p-3">
-                  <span className="mb-1 block text-gray-400">Website URL</span>
-                  <span className="break-all font-medium text-blue-400">
-                    {selectedCompany.website}
-                  </span>
-                </div>
-              )}
-              {selectedCompany.description && (
-                <div className="col-span-2 rounded-lg border border-purple/20 bg-navy/50 p-3">
-                  <span className="mb-1 block text-gray-400">Description</span>
-                  <span className="text-gray-300">
-                    {selectedCompany.description}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </CustomModal>
+      />
 
-      <ConfirmationModal
+      <SuspendCompanyModal
         isOpen={isSuspendModalOpen}
+        company={companyToSuspend}
         onClose={() => setIsSuspendModalOpen(false)}
         onConfirm={handleSuspend}
-        title={
-          companyToSuspend?.status === "blocked" ||
-          companyToSuspend?.status === "suspended"
-            ? "Activate Company"
-            : "Suspend Company"
-        }
-        description={`Are you sure you want to ${companyToSuspend?.status === "blocked" || companyToSuspend?.status === "suspended" ? "activate" : "suspend"} the company "${companyToSuspend?.name}"? ${companyToSuspend?.status !== "blocked" && companyToSuspend?.status !== "suspended" ? "All associated workspaces will lose access immediately." : ""}`}
-        confirmText={
-          companyToSuspend?.status === "blocked" ||
-          companyToSuspend?.status === "suspended"
-            ? "Yes, Activate"
-            : "Yes, Suspend"
-        }
-        cancelText="Cancel"
       />
     </div>
   );
