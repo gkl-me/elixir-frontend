@@ -5,6 +5,7 @@ export const AUTH_API_ROUTES = {
   GITHUB_AUTH: "/auth/github-auth",
   REFRESH: "/auth/refresh",
   LOGOUT: "/auth/logout",
+  LOGOUT_ALL: "/auth/logout-all",
 
   VERIFY_EMAIL: "/auth/verify",
   RESEND_EMAIL: "/auth/resend-email",
@@ -23,6 +24,7 @@ export const USER_API_ROUTES = {
   CHANGE_PASSWORD: "/users/change-password",
   ACTIVE_SESSIONS: "/users/active-sessions",
   UPDATE_PROFILE: "/users/update-profile",
+  REVOKE_SESSION: "/users/revoke-session"
 };
 
 export const PLAN_API_ROUTES = {
@@ -42,6 +44,7 @@ export const ONBOARDING_API_ROUTES = {
 export const PAYMENT_API_ROUTES = {
   VERIFY_PAYMENT: "/payment/verify",
   RETRY_PAYMENT: "/payment/retry",
+  BILLING_INFO: '/payment/billing'
 };
 
 export const COMPANY_API_ROUTES = {
@@ -84,4 +87,7 @@ export const WORKSPACE_API_ROUTES = {
     `/workspace/${workspaceId}/teams/${teamId}/members/${memberId}`,
   GET_TEAM: (workspaceId: string, teamId: string) =>
     `/workspace/${workspaceId}/teams/${teamId}`,
+
+  GET_WORKSPACE_LIMITS: (workspaceId: string) =>
+    `/workspace/${workspaceId}/limits`,
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   CreditCard,
   ArrowRight,
@@ -12,6 +12,7 @@ import {
   Package,
   Download,
   Eye as ViewIcon,
+  Link,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CustomModal } from "@/components/modal/CustomModal";
@@ -25,6 +26,14 @@ import {
 } from "../../../../data/demoData";
 import { Section } from "./shared";
 import { cn } from "@/lib/utils";
+import { IPlan } from "@/types/IPlanType";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
+import { toastHandler } from "@/lib/toastHandler";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { useApi } from "@/hooks/useApi";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { PlanCard } from "@/components/plans/PlanCard";
+import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
 
 // ─── Helpers ──────────────────────────────────────────────
 const fmt = (cents: number) =>
@@ -135,7 +144,7 @@ const InvoiceModal = ({
 
         <div className="flex gap-2 pt-1">
           <Button
-            onClick={() => {}}
+            onClick={() => { }}
             className="flex-1 gap-2 bg-[#8735C9] text-white hover:bg-[#6a29a0]"
           >
             <Download className="h-4 w-4" />
@@ -166,110 +175,60 @@ const Feature = ({ ok, text }: { ok: boolean; text: string }) => (
   </li>
 );
 
+
+
 // ─── BillingTab ───────────────────────────────────────────
 export const BillingTab = () => {
-  const currentPlan =
-    demoSubscriptions.find((s) => s.id === demoWorkspace.subscriptionPlan) ??
-    demoSubscriptions[1];
 
-  const planOrder: Record<string, number> = { free: 0, pro: 1, enterprise: 2 };
-  const upgradePlans = demoSubscriptions.filter(
-    (p) =>
-      (planOrder[p.type.toLowerCase()] ?? 99) >
-      (planOrder[currentPlan.type.toLowerCase()] ?? 0)
-  );
   const planIcons: Record<string, React.ElementType> = {
     free: Package,
     pro: Star,
     enterprise: Building,
   };
 
-  const [search, setSearch] = useState("");
-  const [pageIndex, setPage] = useState(0);
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [selected, setSelected] = useState<Invoice | null>(null);
-  const PAGE_SIZE = 5;
+  const [currentPlan, setCurrentPlan] = useState<IPlan | undefined>()
+  const [upgradePlans, setUpgradePlans] = useState<IPlan[]>([])   // ← must be [] not undefined
+  const [subscription, setSubscription] = useState<unknown>()
 
-  const filtered = demoInvoices.filter(
-    (inv) =>
-      inv.invoiceNumber.toLowerCase().includes(search.toLowerCase()) ||
-      inv.plan.toLowerCase().includes(search.toLowerCase()) ||
-      inv.status.toLowerCase().includes(search.toLowerCase())
-  );
-  const paged = filtered.slice(
-    pageIndex * PAGE_SIZE,
-    (pageIndex + 1) * PAGE_SIZE
-  );
+  const workspaceId = useWorkspaceStore((s) => s?.context.workspaceId)
 
-  const columns: ColumnDef<Invoice, unknown>[] = [
-    {
-      accessorKey: "invoiceNumber",
-      header: "Invoice",
-      cell: ({ row }) => (
-        <div>
-          <p className="text-sm font-semibold text-white">
-            {row.original.invoiceNumber}
-          </p>
-          <p className="text-xs text-[#6b7db3]">{row.original.period}</p>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "date",
-      header: "Date",
-      cell: ({ row }) => (
-        <span className="text-sm text-[#8b9cc8]">{row.original.date}</span>
-      ),
-    },
-    {
-      accessorKey: "plan",
-      header: "Plan",
-      cell: ({ row }) => (
-        <span className="rounded-full border border-[#8735C9]/25 bg-[#8735C9]/15 px-2 py-0.5 text-[11px] font-semibold text-[#c084fc]">
-          {row.original.plan}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "amount",
-      header: "Amount",
-      cell: ({ row }) => (
-        <span className="text-sm font-bold text-white">
-          {fmt(row.original.amount)}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => <StatusBadge status={row.original.status} />,
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-1.5">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSelected(row.original)}
-            className="h-7 gap-1 px-2 text-xs text-[#8735C9] hover:bg-[#8735C9] hover:text-white"
-          >
-            <ViewIcon className="h-3.5 w-3.5" />
-            View
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {}}
-            className="h-7 px-2 text-xs text-[#6b7db3] hover:bg-[#0f1d3d] hover:text-white"
-          >
-            <Download className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      ),
-    },
-  ];
+  const { execute } = useApi({
+    url: NEXT_API_ROUTES.GET_BILLING_INFO,
+    method: "GET"
+  })
+
+  const fetchBillingInfo = useCallback(async () => {
+    if (!workspaceId) {
+      return
+    }
+
+    try {
+
+      const res = await execute({
+        params: {
+          workspaceId
+        }
+      })
+
+      console.log(res.data)
+
+      if (res?.success) {
+        setCurrentPlan(res.data.currentPlan)
+        setSubscription(res.data.subscription)
+        setUpgradePlans(res.data.upgradePlans)
+      }
+
+    } catch (error) {
+      toastHandler({
+        success: false,
+        error: AxiosErrorHandler(error).message,
+      });
+    }
+  }, [workspaceId, execute])
+
+  useEffect(() => {
+    fetchBillingInfo()
+  }, [fetchBillingInfo])
 
   return (
     <div className="space-y-6">
@@ -282,9 +241,9 @@ export const BillingTab = () => {
           <div>
             <p className="text-xs text-[#6b7db3]">Current plan</p>
             <p className="text-lg font-black text-white">
-              {currentPlan.name}{" "}
+              {currentPlan?.name}{" "}
               <span className="text-sm font-normal text-[#6b7db3]">
-                · {fmt(currentPlan.price)}/seat/mo
+                · {fmt(currentPlan?.price)}/seat/mo
               </span>
             </p>
           </div>
@@ -299,7 +258,7 @@ export const BillingTab = () => {
       </div>
 
       {/* Upgrade plans */}
-      {upgradePlans.length > 0 && (
+      {(upgradePlans?.length ?? 0) > 0 && (
         <Section
           title="Upgrade Plan"
           description="Unlock more features and higher limits for your team."
@@ -315,58 +274,27 @@ export const BillingTab = () => {
             {upgradePlans.map((plan) => {
               const Icon = planIcons[plan.id] ?? Star;
               return (
-                <div
-                  key={plan.id}
-                  className="flex flex-col gap-4 rounded-xl border border-[#1e2a4a] bg-[#07112b] p-5 transition-colors hover:border-[#8735C9]/40"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#132353]">
-                      <Icon className="h-5 w-5 text-[#8b9cc8]" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-white">{plan.name}</h3>
-                      <p className="text-sm text-[#6b7db3]">
-                        {plan.price === 0
-                          ? "Free"
-                          : `$${plan.price / 100}/seat/mo`}
-                      </p>
-                    </div>
-                  </div>
-                  <ul className="flex-1 space-y-1.5">
-                    <Feature
-                      ok
-                      text={`${plan.limits.projects === -1 ? "Unlimited" : plan.limits.projects} Projects`}
-                    />
-                    <Feature
-                      ok
-                      text={`${plan.limits.members === -1 ? "Unlimited" : plan.limits.members} Members`}
-                    />
-                    <Feature
-                      ok={plan.features.githubAutomation}
-                      text="GitHub Automation"
-                    />
-                    <Feature
-                      ok={plan.limits.customRoles > 0}
-                      text={`${plan.limits.customRoles} Custom Roles`}
-                    />
-                    <Feature ok={plan.id !== "free"} text="Priority Support" />
-                    <Feature ok={plan.id === "enterprise"} text="SSO / SAML" />
-                  </ul>
-                  <Button
-                    onClick={() => {}}
-                    className="mt-auto w-full gap-2 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-white shadow hover:opacity-90"
-                  >
-                    Upgrade to {plan.name}
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
+                <PlanCard
+                  key={plan?.id}
+                  {...plan}
+                  actionSlot={
+                    <Link
+                      href={AUTH_CLIENT_ROUTES.LOGIN}
+                      className="mt-6 block w-full"
+                    >
+                      <Button variant={"dark"} className="w-full">
+                        Choose {plan.name}
+                      </Button>
+                    </Link>
+                  }
+                />
               );
             })}
           </div>
         </Section>
       )}
 
-      {/* Invoice history */}
+      {/* Invoice history
       <Section
         title="Billing History"
         description="All your past invoices and receipts."
@@ -399,7 +327,7 @@ export const BillingTab = () => {
         />
       </Section>
 
-      <InvoiceModal invoice={selected} onClose={() => setSelected(null)} />
+      <InvoiceModal invoice={selected} onClose={() => setSelected(null)} /> */}
     </div>
   );
 };

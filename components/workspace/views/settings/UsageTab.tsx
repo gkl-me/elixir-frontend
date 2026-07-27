@@ -1,10 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FolderKanban, Users, HardDrive } from "lucide-react";
-import { demoWorkspace, demoSubscriptions } from "../../../../data/demoData";
 import { Section } from "./shared";
 import { cn } from "@/lib/utils";
+import { useApi } from "@/hooks/useApi";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
+import { toastHandler } from "@/lib/toastHandler";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
 
 // ─── Usage Meter ──────────────────────────────────────────
 const UsageMeter = ({
@@ -57,25 +61,66 @@ const UsageMeter = ({
           />
         )}
       </div>
-      {warn && limit !== -1 && (
-        <p className="text-[10px] text-amber-400">
-          ⚠ Approaching limit — consider upgrading
-        </p>
-      )}
     </div>
   );
 };
 
 // ─── UsageTab ─────────────────────────────────────────────
 export const UsageTab = () => {
-  const currentPlan =
-    demoSubscriptions.find((s) => s.id === demoWorkspace.subscriptionPlan) ??
-    demoSubscriptions[1];
 
-  const seatsUsed = demoWorkspace.members.length;
-  const projectsUsed = 2;
-  const teamsUsed = 2;
-  const storageUsed = 52428800; // ~50 MB demo
+  type UsageType = {
+    projects: number,
+    members: number,
+    teams: number,
+    storageBytes: number,
+    customRoles: number
+  }
+
+  const [limits, setLimits] = useState<UsageType>({
+    projects: -1,
+    members: -1,
+    teams: -1,
+    storageBytes: 524288000,
+    customRoles: -1,
+  })
+  const [used, setUsed] = useState<UsageType>()
+
+  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId)
+
+  const { execute } = useApi({
+    url: NEXT_API_ROUTES.GET_WORKSPACE_LIMITS,
+    method: "GET"
+  })
+
+  const fetchLimits = useCallback(async () => {
+    if (!workspaceId) {
+      return
+    }
+
+    try {
+      const res = await execute({
+        params: {
+          workspaceId
+        }
+      })
+
+      console.log("limits", res.data)
+
+      if (res?.success) {
+        setLimits(res.data.limits)
+        setUsed(res.data.used)
+      }
+    } catch (error) {
+      toastHandler({
+        success: false,
+        error: AxiosErrorHandler(error).message,
+      });
+    }
+  }, [workspaceId, execute])
+
+  useEffect(() => {
+    fetchLimits()
+  }, [fetchLimits])
 
   return (
     <div className="space-y-6">
@@ -86,40 +131,34 @@ export const UsageTab = () => {
         <div className="grid gap-6 sm:grid-cols-2">
           <UsageMeter
             label="Projects"
-            used={projectsUsed}
-            limit={currentPlan.limits.projects}
+            used={used?.projects}
+            limit={limits?.projects}
             icon={FolderKanban}
             color="#8735C9"
           />
           <UsageMeter
-            label="Members (Seats)"
-            used={seatsUsed}
-            limit={currentPlan.limits.members}
+            label="Members"
+            used={used?.members}
+            limit={limits?.members}
             icon={Users}
             color="#60a5fa"
           />
           <UsageMeter
             label="Teams"
-            used={teamsUsed}
-            limit={currentPlan.limits.teams}
+            used={used?.teams}
+            limit={limits?.teams}
             icon={Users}
             color="#34d399"
           />
           <UsageMeter
             label="Storage"
-            used={storageUsed / 1048576}
-            limit={currentPlan.limits.storageBytes / 1048576}
+            used={used?.storageBytes / 1048576}
+            limit={limits?.storageBytes / 1048576}
             icon={HardDrive}
             color="#f59e0b"
             unit=" MB"
           />
         </div>
-        <p className="mt-4 border-t border-[#1e2a4a] pt-4 text-xs text-[#4B5578]">
-          💡 <strong className="text-[#6b7db3]">What is a seat?</strong> A seat
-          is one named user in your workspace. If you have 3 members (Alice,
-          Bob, Charlie), you&apos;re using 3 seats. Removing a member frees a
-          seat immediately.
-        </p>
       </Section>
 
       <Section
@@ -130,19 +169,13 @@ export const UsageTab = () => {
           <div>
             <p className="text-sm text-[#c9d3ed]">Custom Roles Used</p>
             <p className="mt-1 text-2xl font-black text-white">
-              {demoWorkspace.customRoles.length}{" "}
+              {used?.customRoles}
               <span className="text-sm font-normal text-[#6b7db3]">
                 /{" "}
-                {currentPlan.limits.customRoles === -1
+                {limits?.customRoles === -1
                   ? "∞"
-                  : currentPlan.limits.customRoles}
+                  : limits?.customRoles}
               </span>
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-xs text-[#6b7db3]">Plan: {currentPlan.name}</p>
-            <p className="mt-0.5 text-xs text-[#4B5578]">
-              Upgrade for more roles
             </p>
           </div>
         </div>

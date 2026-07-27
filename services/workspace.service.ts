@@ -7,6 +7,7 @@ import {
   ListTeamsData,
   RemoveTeamMemberData,
   WorkspaceContextData,
+  WorkspaceLimitsData,
 } from "@/types/IWorkspaceType";
 
 export const workspaceService = {
@@ -122,4 +123,10 @@ export const workspaceService = {
       WORKSPACE_API_ROUTES.GET_TEAM(data?.workspaceId, data?.teamId)
     );
   },
+
+  getWorkspaceLimits: async (data: WorkspaceLimitsData) => {
+    return api.get(
+      WORKSPACE_API_ROUTES.GET_WORKSPACE_LIMITS(data?.workspaceId)
+    )
+  }
 };

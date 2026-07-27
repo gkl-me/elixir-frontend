@@ -22,7 +22,6 @@ const navigation = [
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Plans", href: "/admin/plans", icon: CreditCard },
   { name: "Company", href: "/admin/company", icon: Building2 },
-  { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Workspaces", href: "/admin/workspace", icon: LayoutDashboard },
 ];
 

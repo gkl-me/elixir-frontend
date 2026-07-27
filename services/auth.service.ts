@@ -48,4 +48,7 @@ export const authService = {
   logout: async (data: LogoutData) => {
     return api.post(AUTH_API_ROUTES.LOGOUT, data);
   },
+  logoutAllDevices: async () => {
+    return api.post(AUTH_API_ROUTES.LOGOUT_ALL)
+  }
 };

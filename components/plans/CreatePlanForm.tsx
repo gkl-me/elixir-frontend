@@ -41,6 +41,7 @@ export default function CreatePlanForm({ onSuccess }: CreatePlanFormProps) {
       await createPlanAction({
         name: values.name,
         type: values.type,
+        price: values.price,
         limits: {
           projects: values.projects,
           teams: values.teams,

@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import WorkspacePageLayout from "@/components/workspace/layout/WorkspacePageLayout";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { handlerServerError } from "@/lib/authHelper";
 import { WorkspaceContextProvider } from "@/providers/WorkspaceContextProvider";
 import { workspaceService } from "@/services/workspace.service";
 
@@ -25,6 +26,7 @@ export default async function WorkspaceSlugLayout({
       </WorkspaceContextProvider>
     );
   } catch (error) {
+    handlerServerError(error);
     const err = AxiosErrorHandler(error);
     throw new Error(err.message);
   }
