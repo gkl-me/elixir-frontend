@@ -1,4 +1,3 @@
-// lib/errorHandler.ts
 import axios from "axios";
 
 export function AxiosErrorHandler(error: unknown): {
@@ -8,13 +7,12 @@ export function AxiosErrorHandler(error: unknown): {
 } {
   if (axios.isAxiosError(error)) {
     return {
-      message: error.response?.data?.message || "Request failed please try again",
+      message:
+        error.response?.data?.message || "Request failed please try again",
       errorCode: error.response?.data?.errorCode,
       statusCode: error.response?.status,
     };
   }
 
-  return { message: "Something went wrong", statusCode:500 };
+  return { message: "Something went wrong", statusCode: 500 };
 }
-
-

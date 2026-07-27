@@ -1,16 +1,62 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import js from "@eslint/js";
+import nextPlugin from "@next/eslint-plugin-next";
+import tseslint from "typescript-eslint";
+import importPlugin from "eslint-plugin-import";
+import unusedImports from "eslint-plugin-unused-imports";
+import reactPlugin from "eslint-plugin-react";
+import prettier from "eslint-config-prettier";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+export default [
+  // Ignore files
+  {
+    ignores: [
+      "node_modules/**",
+      ".next/**",
+      "dist/**",
+      "build/**",
+      "coverage/**",
+      "public/**",
+    ],
+  },
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+  // Base JS rules
+  js.configs.recommended,
 
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  //TypeScript setup
+  ...tseslint.configs.recommended,
+  prettier,
+
+  //Next.js plugin
+  {
+    plugins: {
+      "@next/next": nextPlugin,
+      import: importPlugin,
+      "unused-imports": unusedImports,
+      react: reactPlugin,
+    },
+    rules: {
+      //General
+      "no-console": "warn",
+      "no-debugger": "error",
+      eqeqeq: ["error", "always"],
+      curly: "error",
+      "prefer-const": "error",
+
+      //TypeScript
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_" },
+      ],
+      "@typescript-eslint/no-explicit-any": "warn",
+      // "@typescript-eslint/consistent-type-imports": "error",
+
+      //Imports
+      "unused-imports/no-unused-imports": "warn",
+
+      //react and next
+      "react/jsx-key": "error",
+      "react/react-in-jsx-scope": "off",
+      "@next/next/no-img-element": "warn",
+    },
+  },
 ];
-
-export default eslintConfig;

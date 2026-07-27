@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 import { 
   Home, 
@@ -25,10 +26,22 @@ import {
   Menu,
   X,
 >>>>>>> Stashed changes
+=======
+import {
+  Home,
+  Users,
+  CreditCard,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  BarChart3,
+  LayoutDashboard,
+>>>>>>> origin/week2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 <<<<<<< Updated upstream
 import { Separator } from "@/components/ui/separator";
+<<<<<<< HEAD
 // import { useDispatch, useSelector } from "react-redux";
 // import { RootState } from "@/redux/store";
 // import { setCollapsed } from "@/redux/slices/adminSlice";
@@ -36,12 +49,16 @@ import {  useState } from "react";
 
 =======
 >>>>>>> Stashed changes
+=======
+import { useEffect, useState } from "react";
+>>>>>>> origin/week2
 
 const NAVIGATION = [
   { name: "Dashboard", href: "/admin/dashboard", icon: Home },
   { name: "Users", href: "/admin/users", icon: Users },
 <<<<<<< Updated upstream
   { name: "Plans", href: "/admin/plans", icon: CreditCard },
+<<<<<<< HEAD
   { name: "Company", href: "/company", icon: Building2 },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
 =======
@@ -49,27 +66,35 @@ const NAVIGATION = [
   { name: "Workspaces", href: "/admin/workspace", icon: LayoutDashboard },
   { name: "Plans", href: "/admin/plans", icon: CreditCard },
 >>>>>>> Stashed changes
+=======
+  { name: "Company", href: "/admin/company", icon: Building2 },
+  { name: "Workspaces", href: "/admin/workspace", icon: LayoutDashboard },
+>>>>>>> origin/week2
 ];
-
 
 export function Sidebar() {
   const pathname = usePathname();
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   const [isCollapsed,setCollapsed] = useState(false)
 //   const isCollapsed= useSelector((state:RootState) => state.admin.isCollapsed)
 //   const dispatch = useDispatch()
+=======
+  const [isCollapsed, setCollapsed] = useState(false);
+>>>>>>> origin/week2
 
-//   useEffect(() => {
-//     function handleResize(){
-//       if(window.innerWidth < 700){
-//         dispatch(setCollapsed(true))
-//       }else{
-//         dispatch(setCollapsed(false))
-//       }
-//     }
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth < 700) {
+        setCollapsed(true);
+      } else {
+        setCollapsed(false);
+      }
+    }
 
-//     window.addEventListener('resize',handleResize)
+    window.addEventListener("resize", handleResize);
 
+<<<<<<< HEAD
 //     return () => {
 //       window.removeEventListener('resize',handleResize)
 //     }
@@ -103,18 +128,27 @@ export function Sidebar() {
   return (
 <<<<<<< Updated upstream
     <aside 
+=======
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return (
+    <aside
+>>>>>>> origin/week2
       className={cn(
-        "sticky top-16 bg-navyDark h-[calc(100vh-4rem)] border-r border-white/10 transition-all duration-300",
-        isCollapsed ? "w-16" : "w-40 md:w-64",
+        "sticky top-16 h-[calc(100vh-4rem)] border-r border-white/10 bg-navyDark transition-all duration-300",
+        isCollapsed ? "w-16" : "w-40 md:w-64"
       )}
     >
       <div className="flex h-full flex-col">
         {/* Toggle Button */}
-        <div className="flex items-center justify-end p-4 pb-2 ">
+        <div className="flex items-center justify-end p-4 pb-2">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setCollapsed(prev => !prev)}
+            onClick={() => setCollapsed((prev) => !prev)}
             className="h-8 w-8 bg-gradient-to-r from-purple to-purpleDark text-white shadow-lg shadow-purple/25"
           >
             {isCollapsed ? (
@@ -216,11 +250,12 @@ export function Sidebar() {
                   isActive
 <<<<<<< Updated upstream
                     ? "bg-gradient-to-r from-purple to-purpleDark text-white shadow-lg shadow-purple/25"
-                    : " hover:bg-white/5 text-white hover:text-white",
+                    : "text-white hover:bg-white/5 hover:text-white",
                   isCollapsed && "justify-center px-0"
                 )}
               >
                 <item.icon className="h-5 w-5 shrink-0" />
+<<<<<<< HEAD
                 {!isCollapsed && (
                   <span className="truncate">{item.name}</span>
                 )}
@@ -239,6 +274,9 @@ export function Sidebar() {
                 />
                 {!isCollapsedDesktop && <span className="truncate">{item.name}</span>}
 >>>>>>> Stashed changes
+=======
+                {!isCollapsed && <span className="truncate">{item.name}</span>}
+>>>>>>> origin/week2
               </Link>
             );
           })}

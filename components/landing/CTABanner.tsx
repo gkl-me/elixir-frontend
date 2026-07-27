@@ -6,33 +6,36 @@ import { ArrowRight } from "lucide-react";
 import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
 
 export default function CTABanner() {
-    return (
-        <section className="py-20 px-4 bg-navyDark">
-            <div className="container mx-auto">
-                <div className="bg-gradient-to-r from-purpleDark to-blueDark rounded-3xl p-12 md:p-20 text-center relative overflow-hidden shadow-2xl border border-white/10 group">
-                    
-                    {/* Background glow effects */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-purple/30 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-purple/40 transition-colors duration-500"></div>
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600/20 blur-[80px] rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+  return (
+    <section className="bg-navyDark px-4 py-20">
+      <div className="container mx-auto">
+        <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-purpleDark to-blueDark p-12 text-center shadow-2xl md:p-20">
+          {/* Background glow effects */}
+          <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-purple/30 blur-[80px] transition-colors duration-500 group-hover:bg-purple/40"></div>
+          <div className="pointer-events-none absolute bottom-0 left-0 h-64 w-64 -translate-x-1/2 translate-y-1/2 rounded-full bg-blue-600/20 blur-[80px]"></div>
 
-                    <div className="relative z-10 max-w-3xl mx-auto">
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                            Ready to Streamline Your Workflow?
-                        </h2>
-                        <p className="text-gray-200 text-lg mb-10 leading-relaxed">
-                            Join thousands of teams who are shipping faster and more efficiently with Elixir. Start your free trial today.
-                        </p>
-                        
-                        <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <Link href={AUTH_CLIENT_ROUTES.REGISTER}>
-                                <Button size="lg" className="bg-white text-purpleDark hover:bg-gray-100 font-bold px-8 py-6 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
-                                    Get Started Free <ArrowRight className="ml-2 w-5 h-5" />
-                                </Button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
+          <div className="relative z-10 mx-auto max-w-3xl">
+            <h2 className="mb-6 text-3xl font-bold text-white md:text-5xl">
+              Ready to Streamline Your Workflow?
+            </h2>
+            <p className="mb-10 text-lg leading-relaxed text-gray-200">
+              Join thousands of teams who are shipping faster and more
+              efficiently with Elixir. Start your free trial today.
+            </p>
+
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              <Link href={AUTH_CLIENT_ROUTES.REGISTER}>
+                <Button
+                  size="lg"
+                  className="bg-white px-8 py-6 text-lg font-bold text-purpleDark shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-gray-100 hover:shadow-2xl"
+                >
+                  Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
             </div>
-        </section>
-    )
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

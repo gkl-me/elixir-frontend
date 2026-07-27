@@ -3,17 +3,14 @@ import { Work_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 
-
-
 const workSans = Work_Sans({
   variable: "--font-work-sans",
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
   title: "Elixir | Project Management Tool",
-  description: "Automated Project Management Tool", 
+  description: "Automated Project Management Tool",
 };
 
 export default function RootLayout({
@@ -27,14 +24,9 @@ export default function RootLayout({
         <link rel="icon" type="image/svg" href="/elixir-logo.svg" />
       </head>
       <body
-        className={`${workSans.variable} ${workSans.variable} antialiased 
-        bg-navyDark text-white tracking-wide
-
-        `
-      } 
-
+        className={`${workSans.variable} ${workSans.variable} bg-navyDark tracking-wide text-white antialiased`}
       >
-        <Toaster richColors={false} toastOptions={{}}/>
+        <Toaster richColors={false} toastOptions={{}} />
         {children}
       </body>
     </html>

@@ -1,47 +1,44 @@
-import { create } from "zustand"
-import {persist,createJSONStorage} from 'zustand/middleware'
-
-
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type OtpStore = {
-    email:string | null,
-    expiresAt:Date|null,
+  email: string | null;
+  expiresAt: Date | null;
 
-
-    setOtp(email:string,expiresAt:Date):void
-    clearOtp():void
-    clearTimer():void
-}
-
-
+  setOtp(email: string, expiresAt: Date): void;
+  clearOtp(): void;
+  clearTimer(): void;
+};
 
 export const useOtpStore = create<OtpStore>()(
-    persist(
+  persist(
     (set) => ({
-        email:null,
-        expiresAt:null,
+      email: null,
+      expiresAt: null,
 
-        setOtp:(email, expiresAt) => {
-            set({
-                email,
-                expiresAt
-            })
-        },
+      setOtp: (email, expiresAt) => {
+        set({
+          email,
+          expiresAt,
+        });
+      },
 
-        clearOtp:() => {
-            set({
-                email:null,
-                expiresAt:null
-            })
-        },
+      clearOtp: () => {
+        set({
+          email: null,
+          expiresAt: null,
+        });
+      },
 
-        clearTimer:() => {
-            set({
-                expiresAt:null
-            })
-        }
-    }),{
-        name:'otp-store',
-        storage:createJSONStorage(() => sessionStorage)
+      clearTimer: () => {
+        set({
+          expiresAt: null,
+        });
+      },
+    }),
+    {
+      name: "otp-store",
+      storage: createJSONStorage(() => sessionStorage),
     }
-))
+  )
+);

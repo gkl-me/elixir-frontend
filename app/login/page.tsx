@@ -1,76 +1,85 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import Image from "next/image"
-import { useEffect, useState, useTransition } from "react"
-import { ArrowLeft, Github, Mail } from "lucide-react"
-import { z } from "zod"
-import { CustomForm } from "@/components/form/CustomForm"
-import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes"
-import { PasswordInput } from "@/components/ui/password-input"
-import { LoginSchema } from "@/validator/AuthSchema"
-import { loginAction } from "../actions/auth.action"
-import { useSearchParams } from "next/navigation"
-import { toast } from "sonner"
-import { AUTH_ERROR_CODE } from "@/constants/errorCode"
-import {signIn} from "next-auth/react"
-import { toastHandler } from "@/lib/toastHandler"
-import { NEXT_API_ROUTES } from "@/constants/routeHandler"
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useState, useTransition } from "react";
+import { ArrowLeft, Github, Mail } from "lucide-react";
+import { z } from "zod";
+import { CustomForm } from "@/components/form/CustomForm";
+import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
+import { PasswordInput } from "@/components/ui/password-input";
+import { LoginSchema } from "@/validator/AuthSchema";
+import { loginAction } from "../actions/auth.action";
+import { useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { AUTH_ERROR_CODE } from "@/constants/errorCode";
+import { signIn } from "next-auth/react";
+import { toastHandler } from "@/lib/toastHandler";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 
 export default function LoginPage() {
+  const [showEmail, setShowEmail] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-
-  const [showEmail, setShowEmail] = useState(false)
-  const [isPending,startTransition] = useTransition()
-
-  const searchParams = useSearchParams()
-  const reason = searchParams.get('reason')
+  const searchParams = useSearchParams();
+  const reason = searchParams.get("reason");
+  const inviteTokenUrl = searchParams.get("invite");
+  const [inviteToken, setInviteToken] = useState<string | null>(null);
 
   useEffect(() => {
-    if(reason){
-      if(reason == AUTH_ERROR_CODE.UNAUTHORIZED){
-        toast.error('You are not authorized to access this resource')
-      }else if(reason == AUTH_ERROR_CODE.SESSION_EXPIRED){
-        toast.error("Your session has expired. Please log in again.")
-      }else if(reason==AUTH_ERROR_CODE.BLOCKED){
-       toast.error("Your account has been blocked. Please contact the admin.");
+    if (reason) {
+      if (reason === AUTH_ERROR_CODE.UNAUTHORIZED) {
+        toast.error("You are not authorized to access this resource");
+      } else if (reason === AUTH_ERROR_CODE.SESSION_EXPIRED) {
+        toast.error("Your session has expired. Please log in again.");
+      } else if (reason === AUTH_ERROR_CODE.BLOCKED) {
+        toast.error("Your account has been blocked. Please contact the admin.");
       }
     }
-  },[reason])
+  }, [reason]);
 
+  useEffect(() => {
+    if (inviteTokenUrl) {
+      localStorage.setItem("elixir_invite_token", inviteTokenUrl);
+      setInviteToken(inviteTokenUrl);
+    } else {
+      const storedToken = localStorage.getItem("elixir_invite_token");
+      if (storedToken) {
+        setInviteToken(storedToken);
+      }
+    }
+  }, [inviteTokenUrl]);
 
   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
     startTransition(async () => {
-      const res = await loginAction(data)
-      toastHandler(res)
-    })
-  }
+      const res = await loginAction(data, inviteToken ?? undefined);
+      toastHandler(res);
+    });
+  };
 
   const handleGoogle = () => {
-    signIn(
-      "google",{
-        callbackUrl:NEXT_API_ROUTES.GOOGLE_AUTH
-      }
-    )
-  }
+    const callbackUrl = inviteToken
+      ? `${NEXT_API_ROUTES.GOOGLE_AUTH}?invite=${inviteToken}`
+      : NEXT_API_ROUTES.GOOGLE_AUTH;
+    signIn("google", { callbackUrl });
+  };
 
   const handleGithub = () => {
-    signIn(
-      'github',{
-        callbackUrl:NEXT_API_ROUTES.GITHUB_AUTH
-      }
-    )
-  }
+    const callbackUrl = inviteToken
+      ? `${NEXT_API_ROUTES.GITHUB_AUTH}?invite=${inviteToken}`
+      : NEXT_API_ROUTES.GITHUB_AUTH;
+    signIn("github", { callbackUrl });
+  };
 
   return (
-    <div className="min-h-screen bg-navyDark flex flex-col items-center justify-center p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-navyDark p-4">
       {/* Background grid effect */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px] opacity-20"></div>
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px] opacity-20"></div>
 
-      <div className="relative z-10 flex flex-col items-center space-y-8 w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
+      <div className="relative z-10 flex w-full max-w-md flex-col items-center space-y-8 duration-500 animate-in fade-in zoom-in-95">
         <div className="flex flex-col items-center space-y-4">
-          <div className="relative w-12 h-12">
+          <div className="relative h-12 w-12">
             <Image
               src={"/elixir-logo.svg"}
               alt="logo"
@@ -80,9 +89,19 @@ export default function LoginPage() {
           </div>
           <h1 className="text-3xl font-bold text-white">Elixir</h1>
           <h2 className="text-xl font-medium text-gray-200">Login to Elixir</h2>
+          {inviteToken && (
+            <div className="mt-2 rounded-xl border border-[#8735C9]/20 bg-[#8735C9]/10 px-4 py-2.5 text-center">
+              <p className="text-xs font-medium text-[#c084fc]">
+                📩 You have a workspace invitation waiting
+              </p>
+              <p className="mt-0.5 text-[11px] text-[#8b9cc8]">
+                Login to accept it and join the workspace
+              </p>
+            </div>
+          )}
         </div>
 
-        <div className="w-full space-y-4 bg-navy/50 p-8 rounded-xl border border-blueDark backdrop-blur-sm">
+        <div className="w-full space-y-4 rounded-xl border border-blueDark bg-navy/50 p-8 backdrop-blur-sm">
           {!showEmail ? (
             <>
               <Button
@@ -92,10 +111,7 @@ export default function LoginPage() {
               >
                 <span className="mr-2">G</span> Continue with Google
               </Button>
-              <Button
-                variant="white"
-                onClick={() => handleGithub()}
-              >
+              <Button variant="white" onClick={() => handleGithub()}>
                 <Github className="mr-2 h-4 w-4" /> Continue with GitHub
               </Button>
 
@@ -110,18 +126,18 @@ export default function LoginPage() {
 
               <Button
                 variant="light"
-                className="w-full h-10 text-base"
+                className="h-10 w-full text-base"
                 onClick={() => setShowEmail(true)}
               >
                 <Mail className="mr-2 h-4 w-4" /> Continue with email
               </Button>
             </>
           ) : (
-            <div className="animate-in slide-in-from-right-8 fade-in duration-300">
+            <div className="duration-300 animate-in fade-in slide-in-from-right-8">
               <CustomForm
                 schema={LoginSchema}
                 onSubmit={onSubmit}
-                submitText={isPending?"Loading...":"Login"}
+                submitText={isPending ? "Loading..." : "Login"}
                 fields={[
                   {
                     name: "email",
@@ -132,25 +148,30 @@ export default function LoginPage() {
                   {
                     name: "password",
                     label: "Password",
-                    component:PasswordInput,
+                    component: PasswordInput,
                     placeholder: "*************",
                   },
                 ]}
                 defaultValues={{
-                  email:"",
-                  password:""
+                  email: "",
+                  password: "",
                 }}
                 disabled={isPending}
               />
-              <div className="flex justify-end mb-4 mt-2">
-                 <Link href={AUTH_CLIENT_ROUTES.FORGOT_PASSWORD} className="text-xs text-purple hover:text-purple-400">Forgot password?</Link>
+              <div className="mb-4 mt-2 flex justify-end">
+                <Link
+                  href={AUTH_CLIENT_ROUTES.FORGOT_PASSWORD}
+                  className="hover:text-purple-400 text-xs text-purple"
+                >
+                  Forgot password?
+                </Link>
               </div>
               <Button
                 variant="light"
-                className="w-full hover:text-white mt-2"
+                className="mt-2 w-full hover:text-white"
                 onClick={() => setShowEmail(false)}
               >
-                <ArrowLeft/> Back to options
+                <ArrowLeft /> Back to options
               </Button>
             </div>
           )}
@@ -160,12 +181,12 @@ export default function LoginPage() {
           Don&apos;t have an account?{" "}
           <Link
             href={AUTH_CLIENT_ROUTES.REGISTER}
-            className="text-white hover:underline font-medium"
+            className="font-medium text-white hover:underline"
           >
             Signup
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }

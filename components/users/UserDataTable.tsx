@@ -1,17 +1,5 @@
-"use client"
+"use client";
 
-import { DataTable } from "@/components/table/DataTable"
-import { getUserColumns, User } from "./UserColumns"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { SortingState } from "@tanstack/react-table"
-import { toggleUserStatusAction } from "@/app/actions/user.action"
-import { toastHandler } from "@/lib/toastHandler"
-import { useApi } from "@/hooks/useApi"
-import { NEXT_API_ROUTES } from "@/constants/routeHandler"
-
-<<<<<<< Updated upstream
-=======
 import { DataTable } from "@/components/table/DataTable";
 import { getUserColumns, User } from "./UserColumns";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -29,116 +17,86 @@ import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ToggleUserBlockModal } from "./ToggleUserBlockModal";
->>>>>>> Stashed changes
 
 export default function UserDataTable({
-    initialData,
-    initialTotalCount
-}:{
-    initialData:User[],
-    initialTotalCount:number
+  initialData,
+  initialTotalCount,
+}: {
+  initialData: User[];
+  initialTotalCount: number;
 }) {
-    const [data, setData] = useState<User[]>(initialData)
-    const [totalCount, setTotalCount] = useState(initialTotalCount)
+  const [data, setData] = useState<User[]>(initialData);
+  const [totalCount, setTotalCount] = useState(initialTotalCount);
 
-    // Table State
-    const [search, setSearch] = useState("")
-    const [pageIndex, setPageIndex] = useState(0)
-    const [pageSize] = useState(8)
-    const [sorting, setSorting] = useState<SortingState>([])
-    const [statusFilter, setStatusFilter] = useState<string>("")
+  // Table State
+  const [search, setSearch] = useState("");
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize] = useState(8);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const debouncedSearch = useDebounce(search, 500);
 
-    //api hook called
-    const {execute,isLoading} = useApi({
-        url:NEXT_API_ROUTES.USERS_LIST_API,
-        method:"GET"
-    })
+  //confirmatiom modal
 
-    const isFirstRendered = useRef(true)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-    // fetch data from client side
-    const fetchData = useCallback(async () => {
+  //api hook called
+  const { execute, isLoading } = useApi({
+    url: NEXT_API_ROUTES.USERS_LIST_API,
+    method: "GET",
+  });
 
-        const sort = sorting[0]
+  const isFirstRendered = useRef(true);
 
-        const res = await execute({
-            params:{
-                search,
-                status:statusFilter,
-                page:pageIndex+1,
-                limit:pageSize,
-                sortBy:sort?.id,
-                sortOrder:sort?.desc ? "desc" : 'asc'
-            }
-        })
+  // fetch data from client side
+  const fetchData = useCallback(async () => {
+    const sort = sorting[0];
 
-        console.log("fetch is called")
+    const res = await execute({
+      params: {
+        search: debouncedSearch,
+        status: statusFilter,
+        page: pageIndex + 1,
+        limit: pageSize,
+        sortBy: sort?.id,
+        sortOrder: sort?.desc ? "desc" : "asc",
+      },
+    });
 
-        setData(res.data.users)
-        setTotalCount(res.data.totalCount)
+    setData(res.data.users);
+    setTotalCount(res.data.totalCount);
+  }, [debouncedSearch, pageIndex, pageSize, sorting, statusFilter, execute]);
 
-    }, [search, pageIndex, pageSize, sorting, statusFilter,execute])
+  useEffect(() => {
+    if (isFirstRendered.current) {
+      isFirstRendered.current = false;
+      return;
+    }
+    fetchData();
+  }, [fetchData]);
 
-    useEffect(() => {
-        if(isFirstRendered.current){
-            isFirstRendered.current = false
-            return 
-        }
-        fetchData()
-    },[fetchData])
+  // Reset page when filters change
+  useEffect(() => {
+    setPageIndex(0);
+  }, [debouncedSearch, statusFilter]);
 
-    // Reset page when filters change
-    useEffect(() => {
-        setPageIndex(0)
-    }, [search, statusFilter,])
+  const handleToggleBlock = async (id: string) => {
+    const res = await toggleUserStatusAction(id);
+    fetchData();
+    toastHandler(res);
+  };
 
-
-    const handleToggleBlock = async (id: string) => {
-        const res = await toggleUserStatusAction(id)
-        fetchData()
-        toastHandler(res)
+  const openModal = (id: string) => {
+    const user = data.find((u) => u.id === id);
+    if (!user) {
+      return;
     }
 
-    const renderFilters = () => (
-        <>
-             <div className="relative min-w-[150px]">
-                <Select value={statusFilter || "_clear_"} onValueChange={(value) => {
-                    setStatusFilter(value === '_clear_' ? "" : value)
-                }}>
-                    <SelectTrigger className="border-purple/30 pl-3 bg-navy/50 text-white focus:border-purple focus:ring-purple/20 transition-all duration-300 hover:border-purple/50">
-                        <SelectValue placeholder="Filter by Status" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-navy border-navy/50 text-white">
-                        <SelectItem value="_clear_" className="cursor-pointer focus:bg-purple/20 focus:text-white">All Status</SelectItem>
-                        <SelectItem value="active" className="cursor-pointer focus:bg-purple/20 focus:text-white">Active</SelectItem>
-                        <SelectItem value="blocked" className="cursor-pointer focus:bg-purple/20 focus:text-white">Blocked</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-        </>
-    )
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
 
-<<<<<<< Updated upstream
-    return (
-        <div className="w-full">
-            <DataTable
-                title="Users"
-                columns={getUserColumns(handleToggleBlock)}
-                data={data}
-                totalCount={totalCount}
-                isLoading={isLoading}
-                pageIndex={pageIndex}
-                pageSize={pageSize}
-                search={search}
-                sorting={sorting}
-                onPageChange={setPageIndex}
-                onSearchChange={setSearch}
-                onSortingChange={setSorting}
-                renderFilters={renderFilters}
-            />
-        </div>
-    )
-=======
   const confirmToggleBlock = () => {
     if (!selectedUser) {
       return;
@@ -210,5 +168,4 @@ export default function UserDataTable({
       />
     </div>
   );
->>>>>>> Stashed changes
 }
