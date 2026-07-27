@@ -13,13 +13,14 @@ import {
   VerifyEmailData,
   VerifyOtpData,
 } from "@/types/IAuthType";
+import { AxiosRequestConfig } from 'axios'
 
 export const authService = {
   register: async (data: RegisterData) => {
     return api.post(AUTH_API_ROUTES.REGISTER, data);
   },
-  login: async (data: LoginData) => {
-    return api.post(AUTH_API_ROUTES.LOGIN, data);
+  login: async (data: LoginData, config?: AxiosRequestConfig) => {
+    return api.post(AUTH_API_ROUTES.LOGIN, data, config);
   },
   verifyEmail: async (data: VerifyEmailData) => {
     return api.get(AUTH_API_ROUTES.VERIFY_EMAIL + `/${data?.token}`);
@@ -39,11 +40,11 @@ export const authService = {
   resetPassword: async (data: ResetPasswordData) => {
     return api.post(AUTH_API_ROUTES.RESET_PASSWORD, data);
   },
-  googleAuth: async (data: GoogleAuthData) => {
-    return api.post(AUTH_API_ROUTES.GOOGLE_AUTH, data);
+  googleAuth: async (data: GoogleAuthData, config?: AxiosRequestConfig) => {
+    return api.post(AUTH_API_ROUTES.GOOGLE_AUTH, data, config);
   },
-  githubAuth: async (data: GithubAuthData) => {
-    return api.post(AUTH_API_ROUTES.GITHUB_AUTH, data);
+  githubAuth: async (data: GithubAuthData, config?: AxiosRequestConfig) => {
+    return api.post(AUTH_API_ROUTES.GITHUB_AUTH, data, config);
   },
   logout: async (data: LogoutData) => {
     return api.post(AUTH_API_ROUTES.LOGOUT, data);
