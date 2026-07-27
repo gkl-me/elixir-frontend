@@ -28,6 +28,73 @@ export const USER_API_ROUTES = {
 
 
 export const PLAN_API_ROUTES = {
+<<<<<<< Updated upstream
     GET_ALL_PLANS:'/plans/',
     UPDATE_PLAN:'/plans/update'
 }
+=======
+  GET_ALL_PLANS: "/plans/",
+  CREATE_PLAN: "/plans/create",
+  TOGGLE_PLAN_STATUS: "/plans/toggle",
+};
+
+export const ONBOARDING_API_ROUTES = {
+  GET_USER_ONBOARDING: "/onboarding/",
+  SAVE_ONBOARDING_STEP: "/onboarding/step",
+  COMPLETE_ONBOARDING_STEP: "/onboarding/complete",
+  COMPLETE_ONBOARDING_PAYMENT: "/onboarding/complete-payment",
+  CHANGE_PLAN: "/onboarding/change-plan",
+};
+
+export const PAYMENT_API_ROUTES = {
+  VERIFY_PAYMENT: "/payment/verify",
+  RETRY_PAYMENT: "/payment/retry",
+  BILLING_INFO: '/payment/billing'
+};
+
+export const COMPANY_API_ROUTES = {
+  GET_ALL_COMPANY: "/company",
+  TOGGLE_COMPANY_STATUS: (companyId: string) => `/company/${companyId}/status`
+};
+
+export const WORKSPACE_API_ROUTES = {
+  GET_WORKSPACE_CONTEXT: "/workspace/context",
+
+  // Roles
+  GET_ROLES: (workspaceId: string) => `/workspace/${workspaceId}/roles`,
+  CREATE_ROLE: (workspaceId: string) => `/workspace/${workspaceId}/roles`,
+  UPDATE_ROLE: (workspaceId: string, roleId: string) =>
+    `/workspace/${workspaceId}/roles/${roleId}`,
+  DELETE_ROLE: (workspaceId: string, roleId: string) =>
+    `/workspace/${workspaceId}/roles/${roleId}`,
+
+  // Members
+  GET_MEMBERS: (workspaceId: string) => `/workspace/${workspaceId}/members`,
+  UPDATE_MEMBER_ROLE: (workspaceId: string, memberId: string) =>
+    `/workspace/${workspaceId}/members/${memberId}`,
+  REMOVE_MEMBER: (workspaceId: string, memberId: string) =>
+    `/workspace/${workspaceId}/members/${memberId}`,
+
+  // Invites
+  GET_INVITES: (workspaceId: string) => `/workspace/${workspaceId}/invites`,
+  SEND_INVITE: (workspaceId: string) => `/workspace/${workspaceId}/invites`,
+  RESEND_INVITE: (workspaceId: string, inviteId: string) =>
+    `/workspace/${workspaceId}/invites/${inviteId}/resend`,
+  REVOKE_INVITE: (workspaceId: string, inviteId: string) =>
+    `/workspace/${workspaceId}/invites/${inviteId}/revoke`,
+  VALIDATE_INVITE: (token: string) => `/workspace/invites/validate/${token}`,
+  ACCEPT_INVITE: "/workspace/invites/accept",
+
+  GET_TEAMS: (workspaceId: string) => `/workspace/${workspaceId}/teams`,
+  CREATE_TEAM: (workspaceId: string) => `/workspace/${workspaceId}/teams`,
+  ADD_MEMBERS: (workspaceId: string, teamId: string) =>
+    `/workspace/${workspaceId}/teams/${teamId}/members`,
+  REMOVE_TEAM_MEMBER: (workspaceId: string, teamId: string, memberId: string) =>
+    `/workspace/${workspaceId}/teams/${teamId}/members/${memberId}`,
+  GET_TEAM: (workspaceId: string, teamId: string) =>
+    `/workspace/${workspaceId}/teams/${teamId}`,
+
+  GET_WORKSPACE_LIMITS: (workspaceId: string) =>
+    `/workspace/${workspaceId}/limits`,
+};
+>>>>>>> Stashed changes

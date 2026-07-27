@@ -10,6 +10,26 @@ import { toastHandler } from "@/lib/toastHandler"
 import { useApi } from "@/hooks/useApi"
 import { NEXT_API_ROUTES } from "@/constants/routeHandler"
 
+<<<<<<< Updated upstream
+=======
+import { DataTable } from "@/components/table/DataTable";
+import { getUserColumns, User } from "./UserColumns";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SortingState } from "@tanstack/react-table";
+import { toggleUserStatusAction } from "@/app/actions/user.action";
+import { toastHandler } from "@/lib/toastHandler";
+import { useApi } from "@/hooks/useApi";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { useDebounce } from "@/hooks/useDebounce";
+import { ToggleUserBlockModal } from "./ToggleUserBlockModal";
+>>>>>>> Stashed changes
 
 export default function UserDataTable({
     initialData,
@@ -98,6 +118,7 @@ export default function UserDataTable({
         </>
     )
 
+<<<<<<< Updated upstream
     return (
         <div className="w-full">
             <DataTable
@@ -117,4 +138,77 @@ export default function UserDataTable({
             />
         </div>
     )
+=======
+  const confirmToggleBlock = () => {
+    if (!selectedUser) {
+      return;
+    }
+    handleToggleBlock(selectedUser.id);
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const renderFilters = () => (
+    <>
+      <div className="relative min-w-[150px]">
+        <Select
+          value={statusFilter || "_clear_"}
+          onValueChange={(value) => {
+            setStatusFilter(value === "_clear_" ? "" : value);
+          }}
+        >
+          <SelectTrigger className="border-purple/30 bg-navy/50 pl-3 text-white transition-all duration-300 hover:border-purple/50 focus:border-purple focus:ring-purple/20">
+            <SelectValue placeholder="Filter by Status" />
+          </SelectTrigger>
+          <SelectContent className="border-navy/50 bg-navy text-white">
+            <SelectItem
+              value="_clear_"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
+              All Status
+            </SelectItem>
+            <SelectItem
+              value="active"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
+              Active
+            </SelectItem>
+            <SelectItem
+              value="blocked"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
+              Blocked
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="w-full">
+      <DataTable
+        title="Users"
+        columns={getUserColumns(openModal)}
+        data={data}
+        totalCount={totalCount}
+        isLoading={isLoading}
+        pageIndex={pageIndex}
+        pageSize={pageSize}
+        search={search}
+        sorting={sorting}
+        onPageChange={setPageIndex}
+        onSearchChange={setSearch}
+        onSortingChange={setSorting}
+        renderFilters={renderFilters}
+      />
+      <ToggleUserBlockModal
+        isOpen={isModalOpen}
+        user={selectedUser}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmToggleBlock}
+      />
+    </div>
+  );
+>>>>>>> Stashed changes
 }
