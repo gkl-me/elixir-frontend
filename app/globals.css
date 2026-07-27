@@ -83,6 +83,43 @@
   scrollbar-width: none; /* Firefox */
 }
 
+/* ── Themed Scrollbar ─────────────────────────────────────────
+   Change only these three variables to restyle every scrollbar
+   in the app at once.
+──────────────────────────────────────────────────────────── */
+:root {
+  --sb-track:       #07112b;   /* track background  (deep navy)   */
+  --sb-thumb:       #4B2070;   /* thumb color        (purple dark) */
+  --sb-thumb-hover: #8735C9;   /* thumb hover color  (purple)      */
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--sb-track);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb);
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--sb-thumb-hover);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb) var(--sb-track);
+}
+
 /* Sonner Toast Overrides - Ensuring "Elixir" Theme */
 @layer components {
   :where([data-sonner-toast]) {
