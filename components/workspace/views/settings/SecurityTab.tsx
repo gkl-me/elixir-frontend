@@ -14,6 +14,7 @@ import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { RevokeSessionData } from "@/types/IUserType";
 import { handleLogoutAllDevicesAction } from "@/app/actions/auth.action";
 import { formatUserAgent } from "@/lib/formatAgent";
+import { SignoutAllDevicesModal } from "@/components/modal/SignoutAllDevicesModal";
 
 // ─── Zod schema ───────────────────────────────────────────
 const passwordSchema = z
@@ -81,6 +82,8 @@ export const SecurityTab = () => {
   }, []);
 
 
+
+  const [showSignoutAllModal, setShowSignoutAllModal] = React.useState(false);
 
   return (
     <div className="space-y-6">
@@ -169,12 +172,17 @@ export const SecurityTab = () => {
       {/* Sign out all */}
       <div className="flex justify-end">
         <Button
-          onClick={() => handleLogoutAllDevices()}
+          onClick={() => setShowSignoutAllModal(true)}
           className="gap-2 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white">
           <LogOut className="h-4 w-4" />
           Sign Out of All Devices
         </Button>
       </div>
+
+      <SignoutAllDevicesModal
+        isOpen={showSignoutAllModal}
+        onClose={() => setShowSignoutAllModal(false)}
+      />
     </div>
   );
 };

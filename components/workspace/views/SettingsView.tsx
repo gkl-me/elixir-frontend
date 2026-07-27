@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { User, Shield, ChevronRight, CreditCard, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProfileTab } from "./settings/ProfileTab";
@@ -27,7 +28,20 @@ const TAB_CONTENT: Record<SettingsTab, React.ReactNode> = {
 
 // ─── SettingsView ─────────────────────────────────────────
 export const SettingsView = () => {
-  const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const tabParam = searchParams.get("tab") as SettingsTab;
+  const activeTab: SettingsTab = TABS.some((t) => t.id === tabParam)
+    ? tabParam
+    : "profile";
+
+  const handleTabChange = (tabId: SettingsTab) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <div className="mx-auto w-full max-w-5xl pb-10">
@@ -48,7 +62,7 @@ export const SettingsView = () => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={cn(
                     "flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all",
                     active

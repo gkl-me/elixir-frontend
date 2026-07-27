@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { CustomModal } from "../modal/CustomModal";
-import { logoutAction } from "@/app/actions/auth.action";
+import { LogoutModal } from "../modal/LogoutModal";
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -37,22 +36,7 @@ export function Header() {
         <span className="hidden sm:inline">Admin</span>
       </Button>
 
-      {/* custom modal */}
-
-      <CustomModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Admin Logout"
-      >
-        <Button
-          variant="white"
-          onClick={() => {
-            logoutAction();
-          }}
-        >
-          Logout
-        </Button>
-      </CustomModal>
+      <LogoutModal isOpen={open} onClose={() => setOpen(false)} />
     </header>
   );
 }
