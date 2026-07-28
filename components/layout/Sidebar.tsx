@@ -52,16 +52,18 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Floating Toggle Button */}
-      <div className="fixed bottom-5 right-5 z-50 md:hidden">
-        <button
-          onClick={() => setMobileOpen((p) => !p)}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-white shadow-xl shadow-[#8735C9]/40 transition-transform active:scale-95"
-          aria-label="Toggle Navigation Menu"
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
-      </div>
+      {/* Mobile Top-Left Toggle Button (Only visible when mobile menu is closed) */}
+      {!mobileOpen && (
+        <div className="fixed top-3.5 left-3.5 z-50 md:hidden">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#1e2a4a] bg-[#0c1635]/90 text-white shadow-lg backdrop-blur-md transition-all active:scale-95 hover:bg-[#132353]"
+            aria-label="Open Navigation Menu"
+          >
+            <Menu className="h-5 w-5 text-purple-300" />
+          </button>
+        </div>
+      )}
 
       {/* Mobile Overlay Backdrop */}
       {isMobile && mobileOpen && (

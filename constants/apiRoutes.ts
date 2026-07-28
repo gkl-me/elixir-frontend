@@ -55,6 +55,9 @@ export const COMPANY_API_ROUTES = {
 export const WORKSPACE_API_ROUTES = {
   GET_WORKSPACE_CONTEXT: "/workspace/context",
 
+  GET_ALL_WORKSPACE: "/workspace",
+  TOGGLE_WORKSPACE_STATUS: (workspaceId: string) => `/workspace/${workspaceId}/status`,
+
   // Roles
   GET_ROLES: (workspaceId: string) => `/workspace/${workspaceId}/roles`,
   CREATE_ROLE: (workspaceId: string) => `/workspace/${workspaceId}/roles`,
