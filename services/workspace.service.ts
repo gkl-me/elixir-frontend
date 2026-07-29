@@ -5,12 +5,25 @@ import {
   CreateTeamData,
   GetTeamData,
   ListTeamsData,
+  ListWorkspaceData,
   RemoveTeamMemberData,
+  ToggleWorkspaceStatusData,
   WorkspaceContextData,
   WorkspaceLimitsData,
 } from "@/types/IWorkspaceType";
 
 export const workspaceService = {
+
+  handleListWorkspace: async (params: ListWorkspaceData) => {
+    return api.get(WORKSPACE_API_ROUTES.GET_ALL_WORKSPACE, {
+      params
+    })
+  },
+
+  handletoggleWorkspaceStatus: async (params: ToggleWorkspaceStatusData) => {
+    return api.patch(WORKSPACE_API_ROUTES.TOGGLE_WORKSPACE_STATUS(params.workspaceId))
+  },
+
   handleWorkspaceContext: async (data: WorkspaceContextData) => {
     return api.get(
       WORKSPACE_API_ROUTES.GET_WORKSPACE_CONTEXT + "/" + data?.slug

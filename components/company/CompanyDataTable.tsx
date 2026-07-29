@@ -173,16 +173,10 @@ export default function CompanyDataTable({
               Active
             </SelectItem>
             <SelectItem
-              value="pending"
+              value="suspended"
               className="cursor-pointer focus:bg-purple/20 focus:text-white"
             >
-              Pending
-            </SelectItem>
-            <SelectItem
-              value="blocked"
-              className="cursor-pointer focus:bg-purple/20 focus:text-white"
-            >
-              Blocked
+              Suspended
             </SelectItem>
           </SelectContent>
         </Select>

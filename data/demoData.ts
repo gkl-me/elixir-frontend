@@ -738,3 +738,160 @@ export const demoInvites: Invite[] = [
     expiresAt: "2026-03-08T07:00:00.000Z",
   },
 ];
+
+// ─────────────────────────────────────────────────────────
+// ADMIN SUBSCRIPTIONS & TRANSACTIONS
+// ─────────────────────────────────────────────────────────
+export interface AdminSubscription {
+  id: string;
+  workspaceName: string;
+  companyName: string;
+  ownerEmail: string;
+  planName: "Free" | "Pro" | "Enterprise";
+  status: "active" | "canceled" | "past_due" | "paused";
+  billingCycle: "monthly" | "yearly";
+  price: number; // in cents
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  cancelAtPeriodEnd: boolean;
+  paymentMethod: string;
+  createdAt: string;
+}
+
+export const demoAdminSubscriptions: AdminSubscription[] = [
+  {
+    id: "sub_101",
+    workspaceName: "Acme Corp Workspace",
+    companyName: "Acme Corporation",
+    ownerEmail: "alice@acme.com",
+    planName: "Enterprise",
+    status: "active",
+    billingCycle: "yearly",
+    price: 19900,
+    currentPeriodStart: "2026-01-01T00:00:00.000Z",
+    currentPeriodEnd: "2027-01-01T00:00:00.000Z",
+    cancelAtPeriodEnd: false,
+    paymentMethod: "Visa •••• 4242",
+    createdAt: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "sub_102",
+    workspaceName: "DevOps Core",
+    companyName: "TechCorp Labs",
+    ownerEmail: "bob@techcorp.io",
+    planName: "Pro",
+    status: "active",
+    billingCycle: "monthly",
+    price: 2900,
+    currentPeriodStart: "2026-03-01T00:00:00.000Z",
+    currentPeriodEnd: "2026-04-01T00:00:00.000Z",
+    cancelAtPeriodEnd: false,
+    paymentMethod: "Mastercard •••• 8888",
+    createdAt: "2025-11-15T00:00:00.000Z",
+  },
+  {
+    id: "sub_103",
+    workspaceName: "Design Systems",
+    companyName: "Creative Pulse Studio",
+    ownerEmail: "charlie@designpulse.co",
+    planName: "Pro",
+    status: "active",
+    billingCycle: "monthly",
+    price: 2900,
+    currentPeriodStart: "2026-03-10T00:00:00.000Z",
+    currentPeriodEnd: "2026-04-10T00:00:00.000Z",
+    cancelAtPeriodEnd: true,
+    paymentMethod: "Visa •••• 1234",
+    createdAt: "2025-12-10T00:00:00.000Z",
+  },
+  {
+    id: "sub_104",
+    workspaceName: "Alpha Sandbox",
+    companyName: "Starlight Media",
+    ownerEmail: "diana@starlight.org",
+    planName: "Free",
+    status: "active",
+    billingCycle: "monthly",
+    price: 0,
+    currentPeriodStart: "2026-02-01T00:00:00.000Z",
+    currentPeriodEnd: "2026-03-01T00:00:00.000Z",
+    cancelAtPeriodEnd: false,
+    paymentMethod: "N/A",
+    createdAt: "2026-02-01T00:00:00.000Z",
+  },
+  {
+    id: "sub_105",
+    workspaceName: "FinTech Hub",
+    companyName: "Nova Pay Inc",
+    ownerEmail: "ethan@novapay.com",
+    planName: "Enterprise",
+    status: "past_due",
+    billingCycle: "monthly",
+    price: 9900,
+    currentPeriodStart: "2026-02-15T00:00:00.000Z",
+    currentPeriodEnd: "2026-03-15T00:00:00.000Z",
+    cancelAtPeriodEnd: false,
+    paymentMethod: "Amex •••• 9012",
+    createdAt: "2025-08-20T00:00:00.000Z",
+  },
+  {
+    id: "sub_106",
+    workspaceName: "Legacy Portal",
+    companyName: "Vintage Goods Co",
+    ownerEmail: "fiona@vintagegoods.net",
+    planName: "Pro",
+    status: "canceled",
+    billingCycle: "monthly",
+    price: 2900,
+    currentPeriodStart: "2026-01-01T00:00:00.000Z",
+    currentPeriodEnd: "2026-02-01T00:00:00.000Z",
+    cancelAtPeriodEnd: true,
+    paymentMethod: "Visa •••• 5555",
+    createdAt: "2025-05-10T00:00:00.000Z",
+  },
+  {
+    id: "sub_107",
+    workspaceName: "Cloud Ops Base",
+    companyName: "Strato Cloud Services",
+    ownerEmail: "george@stratocloud.io",
+    planName: "Pro",
+    status: "paused",
+    billingCycle: "yearly",
+    price: 29000,
+    currentPeriodStart: "2025-09-01T00:00:00.000Z",
+    currentPeriodEnd: "2026-09-01T00:00:00.000Z",
+    cancelAtPeriodEnd: false,
+    paymentMethod: "Mastercard •••• 7777",
+    createdAt: "2025-09-01T00:00:00.000Z",
+  },
+  {
+    id: "sub_108",
+    workspaceName: "Growth Engine",
+    companyName: "Vanguard Dynamics",
+    ownerEmail: "hannah@vanguard.com",
+    planName: "Enterprise",
+    status: "active",
+    billingCycle: "yearly",
+    price: 19900,
+    currentPeriodStart: "2026-02-01T00:00:00.000Z",
+    currentPeriodEnd: "2027-02-01T00:00:00.000Z",
+    cancelAtPeriodEnd: false,
+    paymentMethod: "Visa •••• 3333",
+    createdAt: "2026-02-01T00:00:00.000Z",
+  },
+];
+
+export interface AdminTransaction {
+  id: string;
+  invoiceNumber: string;
+  workspaceName: string;
+  customerEmail: string;
+  amount: number; // in cents
+  currency: string;
+  status: "succeeded" | "failed" | "refunded" | "pending";
+  paymentMethod: string;
+  last4: string;
+  invoicePdfUrl: string
+  planType: string;
+  createdAt: string;
+}

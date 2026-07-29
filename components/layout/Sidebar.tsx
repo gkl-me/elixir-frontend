@@ -14,6 +14,8 @@ import {
   ShieldCheck,
   Menu,
   X,
+  Repeat,
+  Receipt,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +24,8 @@ const NAVIGATION = [
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Company", href: "/admin/company", icon: Building2 },
   { name: "Workspaces", href: "/admin/workspace", icon: LayoutDashboard },
+  { name: "Subscriptions", href: "/admin/subscription", icon: Repeat },
+  { name: "Transactions", href: "/admin/transaction", icon: Receipt },
   { name: "Plans", href: "/admin/plans", icon: CreditCard },
 ];
 
@@ -50,18 +54,22 @@ export function Sidebar() {
     setMobileOpen(false);
   }, [pathname]);
 
+  const isCollapsedDesktop = !isMobile && isCollapsed;
+
   return (
     <>
-      {/* Mobile Floating Toggle Button */}
-      <div className="fixed bottom-5 right-5 z-50 md:hidden">
-        <button
-          onClick={() => setMobileOpen((p) => !p)}
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-white shadow-xl shadow-[#8735C9]/40 transition-transform active:scale-95"
-          aria-label="Toggle Navigation Menu"
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
-      </div>
+      {/* Mobile Top-Left Toggle Button (Only visible when mobile menu is closed) */}
+      {!mobileOpen && (
+        <div className="fixed top-3.5 left-3.5 z-50 md:hidden">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#1e2a4a] bg-[#0c1635]/90 text-white shadow-lg backdrop-blur-md transition-all active:scale-95 hover:bg-[#132353]"
+            aria-label="Open Navigation Menu"
+          >
+            <Menu className="h-5 w-5 text-purple-300" />
+          </button>
+        </div>
+      )}
 
       {/* Mobile Overlay Backdrop */}
       {isMobile && mobileOpen && (
@@ -74,10 +82,13 @@ export function Sidebar() {
       {/* Sidebar Element */}
       <aside
         className={cn(
-          "sticky top-16 h-[calc(100vh-4rem)] flex flex-col border-r border-[#1e2a4a] bg-[#07112b] transition-all duration-300 z-40",
-          !isMobile && (isCollapsed ? "w-[68px]" : "w-60"),
+          "flex h-full shrink-0 flex-col border-r border-[#1e2a4a] bg-[#07112b] transition-all duration-300",
+          !isMobile && [
+            "relative z-30",
+            isCollapsed ? "w-[68px]" : "w-60",
+          ],
           isMobile && [
-            "fixed inset-y-0 left-0 top-0 h-full w-64 shadow-2xl transition-transform duration-300",
+            "fixed inset-y-0 left-0 top-0 h-full w-64 z-50 shadow-2xl transition-transform duration-300",
             mobileOpen ? "translate-x-0" : "-translate-x-full",
           ]
         )}
@@ -87,13 +98,13 @@ export function Sidebar() {
           <div
             className={cn(
               "flex items-center gap-3 overflow-hidden transition-all",
-              !isMobile && isCollapsed && "justify-center w-full"
+              isCollapsedDesktop && "justify-center w-full"
             )}
           >
             <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8735C9] to-[#6a29a0] text-white shadow-md shadow-[#8735C9]/30">
               <ShieldCheck className="h-5 w-5" />
             </div>
-            {(!isCollapsed || isMobile) && (
+            {!isCollapsedDesktop && (
               <div className="min-w-0 flex-1">
                 <h2 className="truncate text-sm font-bold leading-tight text-white">
                   Admin Panel
@@ -111,15 +122,17 @@ export function Sidebar() {
               <X className="h-4 w-4" />
             </button>
           ) : (
-            !isCollapsed && (
-              <button
-                onClick={() => setIsCollapsed(true)}
-                className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#1e2a4a] bg-[#0c1635] text-[#6b7db3] transition-colors hover:bg-[#132353] hover:text-white"
-                title="Collapse Sidebar"
-              >
+            <button
+              onClick={() => setIsCollapsed((prev) => !prev)}
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#1e2a4a] bg-[#0c1635] text-[#6b7db3] transition-colors hover:bg-[#132353] hover:text-white"
+              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            >
+              {isCollapsed ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
                 <ChevronLeft className="h-4 w-4" />
-              </button>
-            )
+              )}
+            </button>
           )}
         </div>
 
@@ -130,8 +143,6 @@ export function Sidebar() {
             const isActive =
               pathname === item.href ||
               (item.href !== "/admin/dashboard" && pathname?.startsWith(item.href));
-
-            const isCollapsedDesktop = !isMobile && isCollapsed;
 
             return (
               <Link
@@ -159,19 +170,6 @@ export function Sidebar() {
             );
           })}
         </div>
-
-        {/* Desktop Collapsed Toggle Bar */}
-        {!isMobile && isCollapsed && (
-          <div className="border-t border-[#1e2a4a] p-2 flex justify-center">
-            <button
-              onClick={() => setIsCollapsed(false)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#1e2a4a] bg-[#0c1635] text-[#6b7db3] transition-colors hover:bg-[#132353] hover:text-white"
-              title="Expand Sidebar"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-        )}
       </aside>
     </>
   );

@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/table/DataTable";
 import { getWorkspaceColumns, Workspace } from "./WorkspaceColumns";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -12,63 +12,23 @@ import {
 } from "@/components/ui/select";
 import { SortingState } from "@tanstack/react-table";
 import { useDebounce } from "@/hooks/useDebounce";
-import { CustomModal } from "@/components/modal/CustomModal";
-import { ConfirmationModal } from "@/components/modal/ConfirmationModal";
+import { WorkspaceDetailsModal } from "./modals/WorkspaceDetailsModal";
+import { SuspendWorkspaceModal } from "./modals/SuspendWorkspaceModal";
 import { toastHandler } from "@/lib/toastHandler";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { useApi } from "@/hooks/useApi";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { toggleWorkspaceStatusAction } from "@/app/actions/workspace.action";
 
-// Dummy data for initial dev
-const DUMMY_WORKSPACES: Workspace[] = [
-  {
-    id: "1",
-    name: "Acme Corp",
-    ownerEmail: "admin@acme.com",
-    plan: "enterprice",
-    status: "active",
-    userCount: 42,
-    createdAt: "2024-01-10",
-  },
-  {
-    id: "2",
-    name: "Freelancer Hub",
-    ownerEmail: "john@freelancer.com",
-    plan: "pro",
-    status: "active",
-    userCount: 1,
-    createdAt: "2024-02-15",
-  },
-  {
-    id: "3",
-    name: "Startup Inc",
-    ownerEmail: "founder@startup.io",
-    plan: "free",
-    status: "suspended",
-    userCount: 5,
-    createdAt: "2024-03-01",
-  },
-  {
-    id: "4",
-    name: "Beta Testers",
-    ownerEmail: "beta@test.com",
-    plan: "free",
-    status: "active",
-    userCount: 10,
-    createdAt: "2024-03-05",
-  },
-  {
-    id: "5",
-    name: "Global Reach",
-    ownerEmail: "ceo@globalreach.net",
-    plan: "enterprice",
-    status: "blocked",
-    userCount: 120,
-    createdAt: "2023-11-20",
-  },
-];
-
-export default function WorkspaceDataTable() {
-  const [data, setData] = useState<Workspace[]>(DUMMY_WORKSPACES);
-  const [totalCount, setTotalCount] = useState(DUMMY_WORKSPACES.length);
+export default function WorkspaceDataTable({
+  intialData,
+  intialTotalCount = 0
+}: {
+  intialData: Workspace[],
+  intialTotalCount: number
+}) {
+  const [data, setData] = useState<Workspace[]>(intialData);
+  const [totalCount, setTotalCount] = useState(intialTotalCount)
 
   // Table State
   const [search, setSearch] = useState("");
@@ -87,27 +47,50 @@ export default function WorkspaceDataTable() {
   const [workspaceToSuspend, setWorkspaceToSuspend] =
     useState<Workspace | null>(null);
 
-  const isLoading = false; // Mock loading state for now
+
+  const { execute, isLoading } = useApi({
+    url: NEXT_API_ROUTES.GET_ALL_WORKSPACE,
+    method: "GET"
+  })
+
+
+  const isFirstRendered = useRef(true);
 
   const fetchData = useCallback(async () => {
-    // Mocking API fetch with dummy data filtering
-    let filtered = [...DUMMY_WORKSPACES];
 
-    if (debouncedSearch) {
-      filtered = filtered.filter((w) =>
-        w.name.toLowerCase().includes(debouncedSearch.toLowerCase())
-      );
+    try {
+
+      const res = await execute({
+        params: {
+          search: debouncedSearch,
+          status: statusFilter,
+          page: pageIndex + 1,
+          limit: pageSize
+        }
+      })
+
+      console.log("res", res.data)
+
+      setData(res.data.workspaces)
+      setTotalCount(res.data.totalCount)
+
+      toastHandler({
+        success: res.success,
+        message: res.message
+      })
+
+    } catch (error) {
+      const err = AxiosErrorHandler(error);
+      toastHandler({ success: false, error: err.message });
     }
 
-    if (statusFilter) {
-      filtered = filtered.filter((w) => w.status === statusFilter);
-    }
-
-    setData(filtered);
-    setTotalCount(filtered.length);
   }, [debouncedSearch, statusFilter]); // Simplified deps since it's mock data
 
   useEffect(() => {
+    if (isFirstRendered.current) {
+      isFirstRendered.current = false;
+      return;
+    }
     fetchData();
   }, [fetchData]);
 
@@ -136,23 +119,12 @@ export default function WorkspaceDataTable() {
     }
 
     try {
-      // Mock API call to toggle status
-      const newStatus =
-        workspaceToSuspend.status === "suspended" ||
-        workspaceToSuspend.status === "blocked"
-          ? "active"
-          : "suspended";
-      const updated = data.map((w) =>
-        w.id === workspaceToSuspend.id
-          ? { ...w, status: newStatus as "active" | "suspended" | "blocked" }
-          : w
-      );
-      setData(updated);
 
-      toastHandler({
-        success: true,
-        message: `Workspace successfully ${newStatus === "active" ? "activated" : "suspended"}.`,
-      });
+      const res = await toggleWorkspaceStatusAction({
+        workspaceId: workspaceToSuspend.id
+      })
+      toastHandler(res)
+      fetchData()
       setIsSuspendModalOpen(false);
     } catch (error) {
       const err = AxiosErrorHandler(error);
@@ -190,12 +162,6 @@ export default function WorkspaceDataTable() {
           >
             Suspended
           </SelectItem>
-          <SelectItem
-            value="blocked"
-            className="cursor-pointer focus:bg-purple/20 focus:text-white"
-          >
-            Blocked
-          </SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -219,75 +185,19 @@ export default function WorkspaceDataTable() {
         renderFilters={renderFilters}
       />
 
-      <CustomModal
+      <WorkspaceDetailsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Workspace Details"
-        description={`Viewing details for ${selectedWorkspace?.name}`}
-      >
-        {selectedWorkspace && (
-          <div className="mt-4 space-y-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">Workspace Name</span>
-                <span className="font-medium text-white">
-                  {selectedWorkspace.name}
-                </span>
-              </div>
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">Status</span>
-                <span className="font-medium capitalize text-white">
-                  {selectedWorkspace.status}
-                </span>
-              </div>
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">Owner Email</span>
-                <span className="font-medium text-white">
-                  {selectedWorkspace.ownerEmail}
-                </span>
-              </div>
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">Current Plan</span>
-                <span className="font-medium capitalize text-white">
-                  {selectedWorkspace.plan}
-                </span>
-              </div>
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">User Count</span>
-                <span className="font-medium text-white">
-                  {selectedWorkspace.userCount}
-                </span>
-              </div>
-              <div className="rounded-lg border border-purple/20 bg-navy/50 p-3">
-                <span className="mb-1 block text-gray-400">Created At</span>
-                <span className="font-medium text-white">
-                  {selectedWorkspace.createdAt}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-      </CustomModal>
+        workspace={selectedWorkspace}
+      />
 
-      <ConfirmationModal
+      <SuspendWorkspaceModal
         isOpen={isSuspendModalOpen}
         onClose={() => setIsSuspendModalOpen(false)}
         onConfirm={handleSuspend}
-        title={
-          workspaceToSuspend?.status === "blocked" ||
-          workspaceToSuspend?.status === "suspended"
-            ? "Activate Workspace"
-            : "Suspend Workspace"
-        }
-        description={`Are you sure you want to ${workspaceToSuspend?.status === "blocked" || workspaceToSuspend?.status === "suspended" ? "activate" : "suspend"} the workspace "${workspaceToSuspend?.name}"? ${workspaceToSuspend?.status !== "blocked" && workspaceToSuspend?.status !== "suspended" ? "All users in this workspace will lose access." : ""}`}
-        confirmText={
-          workspaceToSuspend?.status === "blocked" ||
-          workspaceToSuspend?.status === "suspended"
-            ? "Yes, Activate"
-            : "Yes, Suspend"
-        }
-        cancelText="Cancel"
+        workspace={workspaceToSuspend}
       />
     </div>
   );
 }
+

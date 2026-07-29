@@ -42,3 +42,15 @@ export interface GetTeamData {
 export interface WorkspaceLimitsData {
   workspaceId: string
 }
+
+
+export interface ListWorkspaceData {
+  search?: string,
+  status?: string,
+  page?: number
+  limit?: number
+}
+
+export interface ToggleWorkspaceStatusData {
+  workspaceId: string
+}

@@ -7,6 +7,7 @@ import {
   AddMembersData,
   CreateTeamData,
   RemoveTeamMemberData,
+  ToggleWorkspaceStatusData,
 } from "@/types/IWorkspaceType";
 
 // // ── Types ──────────────────────────────────────────────────────────────────
@@ -273,5 +274,21 @@ export async function removeTeamMemberAction(data: RemoveTeamMemberData) {
       success: false,
       error: AxiosErrorHandler(error).message,
     };
+  }
+}
+
+export async function toggleWorkspaceStatusAction(data: ToggleWorkspaceStatusData) {
+  try {
+    const res = await workspaceService.handletoggleWorkspaceStatus(data)
+    return {
+      success: res.data.success,
+      message: res.data.message
+    }
+  } catch (error) {
+    handlerServerError(error)
+    return {
+      success: false,
+      error: AxiosErrorHandler(error).message
+    }
   }
 }

@@ -44,14 +44,13 @@ export default function OnboardingWizard() {
 
   //on next calls the server action
   const handleNext = async (data: Partial<IOnboardingState>) => {
-    //call the server action here
-    // console.log(data)
+    console.log("rendering here", data);
     const res = await saveOnboardingStepAction({
       ...data,
       currentStep: state.currentStep + 1,
     });
     setState(res.data);
-    const prog = findProgress(state.currentStep);
+    const prog = findProgress(res.data.currentStep);
     setProgress(prog);
   };
 
@@ -61,7 +60,7 @@ export default function OnboardingWizard() {
       currentStep: state.currentStep - 1,
     });
     setState(res.data);
-    const prog = findProgress(state.currentStep - 1);
+    const prog = findProgress(res.data.currentStep);
     setProgress(prog);
   };
 
@@ -104,18 +103,16 @@ export default function OnboardingWizard() {
           </div>
 
           <div
-            className={`text-center ${
-              state.currentStep >= 2 ? "text-white" : "text-gray-600"
-            }`}
+            className={`text-center ${state.currentStep >= 2 ? "text-white" : "text-gray-600"
+              }`}
           >
             <span className="mb-1 block text-xs text-gray-500">STEP 2</span>
             Details
           </div>
 
           <div
-            className={`text-right ${
-              state.currentStep >= 3 ? "text-white" : "text-gray-600"
-            }`}
+            className={`text-right ${state.currentStep >= 3 ? "text-white" : "text-gray-600"
+              }`}
           >
             <span className="mb-1 block text-xs text-gray-500">STEP 3</span>
             Payment
