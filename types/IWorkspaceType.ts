@@ -54,3 +54,17 @@ export interface ListWorkspaceData {
 export interface ToggleWorkspaceStatusData {
   workspaceId: string
 }
+
+export interface GetMembersParams {
+  workspaceId: string,
+  page?: number,
+  limit?: number,
+  search?: string
+}
+
+export interface GetInvitesParams {
+  workspaceId: string
+  limit?: number
+  page?: number
+  search?: string
+}

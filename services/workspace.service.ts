@@ -3,6 +3,8 @@ import api from "@/lib/api";
 import {
   AddMembersData,
   CreateTeamData,
+  GetInvitesParams,
+  GetMembersParams,
   GetTeamData,
   ListTeamsData,
   ListWorkspaceData,
@@ -56,8 +58,10 @@ export const workspaceService = {
     return api.delete(WORKSPACE_API_ROUTES.DELETE_ROLE(workspaceId, roleId));
   },
 
-  getMembers: async (workspaceId: string) => {
-    return api.get(WORKSPACE_API_ROUTES.GET_MEMBERS(workspaceId));
+  getMembers: async (params: GetMembersParams) => {
+    return api.get(WORKSPACE_API_ROUTES.GET_MEMBERS(params.workspaceId), {
+      params
+    });
   },
 
   updateMemberRole: async (
@@ -77,8 +81,10 @@ export const workspaceService = {
     );
   },
 
-  getInvites: async (workspaceId: string) => {
-    return api.get(WORKSPACE_API_ROUTES.GET_INVITES(workspaceId));
+  getInvites: async (params: GetInvitesParams) => {
+    return api.get(WORKSPACE_API_ROUTES.GET_INVITES(params.workspaceId), {
+      params
+    });
   },
 
   sendInvite: async (

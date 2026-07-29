@@ -16,6 +16,7 @@ import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { toastHandler } from "@/lib/toastHandler";
 import Image from "next/image";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const PAGE = 10;
 
@@ -36,11 +37,15 @@ export const MembersTab = ({
   });
 
   const [members, setMembers] = useState<Member[]>([]);
+  const [totalCount, setTotalCount] = useState(0)
+
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const [pageSize] = useState(8)
   const [sorting, setSorting] = useState<SortingState>([]);
   const [editMember, setEditMember] = useState<Member | null>(null);
   const [removeMember, setRemoveMember] = useState<Member | null>(null);
+  const debouncedSearch = useDebounce(search, 500)
 
   const fetchMembers = useCallback(async () => {
     if (!workspaceId) {
@@ -50,39 +55,39 @@ export const MembersTab = ({
       const res = await execute({
         params: {
           workspaceId,
+          page: page + 1,
+          limit: pageSize,
+          search: debouncedSearch
         },
       });
 
+      console.log("res", res)
+
       if (res?.success) {
-        setMembers(res.data.members || []);
+        setMembers(res.data.members);
+        setTotalCount(res.data.totalCount)
       }
     } catch (error) {
       const err = AxiosErrorHandler(error);
       toastHandler({ success: false, error: err.message });
     }
-  }, [workspaceId, execute]);
+  }, [
+    debouncedSearch,
+    pageSize,
+    page,
+    workspaceId,
+  ]);
 
   // Load members on mount and refresh trigger
   useEffect(() => {
     fetchMembers();
   }, [fetchMembers, refreshTrigger]);
 
-  const filtered = useMemo(
-    () =>
-      members.filter(
-        (m) =>
-          !search ||
-          m.name.toLowerCase().includes(search.toLowerCase()) ||
-          m.email.toLowerCase().includes(search.toLowerCase()) ||
-          m.roleKey.toLowerCase().includes(search.toLowerCase())
-      ),
-    [members, search]
-  );
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch,]);
 
-  const paged = useMemo(
-    () => filtered.slice(page * PAGE, (page + 1) * PAGE),
-    [filtered, page]
-  );
+
 
   const columns: ColumnDef<Member>[] = [
     {
@@ -208,8 +213,8 @@ export const MembersTab = ({
     <>
       <DataTable
         columns={columns}
-        data={paged}
-        totalCount={filtered.length}
+        data={members}
+        totalCount={totalCount}
         pageIndex={page}
         pageSize={PAGE}
         search={search}

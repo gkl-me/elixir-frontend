@@ -6,8 +6,17 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const workspaceId = searchParams.get("workspaceId");
+    const search = searchParams.get("search") ?? "";
+    const page = searchParams.get("page") ?? "1";
+    const limit = searchParams.get("limit") ?? "9";
 
-    const res = await workspaceService.getMembers(workspaceId);
+
+    const res = await workspaceService.getMembers({
+      workspaceId,
+      limit: parseInt(limit),
+      page: parseInt(page),
+      search
+    });
 
     return NextResponse.json({
       success: res.data.success,
