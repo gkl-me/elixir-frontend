@@ -47,8 +47,8 @@ export interface WorkspaceLimitsData {
 export interface ListWorkspaceData {
   search?: string,
   status?: string,
-  page: number
-  limit: number
+  page?: number
+  limit?: number
 }
 
 export interface ToggleWorkspaceStatusData {

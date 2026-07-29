@@ -14,6 +14,8 @@ import {
   ShieldCheck,
   Menu,
   X,
+  Repeat,
+  Receipt,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +24,8 @@ const NAVIGATION = [
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Company", href: "/admin/company", icon: Building2 },
   { name: "Workspaces", href: "/admin/workspace", icon: LayoutDashboard },
+  { name: "Subscriptions", href: "/admin/subscription", icon: Repeat },
+  { name: "Transactions", href: "/admin/transaction", icon: Receipt },
   { name: "Plans", href: "/admin/plans", icon: CreditCard },
 ];
 

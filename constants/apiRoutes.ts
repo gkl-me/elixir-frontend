@@ -52,6 +52,16 @@ export const COMPANY_API_ROUTES = {
   TOGGLE_COMPANY_STATUS: (companyId: string) => `/company/${companyId}/status`
 };
 
+export const TRANSACTION_API_ROUTES = {
+  GET_ALL_TRANSACTION: '/transaction'
+}
+
+export const SUBSCRIPTION_API_ROUTES = {
+  GET_ALL_SUBSCRIPTION: "/subscription",
+  CANCEL_SUBSCRIPTION: (subscriptionId: string) => `/subscription/${subscriptionId}/cancel`,
+  REACTIVATE_SUBSCRIPTION: (subscriptionId: string) => `/subscription/${subscriptionId}/reactivate`
+}
+
 export const WORKSPACE_API_ROUTES = {
   GET_WORKSPACE_CONTEXT: "/workspace/context",
 
