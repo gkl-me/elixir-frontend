@@ -111,7 +111,9 @@ export const workspaceService = {
   },
 
   listTeams: async (data: ListTeamsData) => {
-    return api.get(WORKSPACE_API_ROUTES.GET_TEAMS(data?.workspaceId));
+    return api.get(WORKSPACE_API_ROUTES.GET_TEAMS(data?.workspaceId), {
+      params: data
+    });
   },
 
   createTeam: async (data: CreateTeamData) => {

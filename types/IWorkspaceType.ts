@@ -4,6 +4,9 @@ export interface WorkspaceContextData {
 
 export interface ListTeamsData {
   workspaceId: string;
+  page?: number,
+  limit?: number,
+  search?: string
 }
 
 export interface CreateTeamData {

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
+import { Pagination } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import { TeamType } from "./shared";
 import { CreateTeamModal } from "./CreateTeamModal";
@@ -13,12 +14,18 @@ import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { toastHandler } from "@/lib/toastHandler";
 import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export const TeamsView = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [managingTeam, setManagingTeam] = useState<TeamType | null>(null);
   const [search, setSearch] = useState("");
   const [teams, setTeams] = useState<WorkspaceTeamsList[] | []>([]);
+  const [totalCount, setTotalCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1);
+  const debouncedSearch = useDebounce(search, 500)
+
+  const TEAMS_PER_PAGE = 8;
 
   const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
 
@@ -36,11 +43,17 @@ export const TeamsView = () => {
       const res = await execute({
         params: {
           workspaceId,
+          page: currentPage,
+          limit: TEAMS_PER_PAGE,
+          search: debouncedSearch
         },
       });
 
+      console.log("res", res)
+
       if (res?.success) {
         setTeams(res.data.teams || []);
+        setTotalCount(res.data.totalCount || 0)
       }
     } catch (error) {
       toastHandler({
@@ -48,7 +61,7 @@ export const TeamsView = () => {
         error: AxiosErrorHandler(error).message,
       });
     }
-  }, [workspaceId, execute]);
+  }, [workspaceId, execute, debouncedSearch, currentPage]);
 
   useEffect(() => {
     fetchTeams();
@@ -89,7 +102,7 @@ export const TeamsView = () => {
         <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#4B5578]" />
         <input
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
           placeholder="Search teams…"
           className="w-full rounded-xl border border-[#1e2a4a] bg-[#0C1635] py-2 pl-9 pr-4 text-sm text-white outline-none transition-colors placeholder:text-[#4B5578] focus:border-[#8735C9]"
         />
@@ -116,6 +129,13 @@ export const TeamsView = () => {
           </span>
         </button>
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalCount}
+        onPageChange={setCurrentPage}
+      />
 
       {createOpen && (
         <CreateTeamModal
