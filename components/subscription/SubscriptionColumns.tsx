@@ -18,9 +18,6 @@ import {
   Zap,
   Crown,
   Calendar,
-  CreditCard,
-  Building2,
-  RefreshCw,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AdminSubscription } from "@/data/demoData";
@@ -40,7 +37,7 @@ export function getSubscriptionColumns(
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Workspace / Company
-            <ArrowUpDown className="ml-2 h-4 w-4 text-purple-400" />
+            <ArrowUpDown className="text-purple-400 ml-2 h-4 w-4" />
           </Button>
         );
       },
@@ -53,11 +50,11 @@ export function getSubscriptionColumns(
                 {sub.workspaceName.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col min-w-0">
-              <span className="font-semibold text-white tracking-wide truncate">
+            <div className="flex min-w-0 flex-col">
+              <span className="truncate font-semibold tracking-wide text-white">
                 {sub.workspaceName}
               </span>
-              <span className="text-xs text-gray-400 truncate">
+              <span className="truncate text-xs text-gray-400">
                 {sub.companyName}
               </span>
             </div>
@@ -70,7 +67,9 @@ export function getSubscriptionColumns(
       accessorKey: "ownerEmail",
       header: "Owner Email",
       cell: ({ row }) => (
-        <span className="text-gray-300 text-sm">{row.getValue("ownerEmail")}</span>
+        <span className="text-sm text-gray-300">
+          {row.getValue("ownerEmail")}
+        </span>
       ),
     },
     {
@@ -81,8 +80,8 @@ export function getSubscriptionColumns(
 
         if (plan === "Pro") {
           return (
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-blue-500/40 bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-purple-500/15 px-2.5 py-1 text-xs font-semibold text-blue-300 shadow-[0_0_12px_rgba(59,130,246,0.15)]">
-              <Zap className="h-3.5 w-3.5 text-blue-400 fill-blue-400/20" />
+            <span className="to-purple-500/15 inline-flex items-center gap-1.5 rounded-md border border-blue-500/40 bg-gradient-to-r from-blue-500/15 via-indigo-500/15 px-2.5 py-1 text-xs font-semibold text-blue-300 shadow-[0_0_12px_rgba(59,130,246,0.15)]">
+              <Zap className="h-3.5 w-3.5 fill-blue-400/20 text-blue-400" />
               Pro Plan
             </span>
           );
@@ -90,8 +89,8 @@ export function getSubscriptionColumns(
 
         if (plan === "Enterprice") {
           return (
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-fuchsia-500/15 px-2.5 py-1 text-xs font-semibold text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.15)]">
-              <Crown className="h-3.5 w-3.5 text-amber-400 fill-amber-400/20" />
+            <span className="via-purple-500/15 inline-flex items-center gap-1.5 rounded-md border border-amber-500/40 bg-gradient-to-r from-amber-500/15 to-fuchsia-500/15 px-2.5 py-1 text-xs font-semibold text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.15)]">
+              <Crown className="h-3.5 w-3.5 fill-amber-400/20 text-amber-400" />
               Enterprise
             </span>
           );
@@ -110,7 +109,8 @@ export function getSubscriptionColumns(
       header: "Price / Cycle",
       cell: ({ row }) => {
         const sub = row.original;
-        const priceFmt = sub.price === 0 ? "$0" : `$${(sub.price / 100).toFixed(2)}`;
+        const priceFmt =
+          sub.price === 0 ? "$0" : `$${(sub.price / 100).toFixed(2)}`;
         const cycle = sub.billingCycle === "yearly" ? "/yr" : "/mo";
 
         return (
@@ -129,7 +129,8 @@ export function getSubscriptionColumns(
         const status = (sub.status as string)?.toLowerCase();
         const isPendingCancel = status === "active" && sub.cancelAtPeriodEnd;
 
-        let badgeStyle = "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
+        let badgeStyle =
+          "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
         let dotStyle = "bg-emerald-400";
         let label = status.replace("_", " ");
 
@@ -165,14 +166,14 @@ export function getSubscriptionColumns(
         const dateStr = row.getValue("currentPeriodEnd") as string;
         const dateFmt = dateStr
           ? new Date(dateStr).toLocaleDateString(undefined, {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })
           : "N/A";
         return (
-          <div className="flex items-center gap-1.5 text-gray-300 text-xs">
-            <Calendar className="h-3.5 w-3.5 text-purple-400" />
+          <div className="flex items-center gap-1.5 text-xs text-gray-300">
+            <Calendar className="text-purple-400 h-3.5 w-3.5" />
             <span>{dateFmt}</span>
           </div>
         );
@@ -183,7 +184,9 @@ export function getSubscriptionColumns(
       header: "Actions",
       cell: ({ row }) => {
         const sub = row.original;
-        const isReactivating = sub.status === "canceled" || (sub.status === "active" && sub.cancelAtPeriodEnd);
+        const isReactivating =
+          sub.status === "canceled" ||
+          (sub.status === "active" && sub.cancelAtPeriodEnd);
 
         return (
           <div className="flex items-center">

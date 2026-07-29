@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
       search,
       limit,
       page,
-      status
+      status,
     });
 
     return NextResponse.json({

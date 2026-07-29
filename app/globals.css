@@ -88,9 +88,9 @@
    in the app at once.
 ──────────────────────────────────────────────────────────── */
 :root {
-  --sb-track:       #07112b;   /* track background  (deep navy)   */
-  --sb-thumb:       #4B2070;   /* thumb color        (purple dark) */
-  --sb-thumb-hover: #8735C9;   /* thumb hover color  (purple)      */
+  --sb-track: #07112b; /* track background  (deep navy)   */
+  --sb-thumb: #4b2070; /* thumb color        (purple dark) */
+  --sb-thumb-hover: #8735c9; /* thumb hover color  (purple)      */
 }
 
 /* WebKit (Chrome, Edge, Safari) */

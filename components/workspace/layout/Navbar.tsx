@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, startTransition } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -50,12 +50,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
   const results =
     query.length > 1
       ? demoSearchIndex
-        .filter(
-          (r) =>
-            r.label.toLowerCase().includes(query.toLowerCase()) ||
-            r.sublabel?.toLowerCase().includes(query.toLowerCase())
-        )
-        .slice(0, 8)
+          .filter(
+            (r) =>
+              r.label.toLowerCase().includes(query.toLowerCase()) ||
+              r.sublabel?.toLowerCase().includes(query.toLowerCase())
+          )
+          .slice(0, 8)
       : [];
 
   const [notifications, setNotifications] = useState(demoNotifications);
@@ -80,8 +80,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
       inputRef.current.focus();
     }
   };
-
-
 
   // Close dropdowns on outside click
   useEffect(() => {

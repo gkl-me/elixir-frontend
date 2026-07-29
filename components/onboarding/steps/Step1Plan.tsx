@@ -71,7 +71,6 @@ export default function Step1Plan({ onNext, initialData }: Step1PlanProps) {
         };
       }
     }
-    console.log("Select", planToSubmit);
     onNext(planToSubmit);
   };
 

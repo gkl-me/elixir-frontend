@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Mail, RefreshCw, X, UserPlus, Loader2 } from "lucide-react";
 import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { DataTable } from "@/components/table/DataTable";
@@ -31,26 +31,23 @@ export const InvitesTab = ({
 }: InvitesTabProps) => {
   const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId ?? "");
 
-  const {
-    execute,
-    isLoading,
-  } = useApi({
+  const { execute, isLoading } = useApi({
     url: NEXT_API_ROUTES.GET_WORKSPACE_INVITES,
     method: "GET",
   });
 
-  const [invites, setInvites] = useState<WorkspaceInvite[]>([])
-  const [totalCount, setTotalCount] = useState(0)
+  const [invites, setInvites] = useState<WorkspaceInvite[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
-  const [pageSize] = useState(8)
+  const [pageSize] = useState(8);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [revokeInvite, setRevokeInvite] = useState<WorkspaceInvite | null>(
     null
   );
   const [resending, setResending] = useState<string | null>(null);
-  const debouncedSearch = useDebounce(search, 500)
+  const debouncedSearch = useDebounce(search, 500);
 
   const fetchInvites = useCallback(async () => {
     if (!workspaceId) {
@@ -62,28 +59,24 @@ export const InvitesTab = ({
           workspaceId,
           page: page + 1,
           limit: pageSize,
-          search: debouncedSearch
+          search: debouncedSearch,
         },
       });
 
-      console.log("res", res)
 
       if (res?.success) {
         setInvites(res.data.invites);
-        setTotalCount(res.data.totalCount)
+        setTotalCount(res.data.totalCount);
       }
     } catch (error) {
       const err = AxiosErrorHandler(error);
       toastHandler({ success: false, error: err.message });
     }
-  }, [debouncedSearch,
-    pageSize,
-    page,
-    workspaceId,]);
+  }, [debouncedSearch, pageSize, page, workspaceId]);
 
   useEffect(() => {
-    setPage(0)
-  }, [debouncedSearch])
+    setPage(0);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     fetchInvites();

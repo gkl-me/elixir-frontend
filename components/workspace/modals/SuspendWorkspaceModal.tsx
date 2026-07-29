@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Ban, CheckCircle, Loader2, AlertTriangle, Users } from "lucide-react";
+import { Ban, CheckCircle, Loader2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CustomModal } from "@/components/modal/CustomModal";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -22,7 +22,7 @@ export function SuspendWorkspaceModal({
 }: SuspendWorkspaceModalProps) {
   const [loading, setLoading] = useState(false);
 
-  if (!workspace) return null;
+  if (!workspace) {return null;}
 
   const isSuspended =
     workspace.status === "suspended" || workspace.status === "blocked";
@@ -84,10 +84,12 @@ export function SuspendWorkspaceModal({
                 Suspending Workspace Access
               </p>
               <p className="leading-relaxed text-red-200/90">
-                Suspending <strong className="text-white">{workspace.name}</strong> will
+                Suspending{" "}
+                <strong className="text-white">{workspace.name}</strong> will
                 immediately disable access for all{" "}
-                <strong className="text-white">{workspace.totalUsers}</strong> user(s)
-                and freeze all active projects and services inside this workspace.
+                <strong className="text-white">{workspace.totalUsers}</strong>{" "}
+                user(s) and freeze all active projects and services inside this
+                workspace.
               </p>
             </div>
           </div>
@@ -99,9 +101,11 @@ export function SuspendWorkspaceModal({
                 Restoring Workspace Access
               </p>
               <p className="leading-relaxed text-emerald-200/90">
-                Activating <strong className="text-white">{workspace.name}</strong> will
+                Activating{" "}
+                <strong className="text-white">{workspace.name}</strong> will
                 restore full dashboard, API, and project permissions for all{" "}
-                <strong className="text-white">{workspace.totalUsers}</strong> member(s).
+                <strong className="text-white">{workspace.totalUsers}</strong>{" "}
+                member(s).
               </p>
             </div>
           </div>
@@ -114,8 +118,8 @@ export function SuspendWorkspaceModal({
             disabled={loading}
             className={`flex-1 gap-2 font-semibold text-white shadow-md transition-all duration-200 disabled:opacity-50 ${
               !isSuspended
-                ? "bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 shadow-red-900/20"
-                : "bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 shadow-emerald-900/20"
+                ? "bg-gradient-to-r from-red-600 to-red-700 shadow-red-900/20 hover:from-red-500 hover:to-red-600"
+                : "bg-gradient-to-r from-emerald-600 to-emerald-700 shadow-emerald-900/20 hover:from-emerald-500 hover:to-emerald-600"
             }`}
           >
             {loading ? (

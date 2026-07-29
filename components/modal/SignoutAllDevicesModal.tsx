@@ -37,15 +37,19 @@ export function SignoutAllDevicesModal({
             <ShieldAlert className="h-4 w-4 text-red-400" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">Sign out everywhere</p>
+            <p className="text-sm font-semibold text-white">
+              Sign out everywhere
+            </p>
             <p className="text-xs text-red-200/70">
-              All active sessions on all browsers and devices will be terminated.
+              All active sessions on all browsers and devices will be
+              terminated.
             </p>
           </div>
         </div>
 
         <p className="text-xs text-[#6b7db3]">
-          You will need to log back in on every device. This action cannot be undone.
+          You will need to log back in on every device. This action cannot be
+          undone.
         </p>
 
         <div className="flex gap-2 border-t border-[#1e2a4a] pt-3">

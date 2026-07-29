@@ -10,11 +10,11 @@ export const paymentService = {
     return api.post(PAYMENT_API_ROUTES.RETRY_PAYMENT);
   },
   billingInfo: async (data: BillingInfoData) => {
-    return api.get(PAYMENT_API_ROUTES.BILLING_INFO + '/' + data.workspaceId)
+    return api.get(PAYMENT_API_ROUTES.BILLING_INFO + "/" + data.workspaceId);
   },
   customerPortal: async (data: ICustomerPortalData) => {
     return api.post(PAYMENT_API_ROUTES.CUSTOMER_PORTAL, {
-      workspaceId: data.workspaceId
-    })
-  }
+      workspaceId: data.workspaceId,
+    });
+  },
 };

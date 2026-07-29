@@ -10,8 +10,6 @@ import {
   Sparkles,
   Zap,
   Crown,
-  ShieldCheck,
-  Globe,
 } from "lucide-react";
 import { CustomModal } from "@/components/modal/CustomModal";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -29,7 +27,7 @@ export function WorkspaceDetailsModal({
   workspace,
   onClose,
 }: WorkspaceDetailsModalProps) {
-  if (!workspace) return null;
+  if (!workspace) {return null;}
 
   const isSuspended =
     workspace.status === "suspended" || workspace.status === "blocked";
@@ -55,8 +53,7 @@ export function WorkspaceDetailsModal({
     return {
       label: "Free Plan",
       icon: Sparkles,
-      badgeClass:
-        "bg-slate-500/10 text-slate-300 border-slate-500/20",
+      badgeClass: "bg-slate-500/10 text-slate-300 border-slate-500/20",
     };
   };
 
@@ -110,7 +107,7 @@ export function WorkspaceDetailsModal({
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    isSuspended ? "bg-red-400 animate-pulse" : "bg-emerald-400"
+                    isSuspended ? "animate-pulse bg-red-400" : "bg-emerald-400"
                   }`}
                 />
                 {workspace.status || "Active"}
@@ -124,7 +121,7 @@ export function WorkspaceDetailsModal({
           {/* Workspace Name */}
           <div className="rounded-xl border border-purple/20 bg-navy/60 p-3.5 transition-colors hover:border-purple/40">
             <div className="flex items-center gap-2 text-gray-400">
-              <Building2 className="h-4 w-4 text-purple-400" />
+              <Building2 className="text-purple-400 h-4 w-4" />
               <span className="font-medium">Workspace Name</span>
             </div>
             <p className="mt-2 truncate text-sm font-semibold text-white">

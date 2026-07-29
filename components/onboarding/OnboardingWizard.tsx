@@ -44,7 +44,6 @@ export default function OnboardingWizard() {
 
   //on next calls the server action
   const handleNext = async (data: Partial<IOnboardingState>) => {
-    console.log("rendering here", data);
     const res = await saveOnboardingStepAction({
       ...data,
       currentStep: state.currentStep + 1,

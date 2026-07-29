@@ -67,14 +67,13 @@ const UsageMeter = ({
 
 // ─── UsageTab ─────────────────────────────────────────────
 export const UsageTab = () => {
-
   type UsageType = {
-    projects: number,
-    members: number,
-    teams: number,
-    storageBytes: number,
-    customRoles: number
-  }
+    projects: number;
+    members: number;
+    teams: number;
+    storageBytes: number;
+    customRoles: number;
+  };
 
   const [limits, setLimits] = useState<UsageType>({
     projects: -1,
@@ -82,33 +81,33 @@ export const UsageTab = () => {
     teams: -1,
     storageBytes: 524288000,
     customRoles: -1,
-  })
-  const [used, setUsed] = useState<UsageType>()
+  });
+  const [used, setUsed] = useState<UsageType>();
 
-  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId)
+  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
 
   const { execute } = useApi({
     url: NEXT_API_ROUTES.GET_WORKSPACE_LIMITS,
-    method: "GET"
-  })
+    method: "GET",
+  });
 
   const fetchLimits = useCallback(async () => {
     if (!workspaceId) {
-      return
+      return;
     }
 
     try {
       const res = await execute({
         params: {
-          workspaceId
-        }
-      })
+          workspaceId,
+        },
+      });
 
-      console.log("limits", res.data)
+      console.log("limits", res.data);
 
       if (res?.success) {
-        setLimits(res.data.limits)
-        setUsed(res.data.used)
+        setLimits(res.data.limits);
+        setUsed(res.data.used);
       }
     } catch (error) {
       toastHandler({
@@ -116,11 +115,11 @@ export const UsageTab = () => {
         error: AxiosErrorHandler(error).message,
       });
     }
-  }, [workspaceId, execute])
+  }, [workspaceId, execute]);
 
   useEffect(() => {
-    fetchLimits()
-  }, [fetchLimits])
+    fetchLimits();
+  }, [fetchLimits]);
 
   return (
     <div className="space-y-6">
@@ -171,10 +170,7 @@ export const UsageTab = () => {
             <p className="mt-1 text-2xl font-black text-white">
               {used?.customRoles}
               <span className="text-sm font-normal text-[#6b7db3]">
-                /{" "}
-                {limits?.customRoles === -1
-                  ? "∞"
-                  : limits?.customRoles}
+                / {limits?.customRoles === -1 ? "∞" : limits?.customRoles}
               </span>
             </p>
           </div>

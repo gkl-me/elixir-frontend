@@ -10,7 +10,6 @@ import {
   DollarSign,
   Package,
   Download,
-  ExternalLink,
 } from "lucide-react";
 import { CustomModal } from "@/components/modal/CustomModal";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ export function TransactionDetailsModal({
   transaction,
   onClose,
 }: TransactionDetailsModalProps) {
-  if (!transaction) return null;
+  if (!transaction) {return null;}
 
   const isFailed = transaction.status === "failed";
   const isRefunded = transaction.status === "refunded";
@@ -42,15 +41,15 @@ export function TransactionDetailsModal({
 
   const dateFmt = transaction.createdAt
     ? new Date(transaction.createdAt).toLocaleString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     : "N/A";
 
-  const router = useRouter()
+  const router = useRouter();
 
   const handleDownloadInvoice = () => {
     if (!transaction.invoicePdfUrl) {
@@ -60,7 +59,7 @@ export function TransactionDetailsModal({
       });
       return;
     }
-    router.push(transaction.invoicePdfUrl)
+    router.push(transaction.invoicePdfUrl);
     toastHandler({
       success: true,
       message: `Downloading PDF invoice for ${transaction.invoiceNumber}...`,
@@ -89,31 +88,33 @@ export function TransactionDetailsModal({
                   {transaction.invoiceNumber}
                 </h3>
               </div>
-              <p className="mt-0.5 truncate text-xs text-gray-400 font-mono">
+              <p className="mt-0.5 truncate font-mono text-xs text-gray-400">
                 {transaction.id}
               </p>
             </div>
 
             <div className="flex flex-col items-end gap-1.5">
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold capitalize ${isFailed
-                  ? "border border-red-500/30 bg-red-500/10 text-red-400"
-                  : isRefunded
-                    ? "border border-amber-500/30 bg-amber-500/10 text-amber-400"
-                    : isPending
-                      ? "border border-sky-500/30 bg-sky-500/10 text-sky-400"
-                      : "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  }`}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold capitalize ${
+                  isFailed
+                    ? "border border-red-500/30 bg-red-500/10 text-red-400"
+                    : isRefunded
+                      ? "border border-amber-500/30 bg-amber-500/10 text-amber-400"
+                      : isPending
+                        ? "border border-sky-500/30 bg-sky-500/10 text-sky-400"
+                        : "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                }`}
               >
                 <span
-                  className={`h-1.5 w-1.5 rounded-full ${isFailed
-                    ? "bg-red-400 animate-pulse"
-                    : isRefunded
-                      ? "bg-amber-400"
-                      : isPending
-                        ? "bg-sky-400 animate-pulse"
-                        : "bg-emerald-400"
-                    }`}
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    isFailed
+                      ? "animate-pulse bg-red-400"
+                      : isRefunded
+                        ? "bg-amber-400"
+                        : isPending
+                          ? "animate-pulse bg-sky-400"
+                          : "bg-emerald-400"
+                  }`}
                 />
                 {transaction.status}
               </span>
@@ -135,7 +136,7 @@ export function TransactionDetailsModal({
           {/* Customer Company */}
           <div className="rounded-xl border border-purple/20 bg-navy/60 p-3.5 transition-colors hover:border-purple/40">
             <div className="flex items-center gap-2 text-gray-400">
-              <Building2 className="h-4 w-4 text-purple-400" />
+              <Building2 className="text-purple-400 h-4 w-4" />
               <span className="font-medium">Workspace</span>
             </div>
             <p className="mt-2 truncate text-sm font-semibold text-white">
@@ -190,7 +191,7 @@ export function TransactionDetailsModal({
         <div className="flex items-center justify-between border-t border-purple/20 pt-4">
           <Button
             onClick={handleDownloadInvoice}
-            className="gap-2 bg-purple/20 text-purple-300 hover:bg-purple/30 hover:text-white border border-purple/30 text-xs font-semibold"
+            className="text-purple-300 gap-2 border border-purple/30 bg-purple/20 text-xs font-semibold hover:bg-purple/30 hover:text-white"
           >
             <Download className="h-3.5 w-3.5" />
             Download PDF Invoice

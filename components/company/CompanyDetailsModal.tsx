@@ -17,7 +17,7 @@ export function CompanyDetailsModal({
   company,
   onClose,
 }: CompanyDetailsModalProps) {
-  if (!company) return null;
+  if (!company) {return null;}
 
   return (
     <CustomModal
@@ -37,14 +37,16 @@ export function CompanyDetailsModal({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-base font-bold text-white">{company.name}</h3>
+            <h3 className="truncate text-base font-bold text-white">
+              {company.name}
+            </h3>
             <p className="truncate text-xs text-[#6b7db3]">{company.email}</p>
           </div>
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${
               company.status === "active"
-                ? "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
-                : "bg-red-500/15 border border-red-500/30 text-red-400"
+                ? "border border-emerald-500/30 bg-emerald-500/15 text-emerald-400"
+                : "border border-red-500/30 bg-red-500/15 text-red-400"
             }`}
           >
             {company.status || "Active"}
@@ -59,7 +61,9 @@ export function CompanyDetailsModal({
               <Building2 className="h-3.5 w-3.5" />
               <span className="font-medium">Company Name</span>
             </div>
-            <p className="mt-1 truncate font-semibold text-white">{company.name}</p>
+            <p className="mt-1 truncate font-semibold text-white">
+              {company.name}
+            </p>
           </div>
 
           {/* Email */}
@@ -68,7 +72,9 @@ export function CompanyDetailsModal({
               <Mail className="h-3.5 w-3.5" />
               <span className="font-medium">Email Address</span>
             </div>
-            <p className="mt-1 truncate font-semibold text-white">{company.email}</p>
+            <p className="mt-1 truncate font-semibold text-white">
+              {company.email}
+            </p>
           </div>
 
           {/* Type */}
@@ -119,7 +125,7 @@ export function CompanyDetailsModal({
                 }
                 target="_blank"
                 rel="noreferrer"
-                className="mt-1 block truncate font-semibold text-purple-400 hover:underline"
+                className="text-purple-400 mt-1 block truncate font-semibold hover:underline"
               >
                 {company.website}
               </a>

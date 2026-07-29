@@ -22,7 +22,7 @@ export async function GET(req: Request) {
       workspaceId,
       limit: parseInt(limit),
       page: parseInt(page),
-      search
+      search,
     });
 
     return NextResponse.json({

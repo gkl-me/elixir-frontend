@@ -15,15 +15,16 @@ import {
 } from "@/types/IWorkspaceType";
 
 export const workspaceService = {
-
   handleListWorkspace: async (params: ListWorkspaceData) => {
     return api.get(WORKSPACE_API_ROUTES.GET_ALL_WORKSPACE, {
-      params
-    })
+      params,
+    });
   },
 
   handletoggleWorkspaceStatus: async (params: ToggleWorkspaceStatusData) => {
-    return api.patch(WORKSPACE_API_ROUTES.TOGGLE_WORKSPACE_STATUS(params.workspaceId))
+    return api.patch(
+      WORKSPACE_API_ROUTES.TOGGLE_WORKSPACE_STATUS(params.workspaceId)
+    );
   },
 
   handleWorkspaceContext: async (data: WorkspaceContextData) => {
@@ -60,7 +61,7 @@ export const workspaceService = {
 
   getMembers: async (params: GetMembersParams) => {
     return api.get(WORKSPACE_API_ROUTES.GET_MEMBERS(params.workspaceId), {
-      params
+      params,
     });
   },
 
@@ -83,7 +84,7 @@ export const workspaceService = {
 
   getInvites: async (params: GetInvitesParams) => {
     return api.get(WORKSPACE_API_ROUTES.GET_INVITES(params.workspaceId), {
-      params
+      params,
     });
   },
 
@@ -112,7 +113,7 @@ export const workspaceService = {
 
   listTeams: async (data: ListTeamsData) => {
     return api.get(WORKSPACE_API_ROUTES.GET_TEAMS(data?.workspaceId), {
-      params: data
+      params: data,
     });
   },
 
@@ -148,6 +149,6 @@ export const workspaceService = {
   getWorkspaceLimits: async (data: WorkspaceLimitsData) => {
     return api.get(
       WORKSPACE_API_ROUTES.GET_WORKSPACE_LIMITS(data?.workspaceId)
-    )
-  }
+    );
+  },
 };

@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/table/DataTable";
 import { getSubscriptionColumns } from "./SubscriptionColumns";
-import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -15,25 +15,26 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { SubscriptionDetailsModal } from "./SubscriptionDetailsModal";
 import { CancelSubscriptionModal } from "./CancelSubscriptionModal";
 import { toastHandler } from "@/lib/toastHandler";
-import { demoAdminSubscriptions, AdminSubscription } from "@/data/demoData";
-import { Repeat, DollarSign, CheckCircle2, AlertTriangle, ArrowUpRight } from "lucide-react";
+import { AdminSubscription } from "@/data/demoData";
+
+
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
-import { cancelSubscriptionAction, reactivateSubscriptionAction } from "@/app/actions/subscription.action";
+import {
+  cancelSubscriptionAction,
+  reactivateSubscriptionAction,
+} from "@/app/actions/subscription.action";
 
-export default function SubscriptionDataTable(
-  {
-    intialData,
-    intialTotalCount = 0
-  }: {
-    intialData: AdminSubscription[],
-    intialTotalCount: number
-  }
-
-) {
+export default function SubscriptionDataTable({
+  intialData,
+  intialTotalCount = 0,
+}: {
+  intialData: AdminSubscription[];
+  intialTotalCount: number;
+}) {
   const [data, setData] = useState<AdminSubscription[]>(intialData);
-  const [totalCount, setTotalCount] = useState(intialTotalCount)
+  const [totalCount, setTotalCount] = useState(intialTotalCount);
 
   // Table State
   const [search, setSearch] = useState("");
@@ -46,9 +47,13 @@ export default function SubscriptionDataTable(
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSub, setSelectedSub] = useState<AdminSubscription | null>(null);
+  const [selectedSub, setSelectedSub] = useState<AdminSubscription | null>(
+    null
+  );
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [subToCancel, setSubToCancel] = useState<AdminSubscription | null>(null);
+  const [subToCancel, setSubToCancel] = useState<AdminSubscription | null>(
+    null
+  );
 
   // KPI Overview Metrics
   // const metrics = useMemo(() => {
@@ -77,38 +82,34 @@ export default function SubscriptionDataTable(
   //   };
   // }, [data]);
 
-
   const { execute, isLoading } = useApi({
     url: NEXT_API_ROUTES.GET_ALL_SUBSCRIPTION,
-    method: "GET"
-  })
+    method: "GET",
+  });
 
-  const isFirstRendered = useRef(true)
+  const isFirstRendered = useRef(true);
 
   const fetchData = useCallback(async () => {
     try {
-
       const res = await execute({
         params: {
           search: debouncedSearch,
           status: statusFilter,
           plan: planFilter,
           page: pageIndex + 1,
-          limit: pageSize
-        }
-      })
+          limit: pageSize,
+        },
+      });
 
-      setData(res.data.subscriptions)
-      setTotalCount(res.data.totalCount)
+      setData(res.data.subscriptions);
+      setTotalCount(res.data.totalCount);
 
-      toastHandler(res)
-
+      toastHandler(res);
     } catch (error) {
       const err = AxiosErrorHandler(error);
       toastHandler({ success: false, error: err.message });
     }
-  }, [debouncedSearch, statusFilter, planFilter])
-
+  }, [debouncedSearch, statusFilter, planFilter]);
 
   useEffect(() => {
     if (isFirstRendered.current) {
@@ -122,10 +123,9 @@ export default function SubscriptionDataTable(
     setPageIndex(0);
   }, [debouncedSearch, statusFilter]);
 
-
   const openDetailsModal = (id: string) => {
     const sub = data.find((s) => s.id === id);
-    if (!sub) return;
+    if (!sub) {return;}
     setSelectedSub(sub);
     setIsModalOpen(true);
   };
@@ -136,30 +136,31 @@ export default function SubscriptionDataTable(
   };
 
   const handleCancelToggle = async (mode: "period_end" | "immediate") => {
-    if (!subToCancel) return;
+    if (!subToCancel) {return;}
 
     try {
-      const isReactivating = subToCancel.status === "canceled" || (subToCancel.status === "active" && subToCancel.cancelAtPeriodEnd);
+      const isReactivating =
+        subToCancel.status === "canceled" ||
+        (subToCancel.status === "active" && subToCancel.cancelAtPeriodEnd);
       let res;
       if (isReactivating) {
         res = await reactivateSubscriptionAction({
-          subscriptionId: subToCancel.id
-        })
+          subscriptionId: subToCancel.id,
+        });
       } else {
         res = await cancelSubscriptionAction({
           subscriptionId: subToCancel.id,
-          cancelMode: mode
-        })
+          cancelMode: mode,
+        });
       }
 
-      toastHandler(res)
-      fetchData()
+      toastHandler(res);
+      fetchData();
       setIsCancelModalOpen(false);
     } catch (error) {
       const err = AxiosErrorHandler(error);
       toastHandler({ success: false, error: err.message });
     }
-
   };
 
   const renderFilters = () => (
@@ -177,19 +178,34 @@ export default function SubscriptionDataTable(
             <SelectValue placeholder="All Status" />
           </SelectTrigger>
           <SelectContent className="border-navy/50 bg-navy text-white">
-            <SelectItem value="_clear_" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="_clear_"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               All Status
             </SelectItem>
-            <SelectItem value="active" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="active"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               Active
             </SelectItem>
-            <SelectItem value="past_due" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="past_due"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               Past Due
             </SelectItem>
-            <SelectItem value="paused" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="paused"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               Paused
             </SelectItem>
-            <SelectItem value="canceled" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="canceled"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               Canceled
             </SelectItem>
           </SelectContent>
@@ -209,16 +225,28 @@ export default function SubscriptionDataTable(
             <SelectValue placeholder="All Plans" />
           </SelectTrigger>
           <SelectContent className="border-navy/50 bg-navy text-white">
-            <SelectItem value="_clear_" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="_clear_"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               All Plans
             </SelectItem>
-            <SelectItem value="Free" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="Free"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               Free Plan
             </SelectItem>
-            <SelectItem value="Pro" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="Pro"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               Pro Plan
             </SelectItem>
-            <SelectItem value="Enterprice" className="cursor-pointer focus:bg-purple/20 focus:text-white">
+            <SelectItem
+              value="Enterprice"
+              className="cursor-pointer focus:bg-purple/20 focus:text-white"
+            >
               Enterprise
             </SelectItem>
           </SelectContent>

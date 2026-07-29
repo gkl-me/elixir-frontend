@@ -35,17 +35,19 @@ export async function loginAction(
   inviteToken?: string
 ) {
   try {
-
-    const reqHeaders = await headers()
-    const userAgent = reqHeaders.get('user-agent') || ""
-    const clientIp = reqHeaders.get('x-forwarded-for')?.split(",")[0].trim() || reqHeaders.get("x-real-ip") || "";
+    const reqHeaders = await headers();
+    const userAgent = reqHeaders.get("user-agent") || "";
+    const clientIp =
+      reqHeaders.get("x-forwarded-for")?.split(",")[0].trim() ||
+      reqHeaders.get("x-real-ip") ||
+      "";
 
     const requestConfig = {
       headers: {
         "user-agent": userAgent,
         "x-forwarded-for": clientIp,
-      }
-    }
+      },
+    };
 
     const res = await authService.login(data, requestConfig);
 
@@ -79,7 +81,7 @@ export async function loginAction(
     if (err.errorCode === AUTH_ERROR_CODE.NOT_VERIFIED) {
       redirect(
         AUTH_CLIENT_ROUTES.VERIFY_ERROR +
-        `?email=${encodeURIComponent(data.email)}`
+          `?email=${encodeURIComponent(data.email)}`
       );
     }
 
@@ -256,8 +258,7 @@ export async function logoutAction() {
 
 export async function handleLogoutAllDevicesAction() {
   try {
-
-    await authService.logoutAllDevices()
+    await authService.logoutAllDevices();
     await deleteSession();
     await deleteCookies();
 

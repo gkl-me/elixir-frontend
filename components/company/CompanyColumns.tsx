@@ -47,7 +47,7 @@ export function getCompanyColumns(
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Company Name
-            <ArrowUpDown className="ml-2 h-4 w-4 text-purple-400" />
+            <ArrowUpDown className="text-purple-400 ml-2 h-4 w-4" />
           </Button>
         );
       },
@@ -62,7 +62,9 @@ export function getCompanyColumns(
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
-              <span className="font-semibold text-white tracking-wide">{company.name}</span>
+              <span className="font-semibold tracking-wide text-white">
+                {company.name}
+              </span>
             </div>
           </div>
         );
@@ -79,15 +81,17 @@ export function getCompanyColumns(
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Contact Email
-            <ArrowUpDown className="ml-2 h-4 w-4 text-purple-400" />
+            <ArrowUpDown className="text-purple-400 ml-2 h-4 w-4" />
           </Button>
         );
       },
       cell: ({ row }) => {
         return (
           <div className="flex items-center space-x-2">
-            <Mail className="h-4 w-4 text-purple-400" />
-            <span className="text-gray-300 text-sm">{row.getValue("email")}</span>
+            <Mail className="text-purple-400 h-4 w-4" />
+            <span className="text-sm text-gray-300">
+              {row.getValue("email")}
+            </span>
           </div>
         );
       },
@@ -98,10 +102,12 @@ export function getCompanyColumns(
       header: "Status",
       cell: ({ row }) => {
         const status = (row.getValue("status") as string)?.toLowerCase();
-        const isSuspendedOrBlocked = status === "suspended" || status === "blocked";
+        const isSuspendedOrBlocked =
+          status === "suspended" || status === "blocked";
         const isPending = status === "pending";
 
-        let badgeStyle = "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
+        let badgeStyle =
+          "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
         let dotStyle = "bg-emerald-400";
 
         if (isSuspendedOrBlocked) {
@@ -156,7 +162,7 @@ export function getCompanyColumns(
                   className="cursor-pointer text-white hover:!bg-purple/20 hover:!text-white focus:bg-purple/20 focus:text-white"
                 >
                   {company.status === "suspended" ||
-                    company.status === "blocked" ? (
+                  company.status === "blocked" ? (
                     <>
                       <CheckCircle className="mr-2 h-4 w-4 text-emerald-400" />
                       Activate Company
@@ -176,4 +182,3 @@ export function getCompanyColumns(
     },
   ];
 }
-

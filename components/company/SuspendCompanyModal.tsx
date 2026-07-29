@@ -22,10 +22,12 @@ export function SuspendCompanyModal({
 }: SuspendCompanyModalProps) {
   const [loading, setLoading] = useState(false);
 
-  if (!company) return null;
+  if (!company) {return null;}
 
   const isSuspendedOrBlocked =
-    company.status === "suspended" || company.status === "blocked" || company.isBlocked;
+    company.status === "suspended" ||
+    company.status === "blocked" ||
+    company.isBlocked;
 
   const handleConfirm = async () => {
     setLoading(true);
@@ -55,14 +57,16 @@ export function SuspendCompanyModal({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-white">{company.name}</p>
+            <p className="truncate text-sm font-semibold text-white">
+              {company.name}
+            </p>
             <p className="truncate text-xs text-[#6b7db3]">{company.email}</p>
           </div>
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
               isSuspendedOrBlocked
-                ? "bg-red-500/15 border border-red-500/30 text-red-400"
-                : "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
+                ? "border border-red-500/30 bg-red-500/15 text-red-400"
+                : "border border-emerald-500/30 bg-emerald-500/15 text-emerald-400"
             }`}
           >
             {company.status || (isSuspendedOrBlocked ? "Suspended" : "Active")}
@@ -74,15 +78,20 @@ export function SuspendCompanyModal({
           <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-red-200">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
             <div className="space-y-1 text-xs">
-              <p className="font-semibold text-red-400">Disabling Associated Workspaces</p>
+              <p className="font-semibold text-red-400">
+                Disabling Associated Workspaces
+              </p>
               <p className="text-red-200/80">
-                Suspending this company will immediately disable and restrict access to all workspaces, projects, and team members associated with this company.
+                Suspending this company will immediately disable and restrict
+                access to all workspaces, projects, and team members associated
+                with this company.
               </p>
             </div>
           </div>
         ) : (
           <p className="text-xs leading-relaxed text-[#6b7db3]">
-            Activating this company will restore full workspace access for all associated team members and projects.
+            Activating this company will restore full workspace access for all
+            associated team members and projects.
           </p>
         )}
 
@@ -104,7 +113,9 @@ export function SuspendCompanyModal({
             ) : (
               <CheckCircle className="h-4 w-4" />
             )}
-            {!isSuspendedOrBlocked ? "Suspend & Disable Workspaces" : "Activate Company"}
+            {!isSuspendedOrBlocked
+              ? "Suspend & Disable Workspaces"
+              : "Activate Company"}
           </Button>
           <Button
             variant="outline"

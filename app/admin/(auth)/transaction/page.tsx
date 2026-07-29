@@ -5,18 +5,14 @@ import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { transactionService } from "@/services/transaction.service";
 
 export default async function TransactionPage() {
-
   let data;
 
   try {
-
-    const res = await transactionService.handleListTransactions({})
-    data = res.data.data
-
+    const res = await transactionService.handleListTransactions({});
+    data = res.data.data;
   } catch (error) {
-    throw new Error(AxiosErrorHandler(error).message)
+    throw new Error(AxiosErrorHandler(error).message);
   }
-
 
   return (
     <div className="space-y-6">

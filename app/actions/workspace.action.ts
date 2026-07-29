@@ -277,18 +277,20 @@ export async function removeTeamMemberAction(data: RemoveTeamMemberData) {
   }
 }
 
-export async function toggleWorkspaceStatusAction(data: ToggleWorkspaceStatusData) {
+export async function toggleWorkspaceStatusAction(
+  data: ToggleWorkspaceStatusData
+) {
   try {
-    const res = await workspaceService.handletoggleWorkspaceStatus(data)
+    const res = await workspaceService.handletoggleWorkspaceStatus(data);
     return {
       success: res.data.success,
-      message: res.data.message
-    }
+      message: res.data.message,
+    };
   } catch (error) {
-    handlerServerError(error)
+    handlerServerError(error);
     return {
       success: false,
-      error: AxiosErrorHandler(error).message
-    }
+      error: AxiosErrorHandler(error).message,
+    };
   }
 }

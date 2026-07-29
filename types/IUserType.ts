@@ -23,5 +23,5 @@ export interface UpdateUserProfileData {
 }
 
 export interface RevokeSessionData {
-  sessionId: string
+  sessionId: string;
 }

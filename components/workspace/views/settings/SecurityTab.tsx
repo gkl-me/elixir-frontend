@@ -2,12 +2,15 @@
 
 import React, { startTransition, useEffect } from "react";
 import { z } from "zod";
-import { Globe, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CustomForm } from "@/components/form/CustomForm";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Section } from "./shared";
-import { handleChangePassword, handleRevokeSessionAction, } from "@/app/actions/user.action";
+import {
+  handleChangePassword,
+  handleRevokeSessionAction,
+} from "@/app/actions/user.action";
 import { toastHandler } from "@/lib/toastHandler";
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
@@ -48,7 +51,7 @@ export const SecurityTab = () => {
 
   const handleSession = (data: RevokeSessionData) => {
     startTransition(async () => {
-      const res = await handleRevokeSessionAction(data)
+      const res = await handleRevokeSessionAction(data);
       toastHandler({
         success: res.success,
         message: res.message,
@@ -56,14 +59,14 @@ export const SecurityTab = () => {
       if (res.success) {
         await fetchSessions();
       }
-    })
-  }
+    });
+  };
 
   const handleLogoutAllDevices = () => {
     startTransition(async () => {
-      const res = await handleLogoutAllDevicesAction()
-    })
-  }
+      const res = await handleLogoutAllDevicesAction();
+    });
+  };
 
   const { execute } = useApi({
     url: NEXT_API_ROUTES.LIST_ACTIVE_SESSIONS,
@@ -80,8 +83,6 @@ export const SecurityTab = () => {
   useEffect(() => {
     fetchSessions();
   }, []);
-
-
 
   const [showSignoutAllModal, setShowSignoutAllModal] = React.useState(false);
 
@@ -126,10 +127,10 @@ export const SecurityTab = () => {
         <div className="divide-y divide-[#1e2a4a]">
           {JSON.stringify(sessions) === "[]"}
           {sessions.map((s, i) => {
-            const device = formatUserAgent(s.userAgent)
-            const DeviceIcon = device?.icon
+            const device = formatUserAgent(s.userAgent);
+            const DeviceIcon = device?.icon;
 
-            console.log("ssss", s.ip)
+            console.log("ssss", s.ip);
 
             return (
               <div key={i} className="flex items-center justify-between py-3.5">
@@ -146,7 +147,9 @@ export const SecurityTab = () => {
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-[#6b7db3]">{s.ip || "127.0.0.1"}</p>
+                    <p className="text-xs text-[#6b7db3]">
+                      {s.ip || "127.0.0.1"}
+                    </p>
                   </div>
                 </div>
                 {!s.isCurrentSession && (
@@ -154,7 +157,7 @@ export const SecurityTab = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      handleSession({ sessionId: s.sessionId })
+                      handleSession({ sessionId: s.sessionId });
                     }}
                     className="h-7 px-2 text-xs text-red-400 hover:bg-red-500/20 hover:text-white"
                   >
@@ -162,10 +165,8 @@ export const SecurityTab = () => {
                   </Button>
                 )}
               </div>
-            )
-          }
-
-          )}
+            );
+          })}
         </div>
       </Section>
 
@@ -173,7 +174,8 @@ export const SecurityTab = () => {
       <div className="flex justify-end">
         <Button
           onClick={() => setShowSignoutAllModal(true)}
-          className="gap-2 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white">
+          className="gap-2 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white"
+        >
           <LogOut className="h-4 w-4" />
           Sign Out of All Devices
         </Button>

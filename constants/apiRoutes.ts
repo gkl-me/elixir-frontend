@@ -24,7 +24,7 @@ export const USER_API_ROUTES = {
   CHANGE_PASSWORD: "/users/change-password",
   ACTIVE_SESSIONS: "/users/active-sessions",
   UPDATE_PROFILE: "/users/update-profile",
-  REVOKE_SESSION: "/users/revoke-session"
+  REVOKE_SESSION: "/users/revoke-session",
 };
 
 export const PLAN_API_ROUTES = {
@@ -44,30 +44,33 @@ export const ONBOARDING_API_ROUTES = {
 export const PAYMENT_API_ROUTES = {
   VERIFY_PAYMENT: "/payment/verify",
   RETRY_PAYMENT: "/payment/retry",
-  BILLING_INFO: '/payment/billing',
-  CUSTOMER_PORTAL: '/payment/customer-portal'
+  BILLING_INFO: "/payment/billing",
+  CUSTOMER_PORTAL: "/payment/customer-portal",
 };
 
 export const COMPANY_API_ROUTES = {
   GET_ALL_COMPANY: "/company",
-  TOGGLE_COMPANY_STATUS: (companyId: string) => `/company/${companyId}/status`
+  TOGGLE_COMPANY_STATUS: (companyId: string) => `/company/${companyId}/status`,
 };
 
 export const TRANSACTION_API_ROUTES = {
-  GET_ALL_TRANSACTION: '/transaction'
-}
+  GET_ALL_TRANSACTION: "/transaction",
+};
 
 export const SUBSCRIPTION_API_ROUTES = {
   GET_ALL_SUBSCRIPTION: "/subscription",
-  CANCEL_SUBSCRIPTION: (subscriptionId: string) => `/subscription/${subscriptionId}/cancel`,
-  REACTIVATE_SUBSCRIPTION: (subscriptionId: string) => `/subscription/${subscriptionId}/reactivate`
-}
+  CANCEL_SUBSCRIPTION: (subscriptionId: string) =>
+    `/subscription/${subscriptionId}/cancel`,
+  REACTIVATE_SUBSCRIPTION: (subscriptionId: string) =>
+    `/subscription/${subscriptionId}/reactivate`,
+};
 
 export const WORKSPACE_API_ROUTES = {
   GET_WORKSPACE_CONTEXT: "/workspace/context",
 
   GET_ALL_WORKSPACE: "/workspace",
-  TOGGLE_WORKSPACE_STATUS: (workspaceId: string) => `/workspace/${workspaceId}/status`,
+  TOGGLE_WORKSPACE_STATUS: (workspaceId: string) =>
+    `/workspace/${workspaceId}/status`,
 
   // Roles
   GET_ROLES: (workspaceId: string) => `/workspace/${workspaceId}/roles`,

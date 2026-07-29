@@ -2,16 +2,12 @@
 
 import React from "react";
 import {
-  Building2,
-  Mail,
   Calendar,
   Sparkles,
   Zap,
   Crown,
-  CreditCard,
   Repeat,
   RefreshCw,
-  Activity,
   DollarSign,
 } from "lucide-react";
 import { CustomModal } from "@/components/modal/CustomModal";
@@ -30,7 +26,7 @@ export function SubscriptionDetailsModal({
   subscription,
   onClose,
 }: SubscriptionDetailsModalProps) {
-  if (!subscription) return null;
+  if (!subscription) {return null;}
 
   const isCanceled = subscription.status === "canceled";
   const isPastDue = subscription.status === "past_due";
@@ -69,18 +65,18 @@ export function SubscriptionDetailsModal({
 
   const startDateFmt = subscription.currentPeriodStart
     ? new Date(subscription.currentPeriodStart).toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
     : "N/A";
 
   const endDateFmt = subscription.currentPeriodEnd
     ? new Date(subscription.currentPeriodEnd).toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
     : "N/A";
 
   return (
@@ -112,20 +108,22 @@ export function SubscriptionDetailsModal({
 
             <div className="flex flex-col items-end gap-1.5">
               <span
-                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold capitalize ${isCanceled
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold capitalize ${
+                  isCanceled
                     ? "border border-red-500/30 bg-red-500/10 text-red-400"
                     : isPastDue
                       ? "border border-amber-500/30 bg-amber-500/10 text-amber-400"
                       : "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  }`}
+                }`}
               >
                 <span
-                  className={`h-1.5 w-1.5 rounded-full ${isCanceled
-                      ? "bg-red-400 animate-pulse"
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    isCanceled
+                      ? "animate-pulse bg-red-400"
                       : isPastDue
-                        ? "bg-amber-400 animate-pulse"
+                        ? "animate-pulse bg-amber-400"
                         : "bg-emerald-400"
-                    }`}
+                  }`}
                 />
                 {subscription.status.replace("_", " ")}
               </span>
@@ -159,7 +157,7 @@ export function SubscriptionDetailsModal({
             </div>
             <p className="mt-2 text-sm font-semibold text-white">
               {priceFmt}{" "}
-              <span className="text-xs font-normal text-gray-400 capitalize">
+              <span className="text-xs font-normal capitalize text-gray-400">
                 / {subscription.billingCycle}
               </span>
             </p>

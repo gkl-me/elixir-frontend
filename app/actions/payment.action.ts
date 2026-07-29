@@ -39,7 +39,6 @@ export async function retryPaymentAction() {
   }
 }
 
-
 export async function customerPortalAction(data: ICustomerPortalData) {
   try {
     const res = await paymentService.customerPortal(data);

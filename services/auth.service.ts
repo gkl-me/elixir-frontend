@@ -13,7 +13,7 @@ import {
   VerifyEmailData,
   VerifyOtpData,
 } from "@/types/IAuthType";
-import { AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig } from "axios";
 
 export const authService = {
   register: async (data: RegisterData) => {
@@ -50,6 +50,6 @@ export const authService = {
     return api.post(AUTH_API_ROUTES.LOGOUT, data);
   },
   logoutAllDevices: async () => {
-    return api.post(AUTH_API_ROUTES.LOGOUT_ALL)
-  }
+    return api.post(AUTH_API_ROUTES.LOGOUT_ALL);
+  },
 };

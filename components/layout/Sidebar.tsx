@@ -60,13 +60,13 @@ export function Sidebar() {
     <>
       {/* Mobile Top-Left Toggle Button (Only visible when mobile menu is closed) */}
       {!mobileOpen && (
-        <div className="fixed top-3.5 left-3.5 z-50 md:hidden">
+        <div className="fixed left-3.5 top-3.5 z-50 md:hidden">
           <button
             onClick={() => setMobileOpen(true)}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#1e2a4a] bg-[#0c1635]/90 text-white shadow-lg backdrop-blur-md transition-all active:scale-95 hover:bg-[#132353]"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#1e2a4a] bg-[#0c1635]/90 text-white shadow-lg backdrop-blur-md transition-all hover:bg-[#132353] active:scale-95"
             aria-label="Open Navigation Menu"
           >
-            <Menu className="h-5 w-5 text-purple-300" />
+            <Menu className="text-purple-300 h-5 w-5" />
           </button>
         </div>
       )}
@@ -83,12 +83,9 @@ export function Sidebar() {
       <aside
         className={cn(
           "flex h-full shrink-0 flex-col border-r border-[#1e2a4a] bg-[#07112b] transition-all duration-300",
-          !isMobile && [
-            "relative z-30",
-            isCollapsed ? "w-[68px]" : "w-60",
-          ],
+          !isMobile && ["relative z-30", isCollapsed ? "w-[68px]" : "w-60"],
           isMobile && [
-            "fixed inset-y-0 left-0 top-0 h-full w-64 z-50 shadow-2xl transition-transform duration-300",
+            "fixed inset-y-0 left-0 top-0 z-50 h-full w-64 shadow-2xl transition-transform duration-300",
             mobileOpen ? "translate-x-0" : "-translate-x-full",
           ]
         )}
@@ -98,7 +95,7 @@ export function Sidebar() {
           <div
             className={cn(
               "flex items-center gap-3 overflow-hidden transition-all",
-              isCollapsedDesktop && "justify-center w-full"
+              isCollapsedDesktop && "w-full justify-center"
             )}
           >
             <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8735C9] to-[#6a29a0] text-white shadow-md shadow-[#8735C9]/30">
@@ -109,7 +106,9 @@ export function Sidebar() {
                 <h2 className="truncate text-sm font-bold leading-tight text-white">
                   Admin Panel
                 </h2>
-                <p className="mt-0.5 text-[10px] text-[#6b7db3]">Control Center</p>
+                <p className="mt-0.5 text-[10px] text-[#6b7db3]">
+                  Control Center
+                </p>
               </div>
             )}
           </div>
@@ -142,7 +141,8 @@ export function Sidebar() {
             const Icon = item.icon;
             const isActive =
               pathname === item.href ||
-              (item.href !== "/admin/dashboard" && pathname?.startsWith(item.href));
+              (item.href !== "/admin/dashboard" &&
+                pathname?.startsWith(item.href));
 
             return (
               <Link
@@ -151,7 +151,9 @@ export function Sidebar() {
                 title={isCollapsedDesktop ? item.name : undefined}
                 className={cn(
                   "group flex w-full items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200",
-                  isCollapsedDesktop ? "justify-center px-2 py-2.5" : "px-3 py-2.5",
+                  isCollapsedDesktop
+                    ? "justify-center px-2 py-2.5"
+                    : "px-3 py-2.5",
                   isActive
                     ? "bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-white shadow-[0_2px_12px_rgba(135,53,201,0.35)]"
                     : "text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
@@ -162,10 +164,12 @@ export function Sidebar() {
                     "h-4 w-4 shrink-0 transition-colors",
                     isActive
                       ? "text-white"
-                      : "text-[#6b7db3] group-hover:text-purple-300"
+                      : "group-hover:text-purple-300 text-[#6b7db3]"
                   )}
                 />
-                {!isCollapsedDesktop && <span className="truncate">{item.name}</span>}
+                {!isCollapsedDesktop && (
+                  <span className="truncate">{item.name}</span>
+                )}
               </Link>
             );
           })}

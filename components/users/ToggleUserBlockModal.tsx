@@ -22,7 +22,7 @@ export function ToggleUserBlockModal({
 }: ToggleUserBlockModalProps) {
   const [loading, setLoading] = useState(false);
 
-  if (!user) return null;
+  if (!user) {return null;}
 
   const isBlocking = !user.isBlocked; // true if target action is to block
 
@@ -54,17 +54,20 @@ export function ToggleUserBlockModal({
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-white">{user.name}</p>
+            <p className="truncate text-sm font-semibold text-white">
+              {user.name}
+            </p>
             <div className="flex items-center gap-1.5 text-xs text-[#6b7db3]">
               <Mail className="h-3 w-3 shrink-0" />
               <span className="truncate">{user.email}</span>
             </div>
           </div>
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${user.isBlocked
-              ? "bg-red-500/15 border border-red-500/30 text-red-400"
-              : "bg-emerald-500/15 border border-emerald-500/30 text-emerald-400"
-              }`}
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+              user.isBlocked
+                ? "border border-red-500/30 bg-red-500/15 text-red-400"
+                : "border border-emerald-500/30 bg-emerald-500/15 text-emerald-400"
+            }`}
           >
             {user.isBlocked ? "Blocked" : "Active"}
           </span>
@@ -82,10 +85,11 @@ export function ToggleUserBlockModal({
           <Button
             onClick={handleConfirm}
             disabled={loading}
-            className={`flex-1 gap-2 font-semibold text-white disabled:opacity-50 ${isBlocking
-              ? "bg-red-500 hover:bg-red-700"
-              : "bg-emerald-600 hover:bg-emerald-700"
-              }`}
+            className={`flex-1 gap-2 font-semibold text-white disabled:opacity-50 ${
+              isBlocking
+                ? "bg-red-500 hover:bg-red-700"
+                : "bg-emerald-600 hover:bg-emerald-700"
+            }`}
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

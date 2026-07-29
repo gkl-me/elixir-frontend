@@ -12,18 +12,15 @@ import {
   ArrowUpDown,
   MoreHorizontal,
   Eye,
-  RefreshCw,
   CreditCard,
-  Building2,
   Clock,
   Receipt,
-  DollarSign,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AdminTransaction } from "@/data/demoData";
 
 export function getTransactionColumns(
-  openDetailsModal: (id: string) => void,
+  openDetailsModal: (id: string) => void
 ): ColumnDef<AdminTransaction>[] {
   return [
     {
@@ -33,9 +30,9 @@ export function getTransactionColumns(
         const txn = row.original;
         return (
           <div className="flex items-center space-x-2">
-            <Receipt className="h-4 w-4 text-purple-400" />
+            <Receipt className="text-purple-400 h-4 w-4" />
             <div className="flex flex-col">
-              <span className="font-semibold text-white font-mono text-xs">
+              <span className="font-mono text-xs font-semibold text-white">
                 {txn.invoiceNumber}
               </span>
             </div>
@@ -53,7 +50,7 @@ export function getTransactionColumns(
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Workspace / Customer
-            <ArrowUpDown className="ml-2 h-4 w-4 text-purple-400" />
+            <ArrowUpDown className="text-purple-400 ml-2 h-4 w-4" />
           </Button>
         );
       },
@@ -66,11 +63,11 @@ export function getTransactionColumns(
                 {txn.workspaceName.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col min-w-0">
-              <span className="font-semibold text-white tracking-wide truncate">
+            <div className="flex min-w-0 flex-col">
+              <span className="truncate font-semibold tracking-wide text-white">
                 {txn.workspaceName}
               </span>
-              <span className="text-xs text-gray-400 truncate">
+              <span className="truncate text-xs text-gray-400">
                 {txn.customerEmail}
               </span>
             </div>
@@ -89,7 +86,7 @@ export function getTransactionColumns(
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Amount
-            <ArrowUpDown className="ml-2 h-4 w-4 text-purple-400" />
+            <ArrowUpDown className="text-purple-400 ml-2 h-4 w-4" />
           </Button>
         );
       },
@@ -98,7 +95,7 @@ export function getTransactionColumns(
         const formatted =
           txn.amount === 0 ? "$0.00" : `$${(txn.amount / 100).toFixed(2)}`;
         return (
-          <span className="font-bold text-white text-sm">
+          <span className="text-sm font-bold text-white">
             {formatted}{" "}
             <span className="text-[10px] font-normal text-gray-400">
               {txn.currency ?? "USD"}
@@ -115,7 +112,7 @@ export function getTransactionColumns(
         const txn = row.original;
         return (
           <div className="flex items-center gap-1.5 text-xs text-gray-300">
-            <CreditCard className="h-3.5 w-3.5 text-purple-400" />
+            <CreditCard className="text-purple-400 h-3.5 w-3.5" />
             <span>
               {txn.paymentMethod} •••• {txn.last4}
             </span>
@@ -128,7 +125,8 @@ export function getTransactionColumns(
       header: "Status",
       cell: ({ row }) => {
         const status = (row.getValue("status") as string)?.toLowerCase();
-        let badgeStyle = "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
+        let badgeStyle =
+          "border-emerald-500/30 bg-emerald-500/10 text-emerald-400";
         let dotStyle = "bg-emerald-400";
 
         if (status === "failed") {
@@ -159,16 +157,16 @@ export function getTransactionColumns(
         const dateStr = row.getValue("createdAt") as string;
         const dateFmt = dateStr
           ? new Date(dateStr).toLocaleDateString(undefined, {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
           : "N/A";
         return (
-          <div className="flex items-center gap-1.5 text-gray-300 text-xs">
-            <Clock className="h-3.5 w-3.5 text-purple-400" />
+          <div className="flex items-center gap-1.5 text-xs text-gray-300">
+            <Clock className="text-purple-400 h-3.5 w-3.5" />
             <span>{dateFmt}</span>
           </div>
         );

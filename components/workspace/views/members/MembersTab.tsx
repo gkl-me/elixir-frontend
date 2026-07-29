@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Edit3, Trash2, Plus, Loader2 } from "lucide-react";
 import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { DataTable } from "@/components/table/DataTable";
@@ -37,15 +37,15 @@ export const MembersTab = ({
   });
 
   const [members, setMembers] = useState<Member[]>([]);
-  const [totalCount, setTotalCount] = useState(0)
+  const [totalCount, setTotalCount] = useState(0);
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
-  const [pageSize] = useState(8)
+  const [pageSize] = useState(8);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [editMember, setEditMember] = useState<Member | null>(null);
   const [removeMember, setRemoveMember] = useState<Member | null>(null);
-  const debouncedSearch = useDebounce(search, 500)
+  const debouncedSearch = useDebounce(search, 500);
 
   const fetchMembers = useCallback(async () => {
     if (!workspaceId) {
@@ -57,26 +57,20 @@ export const MembersTab = ({
           workspaceId,
           page: page + 1,
           limit: pageSize,
-          search: debouncedSearch
+          search: debouncedSearch,
         },
       });
 
-      console.log("res", res)
 
       if (res?.success) {
         setMembers(res.data.members);
-        setTotalCount(res.data.totalCount)
+        setTotalCount(res.data.totalCount);
       }
     } catch (error) {
       const err = AxiosErrorHandler(error);
       toastHandler({ success: false, error: err.message });
     }
-  }, [
-    debouncedSearch,
-    pageSize,
-    page,
-    workspaceId,
-  ]);
+  }, [debouncedSearch, pageSize, page, workspaceId]);
 
   // Load members on mount and refresh trigger
   useEffect(() => {
@@ -85,9 +79,7 @@ export const MembersTab = ({
 
   useEffect(() => {
     setPage(0);
-  }, [debouncedSearch,]);
-
-
+  }, [debouncedSearch]);
 
   const columns: ColumnDef<Member>[] = [
     {

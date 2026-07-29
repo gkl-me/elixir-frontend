@@ -36,22 +36,27 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile }) {
       try {
         //add header to extract user agent
-        const reqHeaders = await headers()
-        const userAgent = reqHeaders.get('user-agent') || ""
-        const clientIp = reqHeaders.get('x-forwarded-for')?.split(",")[0].trim() || reqHeaders.get("x-real-ip") || "";
+        const reqHeaders = await headers();
+        const userAgent = reqHeaders.get("user-agent") || "";
+        const clientIp =
+          reqHeaders.get("x-forwarded-for")?.split(",")[0].trim() ||
+          reqHeaders.get("x-real-ip") ||
+          "";
 
         const requestConfig = {
           headers: {
             "user-agent": userAgent,
             "x-forwarded-for": clientIp,
-          }
-        }
-
+          },
+        };
 
         if (account?.provider === "google" && account?.id_token) {
-          const res = await authService.googleAuth({
-            idToken: account?.id_token,
-          }, requestConfig);
+          const res = await authService.googleAuth(
+            {
+              idToken: account?.id_token,
+            },
+            requestConfig
+          );
           account.access_token = res.data.data.accessToken;
           account.refresh_token = res.data.data.refreshToken;
           account.hasWorkspace = Boolean(res.data.data.workspace);
@@ -59,14 +64,17 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (account?.provider === "github" && account?.access_token) {
-          const res = await authService.githubAuth({
-            access_token: account.access_token,
-            githubId: user.id,
-            githubUsername: profile.login,
-            name: user.name,
-            email: user.email,
-            image: user.image,
-          }, requestConfig);
+          const res = await authService.githubAuth(
+            {
+              access_token: account.access_token,
+              githubId: user.id,
+              githubUsername: profile.login,
+              name: user.name,
+              email: user.email,
+              image: user.image,
+            },
+            requestConfig
+          );
           account.access_token = res.data.data.accessToken;
           account.refresh_token = res.data.data.refreshToken;
           account.hasWorkspace = Boolean(res.data.data.workspace);

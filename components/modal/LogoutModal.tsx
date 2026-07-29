@@ -34,7 +34,9 @@ export function LogoutModal({ isOpen, onClose }: LogoutModalProps) {
             <LogOut className="h-4 w-4 text-[#c084fc]" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">End current session</p>
+            <p className="text-sm font-semibold text-white">
+              End current session
+            </p>
             <p className="text-xs text-[#6b7db3]">
               You will be signed out on this device and redirected to login.
             </p>

@@ -21,9 +21,9 @@ export const TeamsView = () => {
   const [managingTeam, setManagingTeam] = useState<TeamType | null>(null);
   const [search, setSearch] = useState("");
   const [teams, setTeams] = useState<WorkspaceTeamsList[] | []>([]);
-  const [totalCount, setTotalCount] = useState(0)
+  const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const debouncedSearch = useDebounce(search, 500)
+  const debouncedSearch = useDebounce(search, 500);
 
   const TEAMS_PER_PAGE = 8;
 
@@ -45,15 +45,15 @@ export const TeamsView = () => {
           workspaceId,
           page: currentPage,
           limit: TEAMS_PER_PAGE,
-          search: debouncedSearch
+          search: debouncedSearch,
         },
       });
 
-      console.log("res", res)
+      console.log("res", res);
 
       if (res?.success) {
         setTeams(res.data.teams || []);
-        setTotalCount(res.data.totalCount || 0)
+        setTotalCount(res.data.totalCount || 0);
       }
     } catch (error) {
       toastHandler({
@@ -102,7 +102,10 @@ export const TeamsView = () => {
         <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#4B5578]" />
         <input
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
           placeholder="Search teams…"
           className="w-full rounded-xl border border-[#1e2a4a] bg-[#0C1635] py-2 pl-9 pr-4 text-sm text-white outline-none transition-colors placeholder:text-[#4B5578] focus:border-[#8735C9]"
         />

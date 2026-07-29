@@ -47,7 +47,7 @@ export function getWorkspaceColumns(
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Workspace Name
-            <ArrowUpDown className="ml-2 h-4 w-4 text-purple-400" />
+            <ArrowUpDown className="text-purple-400 ml-2 h-4 w-4" />
           </Button>
         );
       },
@@ -60,7 +60,9 @@ export function getWorkspaceColumns(
                 {workspace.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <span className="font-semibold text-white tracking-wide">{workspace.name}</span>
+            <span className="font-semibold tracking-wide text-white">
+              {workspace.name}
+            </span>
           </div>
         );
       },
@@ -70,7 +72,9 @@ export function getWorkspaceColumns(
       accessorKey: "ownerEmail",
       header: "Owner",
       cell: ({ row }) => (
-        <span className="text-gray-300 text-sm">{row.getValue("ownerEmail")}</span>
+        <span className="text-sm text-gray-300">
+          {row.getValue("ownerEmail")}
+        </span>
       ),
     },
     {
@@ -87,12 +91,16 @@ export function getWorkspaceColumns(
 
         if (plan.includes("pro")) {
           label = "Pro";
-          icon = <Zap className="mr-1.5 h-3.5 w-3.5 text-blue-400 fill-blue-400/20" />;
+          icon = (
+            <Zap className="mr-1.5 h-3.5 w-3.5 fill-blue-400/20 text-blue-400" />
+          );
           badgeStyle =
             "border-blue-500/40 bg-gradient-to-r from-blue-500/15 via-indigo-500/15 to-purple-500/15 text-blue-300 shadow-[0_0_12px_rgba(59,130,246,0.15)]";
         } else if (plan.includes("enter")) {
           label = "Enterprise";
-          icon = <Crown className="mr-1.5 h-3.5 w-3.5 text-amber-400 fill-amber-400/20" />;
+          icon = (
+            <Crown className="mr-1.5 h-3.5 w-3.5 fill-amber-400/20 text-amber-400" />
+          );
           badgeStyle =
             "border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-purple-500/15 to-fuchsia-500/15 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.15)]";
         } else if (plan.includes("free")) {
@@ -101,9 +109,8 @@ export function getWorkspaceColumns(
           badgeStyle =
             "border-slate-700/60 bg-slate-800/60 text-slate-300 shadow-sm";
         } else {
-          icon = <Layers className="mr-1.5 h-3.5 w-3.5 text-purple-400" />;
-          badgeStyle =
-            "border-purple-500/30 bg-purple-500/10 text-purple-300";
+          icon = <Layers className="text-purple-400 mr-1.5 h-3.5 w-3.5" />;
+          badgeStyle = "border-purple-500/30 bg-purple-500/10 text-purple-300";
         }
 
         return (
@@ -121,7 +128,7 @@ export function getWorkspaceColumns(
       header: "Users",
       cell: ({ row }) => (
         <div className="flex items-center space-x-2 text-gray-300">
-          <Users className="h-4 w-4 text-purple-400" />
+          <Users className="text-purple-400 h-4 w-4" />
           <span className="font-medium">{row.getValue("totalUsers")}</span>
         </div>
       ),
@@ -143,7 +150,7 @@ export function getWorkspaceColumns(
           >
             <span
               className={`h-1.5 w-1.5 rounded-full ${
-                isSuspended ? "bg-red-400 animate-pulse" : "bg-emerald-400"
+                isSuspended ? "animate-pulse bg-red-400" : "bg-emerald-400"
               }`}
             />
             {status}
@@ -204,4 +211,3 @@ export function getWorkspaceColumns(
     },
   ];
 }
-

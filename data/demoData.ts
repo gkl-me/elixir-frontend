@@ -891,7 +891,7 @@ export interface AdminTransaction {
   status: "succeeded" | "failed" | "refunded" | "pending";
   paymentMethod: string;
   last4: string;
-  invoicePdfUrl: string
+  invoicePdfUrl: string;
   planType: string;
   createdAt: string;
 }

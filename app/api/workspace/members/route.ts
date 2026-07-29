@@ -10,12 +10,11 @@ export async function GET(req: Request) {
     const page = searchParams.get("page") ?? "1";
     const limit = searchParams.get("limit") ?? "9";
 
-
     const res = await workspaceService.getMembers({
       workspaceId,
       limit: parseInt(limit),
       page: parseInt(page),
-      search
+      search,
     });
 
     return NextResponse.json({

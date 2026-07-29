@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   CreditCard,
-  ArrowRight,
   Check,
   X,
   Zap,
@@ -11,18 +10,10 @@ import {
   Building,
   Package,
   Download,
-  Eye as ViewIcon,
-  Link as LinkIcon,
 } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CustomModal } from "@/components/modal/CustomModal";
-import { ColumnDef, SortingState } from "@tanstack/react-table";
-import { DataTable } from "@/components/table/DataTable";
 import {
-  demoWorkspace,
-  demoSubscriptions,
-  demoInvoices,
   Invoice,
 } from "../../../../data/demoData";
 import { Section } from "./shared";
@@ -34,7 +25,6 @@ import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { PlanCard } from "@/components/plans/PlanCard";
-import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
 import { customerPortalAction } from "@/app/actions/payment.action";
 
 // ─── Helpers ──────────────────────────────────────────────
@@ -146,7 +136,7 @@ const InvoiceModal = ({
 
         <div className="flex gap-2 pt-1">
           <Button
-            onClick={() => { }}
+            onClick={() => {}}
             className="flex-1 gap-2 bg-[#8735C9] text-white hover:bg-[#6a29a0]"
           >
             <Download className="h-4 w-4" />
@@ -177,74 +167,67 @@ const Feature = ({ ok, text }: { ok: boolean; text: string }) => (
   </li>
 );
 
-
-
 // ─── BillingTab ───────────────────────────────────────────
 export const BillingTab = () => {
-
   const planIcons: Record<string, React.ElementType> = {
     free: Package,
     pro: Star,
     enterprise: Building,
   };
 
-  const [currentPlan, setCurrentPlan] = useState<IPlan | undefined>()
-  const [upgradePlans, setUpgradePlans] = useState<IPlan[]>([])   // ← must be [] not undefined
-  const [subscription, setSubscription] = useState<unknown>()
+  const [currentPlan, setCurrentPlan] = useState<IPlan | undefined>();
+  const [upgradePlans, setUpgradePlans] = useState<IPlan[]>([]); // ← must be [] not undefined
+  const [subscription, setSubscription] = useState<unknown>();
 
-  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId)
+  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
 
   const { execute } = useApi({
     url: NEXT_API_ROUTES.GET_BILLING_INFO,
-    method: "GET"
-  })
+    method: "GET",
+  });
 
   const fetchBillingInfo = useCallback(async () => {
     if (!workspaceId) {
-      return
+      return;
     }
 
     try {
-
       const res = await execute({
         params: {
-          workspaceId
-        }
-      })
+          workspaceId,
+        },
+      });
 
-      console.log(res.data)
+      console.log(res.data);
 
       if (res?.success) {
-        setCurrentPlan(res.data.currentPlan)
-        setSubscription(res.data.subscription)
-        setUpgradePlans(res.data.upgradePlans)
+        setCurrentPlan(res.data.currentPlan);
+        setSubscription(res.data.subscription);
+        setUpgradePlans(res.data.upgradePlans);
       }
-
     } catch (error) {
       toastHandler({
         success: false,
         error: AxiosErrorHandler(error).message,
       });
     }
-  }, [workspaceId, execute])
+  }, [workspaceId, execute]);
 
   useEffect(() => {
-    fetchBillingInfo()
-  }, [fetchBillingInfo])
+    fetchBillingInfo();
+  }, [fetchBillingInfo]);
 
   const handleCustomerPortal = async () => {
+    const res = await customerPortalAction({ workspaceId });
 
-    const res = await customerPortalAction({ workspaceId })
-
-    console.log("Res,", res)
+    console.log("Res,", res);
 
     if (res?.success && res.data?.customerPortalUrl) {
-      window.location.href = res.data.customerPortalUrl
+      window.location.href = res.data.customerPortalUrl;
     }
 
-    toastHandler(res)
-
-  }
+    toastHandler(res);
+  };
 
   return (
     <div className="space-y-6">

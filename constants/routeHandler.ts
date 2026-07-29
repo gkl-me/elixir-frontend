@@ -1,5 +1,5 @@
 export const NEXT_API_ROUTES = {
-  USERS_LIST_API: '/api/users',
+  USERS_LIST_API: "/api/users",
 
   USERS_ME_API: "/api/users/me",
 
@@ -23,11 +23,11 @@ export const NEXT_API_ROUTES = {
   GET_WORKSPACE_TEAM: (teamId: string) => `/api/workspace/teams/${teamId}`,
   GET_WORKSPACE_LIMITS: "/api/workspace/limits",
 
-  GET_ALL_WORKSPACE: '/api/workspace',
+  GET_ALL_WORKSPACE: "/api/workspace",
 
   GET_USER_ME: "/api/users/me",
 
-  GET_BILLING_INFO: '/api/payment',
+  GET_BILLING_INFO: "/api/payment",
 
-  GET_ALL_COMPANY: '/api/company'
+  GET_ALL_COMPANY: "/api/company",
 };

@@ -22,13 +22,13 @@ import { toggleWorkspaceStatusAction } from "@/app/actions/workspace.action";
 
 export default function WorkspaceDataTable({
   intialData,
-  intialTotalCount = 0
+  intialTotalCount = 0,
 }: {
-  intialData: Workspace[],
-  intialTotalCount: number
+  intialData: Workspace[];
+  intialTotalCount: number;
 }) {
   const [data, setData] = useState<Workspace[]>(intialData);
-  const [totalCount, setTotalCount] = useState(intialTotalCount)
+  const [totalCount, setTotalCount] = useState(intialTotalCount);
 
   // Table State
   const [search, setSearch] = useState("");
@@ -47,43 +47,36 @@ export default function WorkspaceDataTable({
   const [workspaceToSuspend, setWorkspaceToSuspend] =
     useState<Workspace | null>(null);
 
-
   const { execute, isLoading } = useApi({
     url: NEXT_API_ROUTES.GET_ALL_WORKSPACE,
-    method: "GET"
-  })
-
+    method: "GET",
+  });
 
   const isFirstRendered = useRef(true);
 
   const fetchData = useCallback(async () => {
-
     try {
-
       const res = await execute({
         params: {
           search: debouncedSearch,
           status: statusFilter,
           page: pageIndex + 1,
-          limit: pageSize
-        }
-      })
+          limit: pageSize,
+        },
+      });
 
-      console.log("res", res.data)
 
-      setData(res.data.workspaces)
-      setTotalCount(res.data.totalCount)
+      setData(res.data.workspaces);
+      setTotalCount(res.data.totalCount);
 
       toastHandler({
         success: res.success,
-        message: res.message
-      })
-
+        message: res.message,
+      });
     } catch (error) {
       const err = AxiosErrorHandler(error);
       toastHandler({ success: false, error: err.message });
     }
-
   }, [debouncedSearch, statusFilter]); // Simplified deps since it's mock data
 
   useEffect(() => {
@@ -119,12 +112,11 @@ export default function WorkspaceDataTable({
     }
 
     try {
-
       const res = await toggleWorkspaceStatusAction({
-        workspaceId: workspaceToSuspend.id
-      })
-      toastHandler(res)
-      fetchData()
+        workspaceId: workspaceToSuspend.id,
+      });
+      toastHandler(res);
+      fetchData();
       setIsSuspendModalOpen(false);
     } catch (error) {
       const err = AxiosErrorHandler(error);
@@ -200,4 +192,3 @@ export default function WorkspaceDataTable({
     </div>
   );
 }
-

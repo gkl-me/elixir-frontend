@@ -14,9 +14,6 @@ import {
   UserX,
   UserCheck,
   Mail,
-  Shield,
-  Building2,
-  User as UserIcon,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -42,7 +39,7 @@ export function getUserColumns(
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Name
-            <ArrowUpDown className="ml-2 h-4 w-4 text-purple-400" />
+            <ArrowUpDown className="text-purple-400 ml-2 h-4 w-4" />
           </Button>
         );
       },
@@ -56,7 +53,9 @@ export function getUserColumns(
                 {user.name.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <span className="font-semibold text-white tracking-wide">{user.name}</span>
+            <span className="font-semibold tracking-wide text-white">
+              {user.name}
+            </span>
           </div>
         );
       },
@@ -72,15 +71,17 @@ export function getUserColumns(
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             Email
-            <ArrowUpDown className="ml-2 h-4 w-4 text-purple-400" />
+            <ArrowUpDown className="text-purple-400 ml-2 h-4 w-4" />
           </Button>
         );
       },
       cell: ({ row }) => {
         return (
           <div className="flex items-center space-x-2">
-            <Mail className="h-4 w-4 text-purple-400" />
-            <span className="text-gray-300 text-sm">{row.getValue("email")}</span>
+            <Mail className="text-purple-400 h-4 w-4" />
+            <span className="text-sm text-gray-300">
+              {row.getValue("email")}
+            </span>
           </div>
         );
       },
@@ -95,7 +96,7 @@ export function getUserColumns(
           <div className="flex items-center">
             {isBlocked ? (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-3 py-0.5 text-xs font-medium text-red-400 shadow-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-400 animate-pulse" />
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
                 <UserX className="h-3 w-3" />
                 Blocked
               </span>
@@ -160,4 +161,3 @@ export function getUserColumns(
     },
   ];
 }
-

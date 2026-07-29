@@ -132,13 +132,12 @@ export default function CompanyDataTable({
     }
 
     try {
-
-      const res = await toggleCompanyStatusAction(companyToSuspend.id)
+      const res = await toggleCompanyStatusAction(companyToSuspend.id);
 
       toastHandler({
         success: res.success,
-        message: res.message
-      })
+        message: res.message,
+      });
       setIsSuspendModalOpen(false);
       fetchData();
     } catch (error) {
