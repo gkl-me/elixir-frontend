@@ -12,8 +12,9 @@ import {
   Package,
   Download,
   Eye as ViewIcon,
-  Link,
+  Link as LinkIcon,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CustomModal } from "@/components/modal/CustomModal";
 import { ColumnDef, SortingState } from "@tanstack/react-table";
@@ -34,6 +35,7 @@ import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { PlanCard } from "@/components/plans/PlanCard";
 import { AUTH_CLIENT_ROUTES } from "@/constants/clientRoutes";
+import { customerPortalAction } from "@/app/actions/payment.action";
 
 // ─── Helpers ──────────────────────────────────────────────
 const fmt = (cents: number) =>
@@ -190,7 +192,7 @@ export const BillingTab = () => {
   const [upgradePlans, setUpgradePlans] = useState<IPlan[]>([])   // ← must be [] not undefined
   const [subscription, setSubscription] = useState<unknown>()
 
-  const workspaceId = useWorkspaceStore((s) => s?.context.workspaceId)
+  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId)
 
   const { execute } = useApi({
     url: NEXT_API_ROUTES.GET_BILLING_INFO,
@@ -230,6 +232,20 @@ export const BillingTab = () => {
     fetchBillingInfo()
   }, [fetchBillingInfo])
 
+  const handleCustomerPortal = async () => {
+
+    const res = await customerPortalAction({ workspaceId })
+
+    console.log("Res,", res)
+
+    if (res?.success && res.data?.customerPortalUrl) {
+      window.location.href = res.data.customerPortalUrl
+    }
+
+    toastHandler(res)
+
+  }
+
   return (
     <div className="space-y-6">
       {/* Current plan badge */}
@@ -243,7 +259,7 @@ export const BillingTab = () => {
             <p className="text-lg font-black text-white">
               {currentPlan?.name}{" "}
               <span className="text-sm font-normal text-[#6b7db3]">
-                · {fmt(currentPlan?.price)}/seat/mo
+                · {fmt(currentPlan?.price ?? 0)}/mo
               </span>
             </p>
           </div>
@@ -251,6 +267,7 @@ export const BillingTab = () => {
         <Button
           variant="ghost"
           className="gap-1.5 border border-[#1e2a4a] text-xs text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
+          onClick={handleCustomerPortal}
         >
           <CreditCard className="h-3.5 w-3.5" />
           Manage Payment
@@ -271,21 +288,16 @@ export const BillingTab = () => {
                 : "md:grid-cols-2"
             )}
           >
-            {upgradePlans.map((plan) => {
-              const Icon = planIcons[plan.id] ?? Star;
+            {upgradePlans.map((plan, index) => {
+              const Icon = planIcons[plan?.id] ?? Star;
               return (
                 <PlanCard
-                  key={plan?.id}
+                  key={plan?.id || (plan as any)?._id || index}
                   {...plan}
                   actionSlot={
-                    <Link
-                      href={AUTH_CLIENT_ROUTES.LOGIN}
-                      className="mt-6 block w-full"
-                    >
-                      <Button variant={"dark"} className="w-full">
-                        Choose {plan.name}
-                      </Button>
-                    </Link>
+                    <Button variant={"dark"} className="w-full">
+                      Upgrade
+                    </Button>
                   }
                 />
               );

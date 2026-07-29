@@ -6,3 +6,7 @@ export interface IVerifyPaymentData {
 export interface BillingInfoData {
   workspaceId: string;
 }
+
+export interface ICustomerPortalData {
+  workspaceId: string
+}

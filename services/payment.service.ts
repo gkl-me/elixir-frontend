@@ -1,6 +1,6 @@
 import { PAYMENT_API_ROUTES } from "@/constants/apiRoutes";
 import api from "@/lib/api";
-import { BillingInfoData } from "@/types/IPaymentType";
+import { BillingInfoData, ICustomerPortalData } from "@/types/IPaymentType";
 
 export const paymentService = {
   verifyPayment: async () => {
@@ -11,5 +11,10 @@ export const paymentService = {
   },
   billingInfo: async (data: BillingInfoData) => {
     return api.get(PAYMENT_API_ROUTES.BILLING_INFO + '/' + data.workspaceId)
+  },
+  customerPortal: async (data: ICustomerPortalData) => {
+    return api.post(PAYMENT_API_ROUTES.CUSTOMER_PORTAL, {
+      workspaceId: data.workspaceId
+    })
   }
 };
