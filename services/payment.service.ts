@@ -1,6 +1,6 @@
 import { PAYMENT_API_ROUTES } from "@/constants/apiRoutes";
 import api from "@/lib/api";
-import { BillingInfoData, ICustomerPortalData } from "@/types/IPaymentType";
+import { BillingInfoData, ICustomerPortalData, UpgradeCheckoutData } from "@/types/IPaymentType";
 
 export const paymentService = {
   verifyPayment: async () => {
@@ -17,4 +17,8 @@ export const paymentService = {
       workspaceId: data.workspaceId,
     });
   },
+
+  upgradeCheckout: async (data: UpgradeCheckoutData) => {
+    return api.post(PAYMENT_API_ROUTES.UPRGADE_CHECKOUT, data);
+  }
 };

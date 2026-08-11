@@ -46,6 +46,7 @@ export const PAYMENT_API_ROUTES = {
   RETRY_PAYMENT: "/payment/retry",
   BILLING_INFO: "/payment/billing",
   CUSTOMER_PORTAL: "/payment/customer-portal",
+  UPRGADE_CHECKOUT: "/payment/upgrade-checkout"
 };
 
 export const COMPANY_API_ROUTES = {
