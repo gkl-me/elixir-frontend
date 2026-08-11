@@ -109,4 +109,12 @@ export const WORKSPACE_API_ROUTES = {
 
   GET_WORKSPACE_LIMITS: (workspaceId: string) =>
     `/workspace/${workspaceId}/limits`,
+
+
+
+  //projects 
+  CREATE_PROJECT: (workspaceId: string) =>
+    `/workspace/${workspaceId}/projects`,
+  LIST_PROJECTS: (workspaceId: string) =>
+    `/workspace/${workspaceId}/projects`
 };

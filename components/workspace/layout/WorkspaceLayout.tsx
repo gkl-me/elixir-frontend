@@ -20,12 +20,13 @@ export const WorkspaceLayout: React.FC<WorkspaceLayoutProps> = ({
 
   const pathname = usePathname();
   const pathParts = pathname?.split("/").filter(Boolean) || [];
-  // e.g. ['demo', 'projects', 'p1', 'backlogs']
+  // e.g. ['workspace', 'demo', 'projects', 'p1', 'backlogs']
+  const projectsIdx = pathParts.indexOf("projects");
   const isProjectView =
     pathParts[0] === "workspace" &&
-    pathParts[1] === "projects" &&
-    pathParts.length >= 2;
-  const activeProjectId = isProjectView ? pathParts[2] : null;
+    projectsIdx !== -1 &&
+    pathParts.length > projectsIdx + 1;
+  const activeProjectId = isProjectView ? pathParts[projectsIdx + 1] : null;
 
   // Detect mobile breakpoint
   useEffect(() => {

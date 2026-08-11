@@ -28,13 +28,27 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
 }) => {
   const pathname = usePathname();
   const pathParts = pathname?.split("/").filter(Boolean) || [];
-  // For `/demo/projects/p1/backlogs`, pathParts[3] is 'backlogs'
-  const activeView = pathParts.length > 3 ? pathParts[3] : "overview";
 
-  const project = demoProjects.find((p) => p.id === activeProjectId);
+  const projectsIdx = pathParts.indexOf("projects");
+  const workspaceSlug =
+    pathParts[0] === "workspace" && projectsIdx > 1 ? pathParts[1] : null;
+  const currentProjectId =
+    activeProjectId || (projectsIdx !== -1 ? pathParts[projectsIdx + 1] : null);
+  const activeView =
+    projectsIdx !== -1 && pathParts.length > projectsIdx + 2
+      ? pathParts[projectsIdx + 2]
+      : "overview";
+
+  const project =
+    demoProjects.find((p) => p.id === currentProjectId);
+
   const activeSprint = demoSprints.find(
-    (s) => s.projectId === activeProjectId && s.status === "active"
+    (s) => s.projectId === currentProjectId && s.status === "active"
   );
+
+  const allProjectsUrl = workspaceSlug
+    ? `/workspace/${workspaceSlug}/projects`
+    : "/workspace";
 
   const sections = [
     {
@@ -101,7 +115,7 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
       {/* Back button */}
       <div className="px-4 pb-2 pt-4">
         <Link
-          href="/workspace"
+          href={allProjectsUrl}
           className="group mb-4 flex items-center gap-1.5 text-xs text-[#6b7db3] transition-colors hover:text-white"
         >
           <ChevronLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
@@ -126,26 +140,6 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
               </div>
             </div>
           </div>
-
-          {/* Sprint info */}
-          {activeSprint && (
-            <div className="mt-3 border-t border-[#1e2a4a] pt-3">
-              <div className="flex items-center gap-1.5 text-[11px] text-[#6b7db3]">
-                <GitBranch className="h-3 w-3 text-[#8735C9]" />
-                <span className="truncate font-medium text-white">
-                  {activeSprint.name}
-                </span>
-              </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[10px] text-[#4B5578]">
-                <Timer className="h-3 w-3" />
-                Ends{" "}
-                {new Date(activeSprint.endDate).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -160,10 +154,13 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
               {section.links.map((link) => {
                 const Icon = link.icon;
                 const isActive = activeView === link.id;
+                const baseUrl = workspaceSlug
+                  ? `/workspace/${workspaceSlug}/projects/${currentProjectId}`
+                  : `/demo/projects/${currentProjectId}`;
                 const targetUrl =
                   link.id === "overview"
-                    ? `/demo/projects/${activeProjectId}`
-                    : `/demo/projects/${activeProjectId}/${link.id}`;
+                    ? baseUrl
+                    : `${baseUrl}/${link.id}`;
                 return (
                   <Link
                     key={link.id}
