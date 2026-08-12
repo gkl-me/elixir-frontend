@@ -117,11 +117,13 @@ export const WORKSPACE_API_ROUTES = {
     `/workspace/${workspaceId}/projects`,
   LIST_PROJECTS: (workspaceId: string) =>
     `/workspace/${workspaceId}/projects`,
+  GET_PROJECT_DETAILS: (workspaceId: string, projectId: string) =>
+    `/workspace/${workspaceId}/projects/${projectId}`,
 
 
   CREATE_BACKLOG_ISSUE: (workspaceId: string) =>
     `/workspace/${workspaceId}/backlog/create-issue`,
+  LIST_BACKLOGS: (workspaceId: string, projectId: string) =>
+    `/workspace/${workspaceId}/projects/${projectId}/backlogs`
 
-  GET_PROJECT_DETAILS: (workspaceId: string, projectId: string) =>
-    `/workspace/${workspaceId}/projects/${projectId}`
 };

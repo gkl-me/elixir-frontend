@@ -4,7 +4,7 @@
 
 
 import { AxiosErrorHandler } from "@/lib/errorHandler";
-import { projectService } from "@/services/project.service";
+import { issueService } from "@/services/issue.service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -14,7 +14,11 @@ export async function GET(
     try {
         const { projectId } = await params;
         const { searchParams } = new URL(req.url);
-        const workspaceId = searchParams.get("workspaceId");
+        const workspaceId = searchParams.get("workspaceId")
+
+        const search = searchParams.get("search")
+        const type = searchParams.get("type")
+        const status = searchParams.get("status")
 
         if (!workspaceId) {
             return NextResponse.json(
@@ -22,7 +26,7 @@ export async function GET(
                 { status: 400 }
             );
         }
-        const res = await projectService.handleGetProjectDetails({ workspaceId, projectId });
+        const res = await issueService.handleListBacklogs({ workspaceId, projectId, search, type, status });
 
         return NextResponse.json({
             success: res.data.success,

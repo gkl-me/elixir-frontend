@@ -26,6 +26,8 @@ export const NEXT_API_ROUTES = {
   LIST_PROJECTS: "/api/workspace/projects",
   GET_PROJECT_DETAILS: (workspaceId: string, projectId: string) => `/api/workspace/projects/${projectId}`,
 
+  GET_BACKLOGS: (workspaceId: string, projectId: string) => `/api/workspace/projects/${projectId}/backlogs`,
+
   GET_ALL_WORKSPACE: "/api/workspace",
 
   GET_USER_ME: "/api/users/me",

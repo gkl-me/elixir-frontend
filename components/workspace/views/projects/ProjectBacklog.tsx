@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Plus,
   Search,
@@ -12,19 +12,26 @@ import {
   ChevronDown,
   MoreHorizontal,
   ArrowUp,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { WorkspaceProject, initials, grad } from "./shared";
-import { Task, demoTasks } from "@/data/demoData";
+import { WorkspaceProject } from "./shared";
 import { Button } from "@/components/ui/button";
 import { CreateIssueModal } from "./CreateIssueModal";
+import { useApi } from "@/hooks/useApi";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
+import { useDebounce } from "@/hooks/useDebounce";
+import { toastHandler } from "@/lib/toastHandler";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { IBackLogsDetailsDto, IIssueResDto } from "@/types/IIssueType";
 
 interface ProjectBacklogProps {
   project: WorkspaceProject;
 }
 
-type FilterStatus = "all" | "todo" | "in-progress" | "in-review" | "done";
-type FilterType = "all" | "story" | "bug";
+type FilterStatus = "" | "todo" | "in_progress" | "in_review" | "done";
+type FilterType = "" | "story" | "bug";
 
 // ─── Config maps ──────────────────────────────────────────────────────────────
 const STATUS_CFG: Record<
@@ -37,11 +44,23 @@ const STATUS_CFG: Record<
     badge: "border-emerald-500/30 bg-emerald-500/10",
     text: "text-emerald-400",
   },
+  in_progress: {
+    label: "In Progress",
+    dot: "bg-blue-400",
+    badge: "border-blue-500/30 bg-blue-500/10",
+    text: "text-blue-400",
+  },
   "in-progress": {
     label: "In Progress",
     dot: "bg-blue-400",
     badge: "border-blue-500/30 bg-blue-500/10",
     text: "text-blue-400",
+  },
+  in_review: {
+    label: "In Review",
+    dot: "bg-amber-400",
+    badge: "border-amber-500/30 bg-amber-500/10",
+    text: "text-amber-400",
   },
   "in-review": {
     label: "In Review",
@@ -84,62 +103,64 @@ const POINTS_COLORS = (pts: number) => {
 export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
   project,
 }) => {
-  const [localTasks, setLocalTasks] = useState<Partial<Task>[]>(demoTasks);
+  const [backlogData, setBacklogData] = useState<IBackLogsDetailsDto | null>(null);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<FilterStatus>("all");
-  const [typeFilter, setTypeFilter] = useState<FilterType>("all");
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>("");
+  const [typeFilter, setTypeFilter] = useState<FilterType>("");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const handleCreateIssue = (newIssue: Partial<Task>) => {
-    setLocalTasks((prev) => [newIssue, ...prev]);
-  };
+  const debouncedSearch = useDebounce(search, 500);
+  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
 
-  // Augment tasks with issue keys and member assignees for display
-  const augmentedTasks = useMemo(() => {
-    const assignees = (project as any)?.memberNames || ["John Doe", "Alice Smith", "Bob"];
-    const prefix = project?.key || "ELX";
-    return localTasks.map((t, i) => ({
-      ...t,
-      key: `${prefix}-${101 + i}`,
-      assignee: t.assigneeId || assignees[i % assignees.length] || null,
-      type: (t.type === "bug" ? "bug" : "story") as "story" | "bug",
-      priority: (t.points && t.points >= 8 ? "high" : t.points && t.points >= 5 ? "medium" : "low") as "high" | "medium" | "low",
-    }));
-  }, [localTasks, project]);
+  const projectId = project?.id;
 
-  const filteredTasks = useMemo(() => {
-    return augmentedTasks.filter((t) => {
-      const matchSearch =
-        !search ||
-        (t.title ?? "").toLowerCase().includes(search.toLowerCase()) ||
-        (t.description ?? "").toLowerCase().includes(search.toLowerCase()) ||
-        t.key.toLowerCase().includes(search.toLowerCase());
-      const matchStatus = statusFilter === "all" || t.status === statusFilter;
-      const matchType = typeFilter === "all" || t.type === typeFilter;
-      return matchSearch && matchStatus && matchType;
-    });
-  }, [augmentedTasks, search, statusFilter, typeFilter]);
+  const { execute, isLoading } = useApi({
+    url: NEXT_API_ROUTES.GET_BACKLOGS(workspaceId || "", projectId || ""),
+    method: "GET",
+  });
 
-  const hasFilters = statusFilter !== "all" || typeFilter !== "all" || search !== "";
+  const fetchBacklogs = useCallback(async () => {
+    if (!workspaceId || !projectId) {
+      return;
+    }
+
+    try {
+      const res = await execute({
+        params: {
+          workspaceId,
+          search: debouncedSearch,
+          type: typeFilter === "" ? "" : typeFilter,
+          status: statusFilter === "" ? "" : statusFilter,
+        },
+      });
+
+      if (res?.success && res?.data) {
+        console.log("res backlogs", res)
+        setBacklogData(res.data);
+      }
+    } catch (error) {
+      toastHandler({
+        success: false,
+        error: AxiosErrorHandler(error).message,
+      });
+    }
+  }, [workspaceId, projectId, execute, debouncedSearch, typeFilter, statusFilter]);
+
+  useEffect(() => {
+    fetchBacklogs();
+  }, [fetchBacklogs]);
+
+  const issuesList = backlogData?.backLogs || [];
+
+  const hasFilters = statusFilter !== "" || typeFilter !== "" || search !== "";
 
   const clearFilters = () => {
-    setStatusFilter("all");
-    setTypeFilter("all");
+    setStatusFilter("");
+    setTypeFilter("");
     setSearch("");
   };
 
-  // Counters
-  const counts = useMemo(
-    () => ({
-      total: augmentedTasks.length,
-      stories: augmentedTasks.filter((t) => t.type === "story").length,
-      bugs: augmentedTasks.filter((t) => t.type === "bug").length,
-      done: augmentedTasks.filter((t) => t.status === "done").length,
-      totalPoints: augmentedTasks.reduce((s, t) => s + (t.points ?? 0), 0),
-    }),
-    [augmentedTasks]
-  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -154,7 +175,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold text-white">Backlog</h2>
                 <span className="rounded-full bg-[#8735C9]/20 px-2.5 py-0.5 font-mono text-xs font-bold text-[#c084fc]">
-                  {counts.total} issues
+                  {backlogData?.totalCount} issues
                 </span>
               </div>
               <p className="mt-0.5 text-xs text-[#6b7db3]">
@@ -178,25 +199,25 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
         {/* Quick summary stats bar */}
         <div className="mt-5 grid grid-cols-4 gap-3 border-t border-[#1e2a4a] pt-4">
           <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b]/80 p-3 text-center">
-            <p className="text-lg font-black text-white">{counts.total}</p>
+            <p className="text-lg font-black text-white">{backlogData?.totalCount}</p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#6b7db3]">
               Total Backlog
             </p>
           </div>
           <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b]/80 p-3 text-center">
-            <p className="text-lg font-black text-[#c084fc]">{counts.stories}</p>
+            <p className="text-lg font-black text-[#c084fc]">{backlogData?.stories}</p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#6b7db3]">
               User Stories
             </p>
           </div>
           <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b]/80 p-3 text-center">
-            <p className="text-lg font-black text-red-400">{counts.bugs}</p>
+            <p className="text-lg font-black text-red-400">{backlogData?.bugs}</p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#6b7db3]">
               Bugs Reported
             </p>
           </div>
           <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b]/80 p-3 text-center">
-            <p className="text-lg font-black text-[#60a5fa]">{counts.totalPoints}</p>
+            <p className="text-lg font-black text-[#60a5fa]">{backlogData?.totalStoryPoint}</p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#6b7db3]">
               Total Points
             </p>
@@ -228,7 +249,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
 
           {/* Status filter pills */}
           <div className="flex items-center gap-1 rounded-xl border border-[#1e2a4a] bg-[#0C1635] p-1">
-            {(["all", "todo", "in-progress", "in-review", "done"] as FilterStatus[]).map(
+            {(["all", "todo", "in_progress", "in_review", "done"] as FilterStatus[]).map(
               (f) => (
                 <button
                   key={f}
@@ -240,7 +261,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
                       : "text-[#6b7db3] hover:text-white"
                   )}
                 >
-                  {f === "all" ? "All Status" : f.replace("-", " ")}
+                  {f === "" ? "All Status" : f.replace("_", " ")}
                 </button>
               )
             )}
@@ -249,7 +270,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
           {/* Type filter pills (Story and Bug ONLY) */}
           <div className="flex items-center gap-1 rounded-xl border border-[#1e2a4a] bg-[#0C1635] p-1">
             {(["all", "story", "bug"] as FilterType[]).map((t) => {
-              const cfg = t !== "all" ? TYPE_CFG[t] : null;
+              const cfg = t !== "" ? TYPE_CFG[t] : null;
               const Icon = cfg?.icon;
               return (
                 <button
@@ -263,7 +284,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
                   )}
                 >
                   {Icon && <Icon className="h-3 w-3" />}
-                  {t === "all" ? "All Types" : cfg?.label}
+                  {t === "" ? "All Types" : cfg?.label}
                 </button>
               );
             })}
@@ -281,7 +302,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
         </div>
 
         <span className="text-[11px] font-medium text-[#6b7db3]">
-          Showing <strong className="text-white">{filteredTasks.length}</strong> of {counts.total}
+          Showing <strong className="text-white">{issuesList.length}</strong> of {backlogData?.totalCount}
         </span>
       </div>
 
@@ -303,13 +324,13 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
               Backlog Work Items
             </span>
             <span className="rounded-full bg-[#1e2a4a] px-2 py-0.5 font-mono text-[11px] font-bold text-[#8b9cc8]">
-              {filteredTasks.length}
+              {issuesList.length}
             </span>
           </button>
 
           <div className="flex items-center gap-3 text-[11px] text-[#6b7db3]">
             <span>
-              Total: <strong className="text-white">{counts.totalPoints} pts</strong>
+              Total: <strong className="text-white">{backlogData?.totalStoryPoint} pts</strong>
             </span>
           </div>
         </div>
@@ -317,7 +338,12 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
         {/* Backlog Item Rows */}
         {!isCollapsed && (
           <div className="divide-y divide-[#1e2a4a]">
-            {filteredTasks.length === 0 ? (
+            {isLoading && !backlogData ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <Loader2 className="mb-2.5 h-8 w-8 animate-spin text-[#8735C9]" />
+                <p className="text-xs font-semibold text-white">Loading backlog items…</p>
+              </div>
+            ) : issuesList.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Layers className="mb-2.5 h-8 w-8 text-[#293d6b]" />
                 <p className="text-xs font-semibold text-white">No items found</p>
@@ -334,7 +360,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
                 )}
               </div>
             ) : (
-              filteredTasks.map((task) => {
+              issuesList.map((task: IIssueResDto) => {
                 const st = STATUS_CFG[task.status ?? "todo"] ?? STATUS_CFG["todo"];
                 const ty = TYPE_CFG[task.type ?? "story"] ?? TYPE_CFG["story"];
                 const TypeIcon = ty.icon;
@@ -378,40 +404,28 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
                       )}
                     </div>
 
-                    {/* Assignee Avatar */}
-                    {task.assignee ? (
-                      <div
-                        title={`Assigned to ${task.assignee}`}
-                        className={cn(
-                          "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-[8px] font-bold text-white shadow-sm",
-                          grad(task.assignee)
-                        )}
-                      >
-                        {initials(task.assignee)}
-                      </div>
-                    ) : (
-                      <div
-                        title="Unassigned"
-                        className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border border-dashed border-[#1e2a4a] text-[8px] font-medium text-[#4B5578]"
-                      >
-                        ?
-                      </div>
-                    )}
-
                     {/* Story Points */}
                     <span
                       className={cn(
                         "flex-shrink-0 rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-semibold tabular-nums",
-                        POINTS_COLORS(task.points ?? 0)
+                        POINTS_COLORS(task.storyPoints ?? 0)
                       )}
                     >
-                      {task.points ?? 1}pt
+                      {task.storyPoints ?? 0}pt
                     </span>
 
                     {/* Priority badge */}
-                    {task.priority === "high" && (
-                      <span className="flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold text-red-400">
-                        <ArrowUp className="h-2.5 w-2.5" /> High
+                    {task.priority && (
+                      <span
+                        className={cn(
+                          "flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold capitalize",
+                          task.priority === "urgent" && "border-red-500/30 bg-red-500/10 text-red-400",
+                          task.priority === "high" && "border-orange-500/30 bg-orange-500/10 text-orange-400",
+                          task.priority === "medium" && "border-amber-500/30 bg-amber-500/10 text-amber-400",
+                          task.priority === "low" && "border-slate-500/30 bg-slate-500/10 text-slate-400"
+                        )}
+                      >
+                        <ArrowUp className="h-2.5 w-2.5" /> {task.priority}
                       </span>
                     )}
 
@@ -443,7 +457,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
         <CreateIssueModal
           project={project}
           onClose={() => setIsCreateOpen(false)}
-          onCreateIssue={handleCreateIssue}
+          onSuccess={fetchBacklogs}
         />
       )}
     </div>
