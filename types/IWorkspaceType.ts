@@ -69,3 +69,10 @@ export interface GetInvitesParams {
   page?: number;
   search?: string;
 }
+
+
+export interface GetUniqueTeamMembers {
+  workspaceId: string,
+  teamIds: string[]
+  search?: string
+}

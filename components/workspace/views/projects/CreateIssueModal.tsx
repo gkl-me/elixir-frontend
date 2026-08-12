@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { WorkspaceProject, initials, grad } from "./shared";
 import { Task } from "@/data/demoData";
@@ -32,6 +31,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { IssuePriority, IssueStatus } from "@/types/IIssueType";
 import { useApi } from "@/hooks/useApi";
+import { getUniqueTeamMembersAction } from "@/app/actions/workspace.action";
 
 export interface TeamMember {
   id: string;
@@ -79,14 +79,6 @@ export const CreateIssueSchema = z.object({
 
 export type CreateIssueFormValues = z.infer<typeof CreateIssueSchema>;
 
-const DEMO_TEAM_MEMBERS: TeamMember[] = [
-  { id: "u1", name: "Alice Smith", email: "alice@example.com", role: "Frontend Lead" },
-  { id: "u2", name: "Bob Johnson", email: "bob@example.com", role: "Backend Developer" },
-  { id: "u3", name: "Charlie Dave", email: "charlie@example.com", role: "Full Stack Engineer" },
-  { id: "u4", name: "Diana Park", email: "diana@example.com", role: "UI/UX Designer" },
-  { id: "u5", name: "Ethan Morris", email: "ethan@example.com", role: "DevOps Engineer" },
-];
-
 export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   project,
   onClose,
@@ -107,85 +99,53 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
       storyPoints: 3,
       priority: "medium",
       status: "todo",
-      assignee: (project as any)?.memberNames?.[0] || "",
+      assignee: "",
     },
   });
 
   const { watch, setValue, trigger, formState } = form;
   const formValues = watch();
 
-  // Team members loading & pagination state
-  const [members, setMembers] = useState<TeamMember[]>(DEMO_TEAM_MEMBERS);
+  // Team members state
+  const [members, setMembers] = useState<TeamMember[]>([]);
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
   const [memberSearch, setMemberSearch] = useState("");
   const debouncedMemberSearch = useDebounce(memberSearch, 300);
-  const [memberPage, setMemberPage] = useState(1);
-  const MEMBERS_PER_PAGE = 5;
-  const [totalCount, setTotalCount] = useState(DEMO_TEAM_MEMBERS.length);
 
+  const teamIds = useMemo(() => {
+    return project.teams || [];
+  }, [project.teams]);
 
-  // Load team members based on project.teams (array of team IDs)
-  const fetchProjectTeamMembers = useCallback(async () => {
-    if (!workspaceId) {
-      return;
-    }
+  const fetchUniqueTeamMembers = useCallback(async () => {
+    if (!workspaceId) return;
+
     setIsLoadingMembers(true);
     try {
-      const fetchedMembers: TeamMember[] = [];
-      const teamIds = project.teams || [];
+      const res = await getUniqueTeamMembersAction({
+        workspaceId,
+        teamIds,
+        search: debouncedMemberSearch,
+      });
 
-      if (teamIds.length > 0) {
-        await Promise.all(
-          teamIds.map(async (teamId) => {
-            try {
-              const res = await axios.get(NEXT_API_ROUTES.GET_WORKSPACE_TEAM(teamId), {
-                params: { workspaceId },
-              });
-              if (res.data?.success && res.data?.data?.team?.members) {
-                fetchedMembers.push(...res.data.data.team.members);
-              }
-            } catch {
-              // Ignore fetch failure per team
-            }
-          })
-        );
-      }
-
-      if (fetchedMembers.length > 0) {
-        const uniqueMap = new Map<string, TeamMember>();
-        fetchedMembers.forEach((m) => {
-          const key = m.id || m.email || m.name;
-          if (!uniqueMap.has(key)) {
-            uniqueMap.set(key, m);
-          }
-        });
-        const list = Array.from(uniqueMap.values());
-        setMembers(list);
-        setTotalCount(list.length);
+      if (res?.success && res?.data?.members) {
+        setMembers(res.data.members);
       } else {
-        setMembers(DEMO_TEAM_MEMBERS);
-        setTotalCount(DEMO_TEAM_MEMBERS.length);
+        setMembers([]);
       }
-
     } catch {
-      setMembers(DEMO_TEAM_MEMBERS);
-      setTotalCount(DEMO_TEAM_MEMBERS.length);
+      setMembers([]);
     } finally {
       setIsLoadingMembers(false);
     }
-  }, [workspaceId, project.teams]);
+  }, [workspaceId, teamIds, debouncedMemberSearch]);
 
   useEffect(() => {
-    fetchProjectTeamMembers();
-  }, [fetchProjectTeamMembers]);
+    fetchUniqueTeamMembers();
+  }, [fetchUniqueTeamMembers]);
 
-  // Default selection if assignee empty
-  useEffect(() => {
-    if (!formValues.assignee && members.length > 0) {
-      setValue("assignee", members[0].name, { shouldValidate: true });
-    }
-  }, [members, formValues.assignee, setValue]);
-
+  const selectedMember = useMemo(() => {
+    return members.find((m) => m.id === formValues.assignee || m.name === formValues.assignee);
+  }, [members, formValues.assignee]);
 
 
   const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -506,7 +466,7 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                       Assignee
                     </label>
                     <span className="text-[10px] text-[#6b7db3]">
-                      Selected: <strong className="text-white">{formValues.assignee || "Unassigned"}</strong>
+                      Selected: <strong className="text-white">{selectedMember?.name || "Unassigned"}</strong>
                     </span>
                   </div>
 
@@ -517,7 +477,6 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                       value={memberSearch}
                       onChange={(e) => {
                         setMemberSearch(e.target.value);
-                        setMemberPage(1);
                       }}
                       placeholder="Search team members by name or email…"
                       className="w-full rounded-xl border border-[#1e2a4a] bg-[#07112b] py-2 pl-9 pr-4 text-xs text-white outline-none transition-colors placeholder:text-[#4B5578] focus:border-[#8735C9]"
@@ -527,7 +486,6 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                         type="button"
                         onClick={() => {
                           setMemberSearch("");
-                          setMemberPage(1);
                         }}
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4B5578] hover:text-white"
                       >
@@ -549,12 +507,16 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                       </p>
                     ) : (
                       members.map((m) => {
-                        const sel = formValues.assignee === m.name || formValues.assignee === m.id;
+                        const sel = formValues.assignee === m.id;
                         return (
                           <button
                             key={m.id || m.name}
                             type="button"
-                            onClick={() => setValue("assignee", m.name, { shouldValidate: true })}
+                            onClick={() =>
+                              setValue("assignee", formValues.assignee === m.id ? "" : m.id, {
+                                shouldValidate: true,
+                              })
+                            }
                             className={cn(
                               "flex w-full items-center gap-3 rounded-xl border p-2.5 text-left transition-all",
                               sel
@@ -582,15 +544,6 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                       })
                     )}
                   </div>
-
-                  {/* Pagination if multiple pages exist */}
-                  <div className="mt-2 flex justify-end">
-                    <Pagination
-                      currentPage={memberPage}
-                      totalPages={totalCount / MEMBERS_PER_PAGE}
-                      onPageChange={(page) => setMemberPage(page)}
-                    />
-                  </div>
                 </div>
 
                 {/* Summary Preview Card */}
@@ -617,7 +570,7 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                       {selectedPriorityObj?.label} Priority
                     </span>
                     <span>·</span>
-                    <span>Assignee: <strong className="text-white">{formValues.assignee || "Unassigned"}</strong></span>
+                    <span>Assignee: <strong className="text-white">{selectedMember?.name || "Unassigned"}</strong></span>
                   </div>
                 </div>
               </div>

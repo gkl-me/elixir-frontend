@@ -6,6 +6,7 @@ import {
   GetInvitesParams,
   GetMembersParams,
   GetTeamData,
+  GetUniqueTeamMembers,
   ListTeamsData,
   ListWorkspaceData,
   RemoveTeamMemberData,
@@ -151,4 +152,8 @@ export const workspaceService = {
       WORKSPACE_API_ROUTES.GET_WORKSPACE_LIMITS(data?.workspaceId)
     );
   },
+
+  getUniqueTeamMembers: async (data: GetUniqueTeamMembers) => {
+    return api.post(WORKSPACE_API_ROUTES.GET_UNIQUE_TEAM_MEMBERS(data?.workspaceId), data)
+  }
 };

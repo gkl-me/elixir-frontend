@@ -106,6 +106,8 @@ export const WORKSPACE_API_ROUTES = {
     `/workspace/${workspaceId}/teams/${teamId}/members/${memberId}`,
   GET_TEAM: (workspaceId: string, teamId: string) =>
     `/workspace/${workspaceId}/teams/${teamId}`,
+  GET_UNIQUE_TEAM_MEMBERS: (workspaceId: string) =>
+    `/workspace/${workspaceId}/teams/unique-members`,
 
   GET_WORKSPACE_LIMITS: (workspaceId: string) =>
     `/workspace/${workspaceId}/limits`,

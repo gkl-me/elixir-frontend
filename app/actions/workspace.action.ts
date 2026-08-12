@@ -6,6 +6,7 @@ import { handlerServerError } from "@/lib/authHelper";
 import {
   AddMembersData,
   CreateTeamData,
+  GetUniqueTeamMembers,
   RemoveTeamMemberData,
   ToggleWorkspaceStatusData,
 } from "@/types/IWorkspaceType";
@@ -288,6 +289,25 @@ export async function toggleWorkspaceStatusAction(
     };
   } catch (error) {
     handlerServerError(error);
+    return {
+      success: false,
+      error: AxiosErrorHandler(error).message,
+    };
+  }
+}
+
+
+
+export async function getUniqueTeamMembersAction(data: GetUniqueTeamMembers) {
+  try {
+    const res = await workspaceService.getUniqueTeamMembers(data)
+    return {
+      success: res.data.success,
+      message: res.data.message,
+      data: res.data.data,
+    }
+  } catch (error) {
+    handlerServerError(error)
     return {
       success: false,
       error: AxiosErrorHandler(error).message,
