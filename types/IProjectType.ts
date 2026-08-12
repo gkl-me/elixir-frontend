@@ -20,3 +20,8 @@ export interface ListProjectParams {
     limit: number,
     workspaceId: string
 }
+
+export interface GetProjectDetailsParams {
+    workspaceId: string,
+    projectId: string
+}

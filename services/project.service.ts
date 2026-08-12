@@ -1,6 +1,6 @@
 import { WORKSPACE_API_ROUTES } from "@/constants/apiRoutes"
 import api from "@/lib/api"
-import { CreateProjectData, ListProjectParams } from "@/types/IProjectType"
+import { CreateProjectData, GetProjectDetailsParams, ListProjectParams } from "@/types/IProjectType"
 
 
 export const projectService = {
@@ -11,5 +11,8 @@ export const projectService = {
         return api.get(WORKSPACE_API_ROUTES.LIST_PROJECTS(params.workspaceId), {
             params
         })
+    },
+    handleGetProjectDetails: async (params: GetProjectDetailsParams) => {
+        return api.get(WORKSPACE_API_ROUTES.GET_PROJECT_DETAILS(params.workspaceId, params.projectId))
     }
 }

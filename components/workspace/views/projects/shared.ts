@@ -10,16 +10,19 @@ export interface WorkspaceProject {
   status: ProjectStatus;
   priority: ProjectPriority;
   /** Tag names — colors are derived on the frontend, never stored */
+  doneTasks: number,
+  totalTasks: number,
   tags: string[];
-  taskCount: number;
-  doneCount: number;
-  memberCount: number;
-  memberNames: string[];
-  progress: number; // 0-100
   dueDate?: string;
   createdAt: string;
-  teamNames: string[]; // multi-team support
+  teams?: string[]; // team IDs
   key: string; // e.g. "ELX", "MKTG"
+  totalStoryPoints: number,
+  doneStoryPoints: number,
+  inProgressTasks: number,
+  inReviewTasks: number,
+  toDoTasks: number,
+
 }
 
 // ─── Tag colour — deterministic, frontend-only ─────────────────────────────────

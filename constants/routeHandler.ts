@@ -24,6 +24,7 @@ export const NEXT_API_ROUTES = {
   GET_WORKSPACE_LIMITS: "/api/workspace/limits",
 
   LIST_PROJECTS: "/api/workspace/projects",
+  GET_PROJECT_DETAILS: (workspaceId: string, projectId: string) => `/api/workspace/projects/${projectId}`,
 
   GET_ALL_WORKSPACE: "/api/workspace",
 

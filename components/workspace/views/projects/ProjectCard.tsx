@@ -38,22 +38,23 @@ const grad = (name: string) => {
 export const ProjectCard = ({ project, onView }: ProjectCardProps) => {
   const status = STATUS_CONFIG[project.status];
   const priority = PRIORITY_CONFIG[project.priority];
+  const progress = project.totalTasks === 0 ? 0 : Math.round((project.doneTasks / project.totalTasks) * 100);
+  const tags = project.tags || [];
 
   return (
     <div
       className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-[#1e2a4a] bg-[#0C1635] transition-all duration-200 hover:border-[#293d6b] hover:shadow-[0_4px_24px_rgba(135,53,201,0.12)]"
       onClick={onView}
     >
-      {/* Top gradient accent */}
-      <div className="h-0.5 w-full bg-gradient-to-r from-[#8735C9] to-[#60a5fa] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      {/* Top accent bar */}
+      <div className="h-1 w-full bg-gradient-to-r from-[#8735C9] to-[#6a29a0] opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
 
-      <div className="flex flex-1 flex-col gap-4 p-5">
-        {/* Header row */}
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex min-w-0 flex-1 items-center gap-3">
-            {/* Icon */}
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8735C9] to-[#6a29a0] shadow-[0_2px_8px_rgba(135,53,201,0.3)]">
-              <FolderKanban className="h-4 w-4 text-white" />
+      <div className="flex flex-1 flex-col p-5 space-y-4">
+        {/* Header: Icon + title + status */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8735C9] to-[#6a29a0] text-white shadow-[0_2px_8px_rgba(135,53,201,0.3)]">
+              <FolderKanban className="h-5 w-5" />
             </div>
             <div className="min-w-0">
               {/* Identifier chip */}
@@ -66,10 +67,9 @@ export const ProjectCard = ({ project, onView }: ProjectCardProps) => {
             </div>
           </div>
 
-          {/* Status badge */}
           <span
             className={cn(
-              "flex-shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold",
+              "flex-shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold transition-colors",
               status.bg
             )}
             style={{ color: status.color }}
@@ -79,37 +79,41 @@ export const ProjectCard = ({ project, onView }: ProjectCardProps) => {
         </div>
 
         {/* Description */}
-        <p className="line-clamp-2 text-[11px] leading-relaxed text-[#6b7db3]">
-          {project.description ?? "No description."}
+        <p className="line-clamp-2 text-xs text-[#8b9cc8] leading-relaxed">
+          {project.description || "No description provided."}
         </p>
 
-        {/* Tags & priority pills */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          {project.tags.slice(0, 2).map((tag) => {
-            const swatch = tagColor(tag);
-            return (
-              <span
-                key={tag}
-                className="rounded-full border px-2 py-0.5 text-[10px] font-medium"
-                style={{
-                  color: swatch.color,
-                  borderColor: swatch.border,
-                  backgroundColor: swatch.bg,
-                }}
-              >
-                {tag}
+        {/* Tags */}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {tags.slice(0, 3).map((tag) => {
+              const swatch = tagColor(tag);
+              return (
+                <span
+                  key={tag}
+                  className="rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors"
+                  style={{
+                    color: swatch.color,
+                    borderColor: swatch.border,
+                    backgroundColor: swatch.bg,
+                  }}
+                >
+                  {tag}
+                </span>
+              );
+            })}
+            {tags.length > 3 && (
+              <span className="rounded-full border border-[#1e2a4a] px-2 py-0.5 text-[10px] text-[#4B5578]">
+                +{tags.length - 3}
               </span>
-            );
-          })}
-          {project.tags.length > 2 && (
-            <span className="rounded-full border border-[#1e2a4a] px-2 py-0.5 text-[10px] text-[#4B5578]">
-              +{project.tags.length - 2}
-            </span>
-          )}
-          <span className="flex items-center gap-1 rounded-full border border-[#1e2a4a] px-2 py-0.5 text-[10px] text-[#8b9cc8]">
-            <span
-              className={cn("h-1.5 w-1.5 rounded-full", priority.dot)}
-            />
+            )}
+          </div>
+        )}
+
+        {/* Priority */}
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1 rounded-full border border-[#1e2a4a] bg-[#07112b] px-2 py-0.5 text-[10px] font-medium text-[#8b9cc8]">
+            <span className={cn("h-1.5 w-1.5 rounded-full", priority.dot)} />
             {priority.label}
           </span>
         </div>
@@ -119,21 +123,21 @@ export const ProjectCard = ({ project, onView }: ProjectCardProps) => {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1 text-[10px] text-[#6b7db3]">
               <CheckCircle2 className="h-2.5 w-2.5" />
-              {project.doneCount}/{project.taskCount} tasks
+              {project.doneTasks}/{project.totalTasks} tasks
             </span>
             <span className="text-[10px] font-bold text-white">
-              {project.progress}%
+              {progress}%
             </span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-[#07112b]">
             <div
               className="h-full rounded-full transition-all duration-700"
               style={{
-                width: `${project.progress}%`,
+                width: `${progress}%`,
                 background:
-                  project.progress >= 80
+                  progress >= 80
                     ? "linear-gradient(90deg,#8735C9,#34d399)"
-                    : project.progress >= 50
+                    : progress >= 50
                       ? "linear-gradient(90deg,#8735C9,#60a5fa)"
                       : "linear-gradient(90deg,#8735C9,#c084fc)",
               }}
@@ -177,6 +181,8 @@ interface ProjectRowProps {
 export const ProjectRow = ({ project, onView }: ProjectRowProps) => {
   const status = STATUS_CONFIG[project.status];
   const priority = PRIORITY_CONFIG[project.priority];
+  const progress = project.totalTasks === 0 ? 0 : Math.round((project.doneTasks / project.totalTasks) * 100);
+  const tags = project.tags || [];
 
   return (
     <div
@@ -194,7 +200,7 @@ export const ProjectRow = ({ project, onView }: ProjectRowProps) => {
           <span className="font-mono text-[9px] font-semibold uppercase tracking-widest text-[#4B5578]">
             {project.key}
           </span>
-          {project.tags.slice(0, 2).map((tag) => {
+          {tags.slice(0, 2).map((tag) => {
             const swatch = tagColor(tag);
             return (
               <span
@@ -210,9 +216,9 @@ export const ProjectRow = ({ project, onView }: ProjectRowProps) => {
               </span>
             );
           })}
-          {project.tags.length > 2 && (
+          {tags.length > 2 && (
             <span className="rounded-full border border-[#1e2a4a] px-1.5 py-0.5 text-[9px] text-[#4B5578]">
-              +{project.tags.length - 2}
+              +{tags.length - 2}
             </span>
           )}
         </div>
@@ -231,19 +237,19 @@ export const ProjectRow = ({ project, onView }: ProjectRowProps) => {
       <div className="hidden w-36 flex-shrink-0 flex-col gap-1 md:flex">
         <div className="flex items-center justify-between">
           <span className="text-[10px] text-[#6b7db3]">
-            {project.doneCount}/{project.taskCount}
+            {project.doneTasks}/{project.totalTasks}
           </span>
           <span className="text-[10px] font-bold text-white">
-            {project.progress}%
+            {progress}%
           </span>
         </div>
         <div className="h-1 overflow-hidden rounded-full bg-[#07112b]">
           <div
             className="h-full rounded-full"
             style={{
-              width: `${project.progress}%`,
+              width: `${progress}%`,
               background:
-                project.progress >= 80
+                progress >= 80
                   ? "linear-gradient(90deg,#8735C9,#34d399)"
                   : "linear-gradient(90deg,#8735C9,#60a5fa)",
             }}

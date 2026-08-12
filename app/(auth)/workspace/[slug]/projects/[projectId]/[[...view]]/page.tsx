@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import { SingleProjectView } from "@/components/workspace/views/projects/SingleProjectView";
+import { projectService } from "@/services/project.service";
 
 export default function SingleProjectPage({
   params,
@@ -13,7 +14,6 @@ export default function SingleProjectPage({
 
   return (
     <SingleProjectView
-      projectId={resolvedParams.projectId}
       activeView={activeView}
     />
   );

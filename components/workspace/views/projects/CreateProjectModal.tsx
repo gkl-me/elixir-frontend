@@ -583,15 +583,13 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                   </div>
 
                   {/* Pagination if multiple pages exist */}
-                  {totalCount > TEAMS_PER_PAGE && (
-                    <div className="mt-2 flex justify-end">
-                      <Pagination
-                        currentPage={currentPage}
-                        totalPages={Math.ceil(totalCount / TEAMS_PER_PAGE)}
-                        onPageChange={(page) => setCurrentPage(page)}
-                      />
-                    </div>
-                  )}
+                  <div className="mt-2 flex justify-end">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={Math.ceil(totalCount / TEAMS_PER_PAGE)}
+                      onPageChange={(page) => setCurrentPage(page)}
+                    />
+                  </div>
 
                   {/* Selected teams summary */}
                   {formValues.teams.length > 0 && (
