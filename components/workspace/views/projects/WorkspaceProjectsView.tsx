@@ -44,25 +44,25 @@ const STAT_CARDS = (
   totalTasks: number,
   doneTasks: number
 ) => [
-  {
-    label: "Total Projects",
-    value: projects.length,
-    icon: FolderKanban,
-    color: "#8735C9",
-  },
-  {
-    label: "Tasks Done",
-    value: `${doneTasks}/${totalTasks}`,
-    icon: CheckCircle2,
-    color: "#34d399",
-  },
-  {
-    label: "Active Projects",
-    value: activeProjects,
-    icon: Zap,
-    color: "#f59e0b",
-  },
-];
+    {
+      label: "Total Projects",
+      value: projects.length,
+      icon: FolderKanban,
+      color: "#8735C9",
+    },
+    {
+      label: "Tasks Done",
+      value: `${doneTasks}/${totalTasks}`,
+      icon: CheckCircle2,
+      color: "#34d399",
+    },
+    {
+      label: "Active Projects",
+      value: activeProjects,
+      icon: Zap,
+      color: "#f59e0b",
+    },
+  ];
 
 // ─── Main View ─────────────────────────────────────────────────────────────────
 export const WorkspaceProjectsView = () => {
@@ -400,7 +400,10 @@ export const WorkspaceProjectsView = () => {
 
       {/* ── Create modal ─────────────────────────────────────────────────────── */}
       {createOpen && (
-        <CreateProjectModal onClose={() => setCreateOpen(false)} />
+        <CreateProjectModal onClose={() => {
+          setCreateOpen(false)
+          fetchProjects()
+        }} />
       )}
     </div>
   );
