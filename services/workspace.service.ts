@@ -3,13 +3,31 @@ import api from "@/lib/api";
 import {
   AddMembersData,
   CreateTeamData,
+  GetInvitesParams,
+  GetMembersParams,
   GetTeamData,
+  GetUniqueTeamMembers,
   ListTeamsData,
+  ListWorkspaceData,
   RemoveTeamMemberData,
+  ToggleWorkspaceStatusData,
   WorkspaceContextData,
+  WorkspaceLimitsData,
 } from "@/types/IWorkspaceType";
 
 export const workspaceService = {
+  handleListWorkspace: async (params: ListWorkspaceData) => {
+    return api.get(WORKSPACE_API_ROUTES.GET_ALL_WORKSPACE, {
+      params,
+    });
+  },
+
+  handletoggleWorkspaceStatus: async (params: ToggleWorkspaceStatusData) => {
+    return api.patch(
+      WORKSPACE_API_ROUTES.TOGGLE_WORKSPACE_STATUS(params.workspaceId)
+    );
+  },
+
   handleWorkspaceContext: async (data: WorkspaceContextData) => {
     return api.get(
       WORKSPACE_API_ROUTES.GET_WORKSPACE_CONTEXT + "/" + data?.slug
@@ -42,8 +60,10 @@ export const workspaceService = {
     return api.delete(WORKSPACE_API_ROUTES.DELETE_ROLE(workspaceId, roleId));
   },
 
-  getMembers: async (workspaceId: string) => {
-    return api.get(WORKSPACE_API_ROUTES.GET_MEMBERS(workspaceId));
+  getMembers: async (params: GetMembersParams) => {
+    return api.get(WORKSPACE_API_ROUTES.GET_MEMBERS(params.workspaceId), {
+      params,
+    });
   },
 
   updateMemberRole: async (
@@ -63,8 +83,10 @@ export const workspaceService = {
     );
   },
 
-  getInvites: async (workspaceId: string) => {
-    return api.get(WORKSPACE_API_ROUTES.GET_INVITES(workspaceId));
+  getInvites: async (params: GetInvitesParams) => {
+    return api.get(WORKSPACE_API_ROUTES.GET_INVITES(params.workspaceId), {
+      params,
+    });
   },
 
   sendInvite: async (
@@ -91,7 +113,9 @@ export const workspaceService = {
   },
 
   listTeams: async (data: ListTeamsData) => {
-    return api.get(WORKSPACE_API_ROUTES.GET_TEAMS(data?.workspaceId));
+    return api.get(WORKSPACE_API_ROUTES.GET_TEAMS(data?.workspaceId), {
+      params: data,
+    });
   },
 
   createTeam: async (data: CreateTeamData) => {
@@ -120,6 +144,19 @@ export const workspaceService = {
   getTeam: async (data: GetTeamData) => {
     return api.get(
       WORKSPACE_API_ROUTES.GET_TEAM(data?.workspaceId, data?.teamId)
+    );
+  },
+
+  getWorkspaceLimits: async (data: WorkspaceLimitsData) => {
+    return api.get(
+      WORKSPACE_API_ROUTES.GET_WORKSPACE_LIMITS(data?.workspaceId)
+    );
+  },
+
+  getUniqueTeamMembers: async (data: GetUniqueTeamMembers) => {
+    return api.post(
+      WORKSPACE_API_ROUTES.GET_UNIQUE_TEAM_MEMBERS(data?.workspaceId),
+      data
     );
   },
 };

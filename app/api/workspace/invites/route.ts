@@ -7,6 +7,10 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const workspaceId = searchParams.get("workspaceId");
 
+    const search = searchParams.get("search") ?? "";
+    const page = searchParams.get("page") ?? "1";
+    const limit = searchParams.get("limit") ?? "9";
+
     if (!workspaceId) {
       return NextResponse.json(
         { success: false, message: "Workspace ID is required" },
@@ -14,7 +18,12 @@ export async function GET(req: Request) {
       );
     }
 
-    const res = await workspaceService.getInvites(workspaceId);
+    const res = await workspaceService.getInvites({
+      workspaceId,
+      limit: parseInt(limit),
+      page: parseInt(page),
+      search,
+    });
 
     return NextResponse.json({
       success: res.data.success,

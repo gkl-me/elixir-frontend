@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Mail, RefreshCw, X, UserPlus, Loader2 } from "lucide-react";
 import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { DataTable } from "@/components/table/DataTable";
@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { toastHandler } from "@/lib/toastHandler";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const PAGE = 10;
 
@@ -30,60 +31,55 @@ export const InvitesTab = ({
 }: InvitesTabProps) => {
   const workspaceId = useWorkspaceStore((s) => s.context?.workspaceId ?? "");
 
-  const {
-    data,
-    isLoading,
-    execute: refetch,
-  } = useApi({
+  const { execute, isLoading } = useApi({
     url: NEXT_API_ROUTES.GET_WORKSPACE_INVITES,
     method: "GET",
   });
 
-  const invites: WorkspaceInvite[] = data?.data?.invites ?? [];
+  const [invites, setInvites] = useState<WorkspaceInvite[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
+  const [pageSize] = useState(8);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [revokeInvite, setRevokeInvite] = useState<WorkspaceInvite | null>(
     null
   );
   const [resending, setResending] = useState<string | null>(null);
+  const debouncedSearch = useDebounce(search, 500);
 
-  const fetchInvites = React.useCallback(async () => {
+  const fetchInvites = useCallback(async () => {
     if (!workspaceId) {
       return;
     }
     try {
-      await refetch({
+      const res = await execute({
         params: {
           workspaceId,
+          page: page + 1,
+          limit: pageSize,
+          search: debouncedSearch,
         },
       });
+
+      if (res?.success) {
+        setInvites(res.data.invites);
+        setTotalCount(res.data.totalCount);
+      }
     } catch (error) {
       const err = AxiosErrorHandler(error);
       toastHandler({ success: false, error: err.message });
     }
-  }, [workspaceId, refetch]);
+  }, [debouncedSearch, pageSize, page, workspaceId]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     fetchInvites();
   }, [fetchInvites, refreshTrigger]);
-
-  const filtered = useMemo(
-    () =>
-      invites.filter(
-        (inv) =>
-          !search ||
-          inv.email.toLowerCase().includes(search.toLowerCase()) ||
-          inv.status.toLowerCase().includes(search.toLowerCase())
-      ),
-    [invites, search]
-  );
-
-  const paged = useMemo(
-    () => filtered.slice(page * PAGE, (page + 1) * PAGE),
-    [filtered, page]
-  );
 
   const handleResend = async (inv: WorkspaceInvite) => {
     if (!inv.id) {
@@ -238,8 +234,8 @@ export const InvitesTab = ({
     <>
       <DataTable
         columns={columns}
-        data={paged}
-        totalCount={filtered.length}
+        data={invites}
+        totalCount={totalCount}
         pageIndex={page}
         pageSize={PAGE}
         search={search}

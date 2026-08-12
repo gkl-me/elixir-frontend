@@ -5,6 +5,7 @@ export const AUTH_API_ROUTES = {
   GITHUB_AUTH: "/auth/github-auth",
   REFRESH: "/auth/refresh",
   LOGOUT: "/auth/logout",
+  LOGOUT_ALL: "/auth/logout-all",
 
   VERIFY_EMAIL: "/auth/verify",
   RESEND_EMAIL: "/auth/resend-email",
@@ -23,6 +24,7 @@ export const USER_API_ROUTES = {
   CHANGE_PASSWORD: "/users/change-password",
   ACTIVE_SESSIONS: "/users/active-sessions",
   UPDATE_PROFILE: "/users/update-profile",
+  REVOKE_SESSION: "/users/revoke-session",
 };
 
 export const PLAN_API_ROUTES = {
@@ -42,14 +44,34 @@ export const ONBOARDING_API_ROUTES = {
 export const PAYMENT_API_ROUTES = {
   VERIFY_PAYMENT: "/payment/verify",
   RETRY_PAYMENT: "/payment/retry",
+  BILLING_INFO: "/payment/billing",
+  CUSTOMER_PORTAL: "/payment/customer-portal",
+  UPRGADE_CHECKOUT: "/payment/upgrade-checkout",
 };
 
 export const COMPANY_API_ROUTES = {
   GET_ALL_COMPANY: "/company",
+  TOGGLE_COMPANY_STATUS: (companyId: string) => `/company/${companyId}/status`,
+};
+
+export const TRANSACTION_API_ROUTES = {
+  GET_ALL_TRANSACTION: "/transaction",
+};
+
+export const SUBSCRIPTION_API_ROUTES = {
+  GET_ALL_SUBSCRIPTION: "/subscription",
+  CANCEL_SUBSCRIPTION: (subscriptionId: string) =>
+    `/subscription/${subscriptionId}/cancel`,
+  REACTIVATE_SUBSCRIPTION: (subscriptionId: string) =>
+    `/subscription/${subscriptionId}/reactivate`,
 };
 
 export const WORKSPACE_API_ROUTES = {
   GET_WORKSPACE_CONTEXT: "/workspace/context",
+
+  GET_ALL_WORKSPACE: "/workspace",
+  TOGGLE_WORKSPACE_STATUS: (workspaceId: string) =>
+    `/workspace/${workspaceId}/status`,
 
   // Roles
   GET_ROLES: (workspaceId: string) => `/workspace/${workspaceId}/roles`,
@@ -84,4 +106,20 @@ export const WORKSPACE_API_ROUTES = {
     `/workspace/${workspaceId}/teams/${teamId}/members/${memberId}`,
   GET_TEAM: (workspaceId: string, teamId: string) =>
     `/workspace/${workspaceId}/teams/${teamId}`,
+  GET_UNIQUE_TEAM_MEMBERS: (workspaceId: string) =>
+    `/workspace/${workspaceId}/teams/unique-members`,
+
+  GET_WORKSPACE_LIMITS: (workspaceId: string) =>
+    `/workspace/${workspaceId}/limits`,
+
+  //projects
+  CREATE_PROJECT: (workspaceId: string) => `/workspace/${workspaceId}/projects`,
+  LIST_PROJECTS: (workspaceId: string) => `/workspace/${workspaceId}/projects`,
+  GET_PROJECT_DETAILS: (workspaceId: string, projectId: string) =>
+    `/workspace/${workspaceId}/projects/${projectId}`,
+
+  CREATE_BACKLOG_ISSUE: (workspaceId: string) =>
+    `/workspace/${workspaceId}/backlog/create-issue`,
+  LIST_BACKLOGS: (workspaceId: string, projectId: string) =>
+    `/workspace/${workspaceId}/projects/${projectId}/backlogs`,
 };

@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { CustomModal } from "../modal/CustomModal";
-import { logoutAction } from "@/app/actions/auth.action";
+import { LogoutModal } from "../modal/LogoutModal";
 
 export function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-white/5 bg-navyDark px-4 lg:px-8">
+    <header className="sticky top-0 z-30 flex h-16 w-full shrink-0 items-center justify-between border-b border-white/5 bg-navyDark px-4 lg:px-8">
       {/* Left: Logo + Name */}
       <div className="flex items-center gap-3">
         <div className="relative h-8 w-8">
@@ -37,22 +36,7 @@ export function Header() {
         <span className="hidden sm:inline">Admin</span>
       </Button>
 
-      {/* custom modal */}
-
-      <CustomModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Admin Logout"
-      >
-        <Button
-          variant="white"
-          onClick={() => {
-            logoutAction();
-          }}
-        >
-          Logout
-        </Button>
-      </CustomModal>
+      <LogoutModal isOpen={open} onClose={() => setOpen(false)} />
     </header>
   );
 }

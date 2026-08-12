@@ -3,6 +3,7 @@ import api from "@/lib/api";
 import {
   ChangePasswordData,
   GetAllUsersData,
+  RevokeSessionData,
   ToggleUserStatusData,
   UpdateUserProfileData,
 } from "@/types/IUserType";
@@ -31,5 +32,8 @@ export const userService = {
   },
   handleUpdateProfile: async (data: UpdateUserProfileData) => {
     return api.put(USER_API_ROUTES.UPDATE_PROFILE, data);
+  },
+  handleRevokeSession: async (params: RevokeSessionData) => {
+    return api.patch(USER_API_ROUTES.REVOKE_SESSION + `/${params.sessionId}`);
   },
 };

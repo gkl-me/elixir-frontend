@@ -11,7 +11,7 @@ import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { LoginSchema, RegisterSchema } from "@/validator/AuthSchema";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { deleteSession, getSession } from "@/lib/session";
 import { ENV } from "@/config/env";
 import { authService } from "@/services/auth.service";
@@ -35,7 +35,21 @@ export async function loginAction(
   inviteToken?: string
 ) {
   try {
-    const res = await authService.login(data);
+    const reqHeaders = await headers();
+    const userAgent = reqHeaders.get("user-agent") || "";
+    const clientIp =
+      reqHeaders.get("x-forwarded-for")?.split(",")[0].trim() ||
+      reqHeaders.get("x-real-ip") ||
+      "";
+
+    const requestConfig = {
+      headers: {
+        "user-agent": userAgent,
+        "x-forwarded-for": clientIp,
+      },
+    };
+
+    const res = await authService.login(data, requestConfig);
 
     const accessToken = res?.data.data.accessToken;
     const refreshToken = res?.data.data.refreshToken;
@@ -230,6 +244,21 @@ export async function logoutAction() {
     const refreshToken = (await cookies()).get("refreshToken")?.value;
 
     await authService.logout({ refreshToken });
+    await deleteSession();
+    await deleteCookies();
+
+    redirect(AUTH_CLIENT_ROUTES.LOGIN);
+  } catch (error) {
+    await deleteSession();
+    await deleteCookies();
+    handlerServerError(error);
+    redirect(AUTH_CLIENT_ROUTES.LOGIN);
+  }
+}
+
+export async function handleLogoutAllDevicesAction() {
+  try {
+    await authService.logoutAllDevices();
     await deleteSession();
     await deleteCookies();
 

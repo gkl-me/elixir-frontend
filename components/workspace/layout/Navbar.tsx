@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, startTransition } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -23,7 +23,7 @@ import {
 } from "../../../data/demoData";
 import { cn } from "@/lib/utils";
 import { NOTIFICATION_CONFIG, NotificationType } from "../../../lib/theme";
-import { logoutAction } from "@/app/actions/auth.action";
+import { LogoutModal } from "@/components/modal/LogoutModal";
 import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 
 const kindIcon: Record<SearchResult["kind"], React.ReactNode> = {
@@ -64,6 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const userName = useWorkspaceStore((s) => s.context?.name);
@@ -78,12 +79,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
       searchRef.current.focus();
       inputRef.current.focus();
     }
-  };
-
-  const handleLogout = () => {
-    startTransition(async () => {
-      await logoutAction();
-    });
   };
 
   // Close dropdowns on outside click
@@ -369,7 +364,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
               {/* Logout */}
               <div className="border-t border-[#1e2a4a] p-1">
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    setShowLogoutModal(true);
+                  }}
                   className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
                 >
                   <LogOut className="h-3.5 w-3.5" />
@@ -380,6 +378,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onToggleSidebar }) => {
           )}
         </div>
       </div>
+
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+      />
     </header>
   );
 };

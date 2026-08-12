@@ -11,7 +11,7 @@ export default async function VerifyPage({
   params,
   searchParams,
 }: {
-  params: Promise<{slug:string}>
+  params: Promise<{ slug: string }>;
   searchParams: Promise<{ email?: string }>;
 }) {
   const { slug } = await params;

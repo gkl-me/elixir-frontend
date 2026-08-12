@@ -21,7 +21,9 @@ interface ISelectedPlan {
 
 export default function Step1Plan({ onNext, initialData }: Step1PlanProps) {
   const [selectedPlan, setSelectedPlan] = useState<ISelectedPlan>({
-    planType: initialData.planType || "Free",
+    planType: initialData?.planType || "Free",
+    planId: initialData?.planId,
+    planPrice: initialData?.planPrice,
   });
 
   const [plans, setPlans] = useState<IPlan[]>([]);
@@ -34,12 +36,42 @@ export default function Step1Plan({ onNext, initialData }: Step1PlanProps) {
   useEffect(() => {
     (async () => {
       const res = await execute();
-      setPlans(res.data.plans);
+      const planList: IPlan[] = res?.data?.plans || [];
+      setPlans(planList);
+
+      if (planList.length > 0) {
+        const targetType = initialData?.planType || "Free";
+        const matchingPlan =
+          planList.find((p) => p.id === initialData?.planId) ||
+          planList.find((p) => p.type === targetType) ||
+          planList[0];
+
+        if (matchingPlan) {
+          setSelectedPlan({
+            planId: matchingPlan.id,
+            planType: matchingPlan.type as "Free" | "Pro" | "Enterprice",
+            planPrice: matchingPlan.price,
+          });
+        }
+      }
     })();
   }, []);
 
   const handleContinue = () => {
-    onNext(selectedPlan);
+    let planToSubmit = selectedPlan;
+    if (!planToSubmit.planId && plans.length > 0) {
+      const matching =
+        plans.find((p) => p.type === (planToSubmit.planType || "Free")) ||
+        plans[0];
+      if (matching) {
+        planToSubmit = {
+          planId: matching.id,
+          planType: matching.type as "Free" | "Pro" | "Enterprice",
+          planPrice: matching.price,
+        };
+      }
+    }
+    onNext(planToSubmit);
   };
 
   return (

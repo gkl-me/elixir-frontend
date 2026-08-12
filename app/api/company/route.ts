@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
 
     const search = searchParams.get("search") ?? "";
+    const status = searchParams.get("status") ?? "";
     const page = searchParams.get("page") ?? "1";
     const limit = searchParams.get("limit") ?? "9";
 
@@ -14,6 +15,7 @@ export async function GET(req: NextRequest) {
       search,
       limit,
       page,
+      status,
     });
 
     return NextResponse.json({

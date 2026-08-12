@@ -44,14 +44,12 @@ export default function OnboardingWizard() {
 
   //on next calls the server action
   const handleNext = async (data: Partial<IOnboardingState>) => {
-    //call the server action here
-    // console.log(data)
     const res = await saveOnboardingStepAction({
       ...data,
       currentStep: state.currentStep + 1,
     });
     setState(res.data);
-    const prog = findProgress(state.currentStep);
+    const prog = findProgress(res.data.currentStep);
     setProgress(prog);
   };
 
@@ -61,7 +59,7 @@ export default function OnboardingWizard() {
       currentStep: state.currentStep - 1,
     });
     setState(res.data);
-    const prog = findProgress(state.currentStep - 1);
+    const prog = findProgress(res.data.currentStep);
     setProgress(prog);
   };
 

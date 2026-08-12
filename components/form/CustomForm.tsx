@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { useForm, DefaultValues, Path, FieldValues } from "react-hook-form";
+import {
+  useForm,
+  DefaultValues,
+  Path,
+  FieldValues,
+  UseFormReturn,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
@@ -18,7 +24,7 @@ import { Button } from "@/components/ui/button";
 
 /* ---------------- Types ---------------- */
 
-interface FieldConfig<T extends FieldValues> {
+export interface FieldConfig<T extends FieldValues> {
   name: Path<T>;
   label: string;
   type?: React.HTMLInputTypeAttribute;
@@ -35,7 +41,7 @@ interface FieldConfig<T extends FieldValues> {
   }>;
 }
 
-interface CustomFormProps<T extends FieldValues> {
+export interface CustomFormProps<T extends FieldValues> {
   schema: z.ZodSchema<T>;
   defaultValues?: DefaultValues<T>;
   onSubmit: (values: T) => void;
@@ -43,6 +49,10 @@ interface CustomFormProps<T extends FieldValues> {
   submitText?: string;
   disabled?: boolean;
   resetOnSubmit?: boolean;
+  hideSubmitButton?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+  form?: UseFormReturn<T>;
 }
 
 /* ---------------- Component ---------------- */
@@ -55,11 +65,17 @@ export function CustomForm<T extends FieldValues>({
   submitText = "Submit",
   disabled,
   resetOnSubmit = false,
+  hideSubmitButton = false,
+  children,
+  className = "space-y-6",
+  form: externalForm,
 }: CustomFormProps<T>) {
-  const form = useForm<T>({
+  const internalForm = useForm<T>({
     resolver: zodResolver(schema),
     defaultValues,
   });
+
+  const form = externalForm || internalForm;
 
   return (
     <Form {...form}>
@@ -70,7 +86,7 @@ export function CustomForm<T extends FieldValues>({
             form.reset();
           }
         })}
-        className="space-y-6"
+        className={className}
       >
         {fields.map((field) => (
           <FormField
@@ -102,14 +118,18 @@ export function CustomForm<T extends FieldValues>({
           />
         ))}
 
-        <Button
-          type="submit"
-          variant={"dark"}
-          disabled={disabled}
-          className="w-full"
-        >
-          {submitText}
-        </Button>
+        {children}
+
+        {!hideSubmitButton && (
+          <Button
+            type="submit"
+            variant={"dark"}
+            disabled={disabled}
+            className="w-full"
+          >
+            {submitText}
+          </Button>
+        )}
       </form>
     </Form>
   );

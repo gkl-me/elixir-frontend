@@ -19,12 +19,11 @@ export function handlerServerError(error: unknown) {
   const err = AxiosErrorHandler(error);
 
   const status = err.statusCode || 500;
-  const errorCode = err?.errorCode;
 
-  if (
-    status === STATUS_CODES.UNAUTHORIZED &&
-    errorCode === AUTH_ERROR_CODE.UNAUTHORIZED
-  ) {
+  // Redirect on any 401 — the backend's refresh endpoint sends 401 with no errorCode,
+  // so we cannot rely on errorCode being present. Any 401 reaching a server component
+  // means the session is invalid.
+  if (status === STATUS_CODES.UNAUTHORIZED) {
     return redirect(
       AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`
     );

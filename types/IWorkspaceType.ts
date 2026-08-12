@@ -4,6 +4,9 @@ export interface WorkspaceContextData {
 
 export interface ListTeamsData {
   workspaceId: string;
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 
 export interface CreateTeamData {
@@ -36,4 +39,39 @@ export interface WorkspaceTeamsList {
 export interface GetTeamData {
   workspaceId: string;
   teamId: string;
+}
+
+export interface WorkspaceLimitsData {
+  workspaceId: string;
+}
+
+export interface ListWorkspaceData {
+  search?: string;
+  status?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface ToggleWorkspaceStatusData {
+  workspaceId: string;
+}
+
+export interface GetMembersParams {
+  workspaceId: string;
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
+export interface GetInvitesParams {
+  workspaceId: string;
+  limit?: number;
+  page?: number;
+  search?: string;
+}
+
+export interface GetUniqueTeamMembers {
+  workspaceId: string;
+  teamIds: string[];
+  search?: string;
 }

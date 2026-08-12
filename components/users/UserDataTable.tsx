@@ -16,7 +16,7 @@ import { toastHandler } from "@/lib/toastHandler";
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { useDebounce } from "@/hooks/useDebounce";
-import { ConfirmationModal } from "../modal/ConfirmationModal";
+import { ToggleUserBlockModal } from "./ToggleUserBlockModal";
 
 export default function UserDataTable({
   initialData,
@@ -160,15 +160,11 @@ export default function UserDataTable({
         onSortingChange={setSorting}
         renderFilters={renderFilters}
       />
-      <ConfirmationModal
+      <ToggleUserBlockModal
         isOpen={isModalOpen}
+        user={selectedUser}
         onClose={() => setIsModalOpen(false)}
         onConfirm={confirmToggleBlock}
-        title={selectedUser?.isBlocked ? "Unblock User" : "Block User"}
-        description={`Are you sure you want to ${
-          selectedUser?.isBlocked ? "unblock" : "block"
-        } ${selectedUser?.name}?`}
-        confirmText={selectedUser?.isBlocked ? "Yes, Unblock" : "Yes, Block"}
       />
     </div>
   );

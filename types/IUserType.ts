@@ -21,3 +21,7 @@ export interface UpdateUserProfileData {
   bio?: string;
   avatarUrl?: string;
 }
+
+export interface RevokeSessionData {
+  sessionId: string;
+}

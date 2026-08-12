@@ -12,11 +12,29 @@ export const NEXT_API_ROUTES = {
 
   UPDATE_SESSION: "/api/auth/update-session",
 
+  GET_ALL_SUBSCRIPTION: "/api/subscription",
+
+  GET_ALL_TRANSACTION: "/api/transaction",
+
   GET_WORKSPACE_MEMBERS: "/api/workspace/members",
   GET_WORKSPACE_INVITES: "/api/workspace/invites",
   GET_WORKSPACE_ROLES: "/api/workspace/roles",
   GET_WORKSPACE_TEAMS: "/api/workspace/teams",
   GET_WORKSPACE_TEAM: (teamId: string) => `/api/workspace/teams/${teamId}`,
+  GET_WORKSPACE_LIMITS: "/api/workspace/limits",
+
+  LIST_PROJECTS: "/api/workspace/projects",
+  GET_PROJECT_DETAILS: (workspaceId: string, projectId: string) =>
+    `/api/workspace/projects/${projectId}`,
+
+  GET_BACKLOGS: (workspaceId: string, projectId: string) =>
+    `/api/workspace/projects/${projectId}/backlogs`,
+
+  GET_ALL_WORKSPACE: "/api/workspace",
 
   GET_USER_ME: "/api/users/me",
+
+  GET_BILLING_INFO: "/api/payment",
+
+  GET_ALL_COMPANY: "/api/company",
 };

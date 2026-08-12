@@ -1,305 +1,212 @@
 "use client";
 
-import React, { useState } from "react";
-import {
-  CreditCard,
-  ArrowRight,
-  Check,
-  X,
-  Zap,
-  Star,
-  Building,
-  Package,
-  Download,
-  Eye as ViewIcon,
-} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { CreditCard, Zap, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CustomModal } from "@/components/modal/CustomModal";
-import { ColumnDef, SortingState } from "@tanstack/react-table";
-import { DataTable } from "@/components/table/DataTable";
-import {
-  demoWorkspace,
-  demoSubscriptions,
-  demoInvoices,
-  Invoice,
-} from "../../../../data/demoData";
 import { Section } from "./shared";
 import { cn } from "@/lib/utils";
+import { IPlan } from "@/types/IPlanType";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
+import { toastHandler } from "@/lib/toastHandler";
+import { AxiosErrorHandler } from "@/lib/errorHandler";
+import { useApi } from "@/hooks/useApi";
+import { NEXT_API_ROUTES } from "@/constants/routeHandler";
+import { PlanCard } from "@/components/plans/PlanCard";
+import {
+  customerPortalAction,
+  startUpgradeCheckoutAction,
+} from "@/app/actions/payment.action";
+import {
+  CompanyDetailsModal,
+  ICompanyDetailsForm,
+} from "./CompanyDetailsModal";
 
 // ─── Helpers ──────────────────────────────────────────────
 const fmt = (cents: number) =>
   cents === 0 ? "$0.00" : `$${(cents / 100).toFixed(2)}`;
 
-// ─── Status badge ─────────────────────────────────────────
-const StatusBadge = ({ status }: { status: Invoice["status"] }) => {
-  const map = {
-    paid: {
-      label: "Paid",
-      cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25",
-    },
-    failed: {
-      label: "Failed",
-      cls: "bg-red-500/15 text-red-400 border-red-500/25",
-    },
-    refunded: {
-      label: "Refunded",
-      cls: "bg-amber-500/15 text-amber-400 border-amber-500/25",
-    },
-    pending: {
-      label: "Pending",
-      cls: "bg-sky-500/15 text-sky-400 border-sky-500/25",
-    },
-  };
-  const { label, cls } = map[status] ?? map.pending;
-  return (
-    <span
-      className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${cls}`}
-    >
-      {label}
-    </span>
-  );
-};
-
-// ─── Invoice detail modal ─────────────────────────────────
-const InvoiceModal = ({
-  invoice,
-  onClose,
-}: {
-  invoice: Invoice | null;
-  onClose: () => void;
-}) => {
-  if (!invoice) {
-    return null;
-  }
-  return (
-    <CustomModal
-      isOpen={!!invoice}
-      onClose={onClose}
-      title={invoice.invoiceNumber}
-      description={`Invoice for ${invoice.period}`}
-      className="sm:max-w-lg"
-    >
-      <div className="space-y-5">
-        <div className="flex items-center justify-between rounded-xl border border-[#1e2a4a] bg-[#07112b] p-4">
-          <div>
-            <p className="mb-1 text-xs text-[#6b7db3]">Billed on</p>
-            <p className="text-sm font-semibold text-white">{invoice.date}</p>
-          </div>
-          <StatusBadge status={invoice.status} />
-        </div>
-
-        <div className="overflow-hidden rounded-xl border border-[#1e2a4a]">
-          <div className="border-b border-[#1e2a4a] bg-[#0a1327] px-4 py-2.5">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-[#4B5578]">
-              Line Items
-            </p>
-          </div>
-          <div className="divide-y divide-[#1e2a4a]">
-            <div className="flex items-center justify-between px-4 py-3">
-              <div>
-                <p className="text-sm font-medium text-white">
-                  {invoice.plan} Plan
-                </p>
-                <p className="text-xs text-[#6b7db3]">{invoice.period}</p>
-              </div>
-              <p className="text-sm font-semibold text-white">
-                {fmt(invoice.amount)}
-              </p>
-            </div>
-            <div className="flex items-center justify-between px-4 py-3">
-              <p className="text-sm text-[#8b9cc8]">
-                {invoice.seats} seat{invoice.seats !== 1 ? "s" : ""} × /month
-              </p>
-              <p className="text-sm text-[#8b9cc8]">×{invoice.seats}</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-between border-t border-[#1e2a4a] bg-[#0a1327] px-4 py-3">
-            <p className="text-sm font-bold text-white">Total</p>
-            <p className="text-lg font-bold text-white">
-              {fmt(invoice.amount)}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3 rounded-xl border border-[#1e2a4a] bg-[#07112b] p-3">
-          <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[#132353]">
-            <CreditCard className="h-4 w-4 text-[#8735C9]" />
-          </div>
-          <div>
-            <p className="text-xs text-[#6b7db3]">Payment method</p>
-            <p className="text-sm font-medium text-white">
-              {invoice.paymentMethod} ending in {invoice.last4}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-2 pt-1">
-          <Button
-            onClick={() => {}}
-            className="flex-1 gap-2 bg-[#8735C9] text-white hover:bg-[#6a29a0]"
-          >
-            <Download className="h-4 w-4" />
-            Download PDF
-          </Button>
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="border-[#1e2a4a] text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
-          >
-            Close
-          </Button>
-        </div>
-      </div>
-    </CustomModal>
-  );
-};
-
-// ─── Plan feature row ─────────────────────────────────────
-const Feature = ({ ok, text }: { ok: boolean; text: string }) => (
-  <li className="flex items-center gap-2 text-sm">
-    {ok ? (
-      <Check className="h-3.5 w-3.5 flex-shrink-0 text-emerald-400" />
-    ) : (
-      <X className="h-3.5 w-3.5 flex-shrink-0 text-[#4B5578]" />
-    )}
-    <span className={ok ? "text-[#c9d3ed]" : "text-[#4B5578]"}>{text}</span>
-  </li>
-);
-
 // ─── BillingTab ───────────────────────────────────────────
 export const BillingTab = () => {
-  const currentPlan =
-    demoSubscriptions.find((s) => s.id === demoWorkspace.subscriptionPlan) ??
-    demoSubscriptions[1];
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const planOrder: Record<string, number> = { free: 0, pro: 1, enterprise: 2 };
-  const upgradePlans = demoSubscriptions.filter(
-    (p) =>
-      (planOrder[p.type.toLowerCase()] ?? 99) >
-      (planOrder[currentPlan.type.toLowerCase()] ?? 0)
-  );
-  const planIcons: Record<string, React.ElementType> = {
-    free: Package,
-    pro: Star,
-    enterprise: Building,
+  const [currentPlan, setCurrentPlan] = useState<IPlan | undefined>();
+  const [upgradePlans, setUpgradePlans] = useState<IPlan[]>([]);
+  const [, setSubscription] = useState<unknown>();
+
+  // Upgrade state
+  const [selectedPlanForUpgrade, setSelectedPlanForUpgrade] =
+    useState<IPlan | null>(null);
+  const [isCompanyModalOpen, setIsCompanyModalOpen] = useState(false);
+  const [isUpgrading, setIsUpgrading] = useState(false);
+
+  // Status modal state (success or cancelled)
+  const [statusModal, setStatusModal] = useState<
+    "success" | "cancelled" | null
+  >(null);
+
+  const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
+
+  const { execute } = useApi({
+    url: NEXT_API_ROUTES.GET_BILLING_INFO,
+    method: "GET",
+  });
+
+  const fetchBillingInfo = useCallback(async () => {
+    if (!workspaceId) {
+      return;
+    }
+
+    try {
+      const res = await execute({
+        params: {
+          workspaceId,
+        },
+      });
+
+      if (res?.success) {
+        setCurrentPlan(res.data.currentPlan);
+        setSubscription(res.data.subscription);
+        setUpgradePlans(res.data.upgradePlans);
+      }
+    } catch (error) {
+      toastHandler({
+        success: false,
+        error: AxiosErrorHandler(error).message,
+      });
+    }
+  }, [workspaceId, execute]);
+
+  useEffect(() => {
+    fetchBillingInfo();
+  }, [fetchBillingInfo]);
+
+  // Detect payment status query param from Stripe redirect
+  useEffect(() => {
+    const status = searchParams.get("status");
+    if (status === "success") {
+      setStatusModal("success");
+    } else if (status === "cancelled" || status === "canceled") {
+      setStatusModal("cancelled");
+    }
+  }, [searchParams]);
+
+  const handleCloseStatusModal = () => {
+    setStatusModal(null);
+    // Clean up query param from URL without full reload
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("status");
+    const query = params.toString();
+    const newUrl = query ? `${pathname}?${query}` : pathname;
+    router.replace(newUrl, { scroll: false });
   };
 
-  const [search, setSearch] = useState("");
-  const [pageIndex, setPage] = useState(0);
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [selected, setSelected] = useState<Invoice | null>(null);
-  const PAGE_SIZE = 5;
+  const handleCustomerPortal = async () => {
+    if (!workspaceId) {
+      return;
+    }
+    const res = await customerPortalAction({ workspaceId });
 
-  const filtered = demoInvoices.filter(
-    (inv) =>
-      inv.invoiceNumber.toLowerCase().includes(search.toLowerCase()) ||
-      inv.plan.toLowerCase().includes(search.toLowerCase()) ||
-      inv.status.toLowerCase().includes(search.toLowerCase())
-  );
-  const paged = filtered.slice(
-    pageIndex * PAGE_SIZE,
-    (pageIndex + 1) * PAGE_SIZE
-  );
+    if (res?.success && res.data?.customerPortalUrl) {
+      window.location.href = res.data.customerPortalUrl;
+    }
 
-  const columns: ColumnDef<Invoice, unknown>[] = [
-    {
-      accessorKey: "invoiceNumber",
-      header: "Invoice",
-      cell: ({ row }) => (
-        <div>
-          <p className="text-sm font-semibold text-white">
-            {row.original.invoiceNumber}
-          </p>
-          <p className="text-xs text-[#6b7db3]">{row.original.period}</p>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "date",
-      header: "Date",
-      cell: ({ row }) => (
-        <span className="text-sm text-[#8b9cc8]">{row.original.date}</span>
-      ),
-    },
-    {
-      accessorKey: "plan",
-      header: "Plan",
-      cell: ({ row }) => (
-        <span className="rounded-full border border-[#8735C9]/25 bg-[#8735C9]/15 px-2 py-0.5 text-[11px] font-semibold text-[#c084fc]">
-          {row.original.plan}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "amount",
-      header: "Amount",
-      cell: ({ row }) => (
-        <span className="text-sm font-bold text-white">
-          {fmt(row.original.amount)}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      cell: ({ row }) => <StatusBadge status={row.original.status} />,
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-1.5">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSelected(row.original)}
-            className="h-7 gap-1 px-2 text-xs text-[#8735C9] hover:bg-[#8735C9] hover:text-white"
-          >
-            <ViewIcon className="h-3.5 w-3.5" />
-            View
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {}}
-            className="h-7 px-2 text-xs text-[#6b7db3] hover:bg-[#0f1d3d] hover:text-white"
-          >
-            <Download className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      ),
-    },
-  ];
+    toastHandler(res);
+  };
+
+  // Trigger plan upgrade
+  const handleUpgradeClick = (plan: IPlan) => {
+    setSelectedPlanForUpgrade(plan);
+    const planType = plan.type.toLowerCase();
+
+    if (planType === "enterprice") {
+      setIsCompanyModalOpen(true);
+    } else {
+      executeUpgrade(plan.id);
+    }
+  };
+
+  // Perform upgrade API call and redirect to Stripe
+  const executeUpgrade = async (
+    planId: string,
+    companyData?: ICompanyDetailsForm
+  ) => {
+    if (!workspaceId) {
+      return;
+    }
+    setIsUpgrading(true);
+
+    try {
+      const res = await startUpgradeCheckoutAction({
+        workspaceId,
+        planId,
+        company: companyData,
+      });
+
+      if (res?.success && res.data?.payment_url) {
+        toastHandler({
+          success: true,
+          message: "Redirecting to Stripe payment checkout...",
+        });
+        window.location.href = res.data.payment_url;
+      } else {
+        toastHandler({
+          success: false,
+          error: res.error || "Failed to create checkout session.",
+        });
+      }
+    } catch (error) {
+      toastHandler({
+        success: false,
+        error: AxiosErrorHandler(error).message,
+      });
+    } finally {
+      setIsUpgrading(false);
+      setIsCompanyModalOpen(false);
+    }
+  };
+
+  const handleCompanySubmit = async (details: ICompanyDetailsForm) => {
+    if (selectedPlanForUpgrade) {
+      await executeUpgrade(selectedPlanForUpgrade.id, details);
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* Current plan badge */}
-      <div className="flex items-center justify-between rounded-2xl border border-[#8735C9]/40 bg-gradient-to-r from-[#1a0f35] to-[#0C1635] p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#8735C9]/20">
-            <Zap className="h-5 w-5 text-[#c084fc]" />
+      {currentPlan && currentPlan.type !== "Free" && (
+        <div className="flex items-center justify-between rounded-2xl border border-[#8735C9]/40 bg-gradient-to-r from-[#1a0f35] to-[#0C1635] p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#8735C9]/20">
+              <Zap className="h-5 w-5 text-[#c084fc]" />
+            </div>
+            <div>
+              <p className="text-xs text-[#6b7db3]">Current plan</p>
+              <p className="text-lg font-black text-white">
+                {currentPlan?.name}{" "}
+                <span className="text-sm font-normal text-[#6b7db3]">
+                  · {fmt(currentPlan?.price ?? 0)}/mo
+                </span>
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-[#6b7db3]">Current plan</p>
-            <p className="text-lg font-black text-white">
-              {currentPlan.name}{" "}
-              <span className="text-sm font-normal text-[#6b7db3]">
-                · {fmt(currentPlan.price)}/seat/mo
-              </span>
-            </p>
-          </div>
+          <Button
+            variant="ghost"
+            className="gap-1.5 border border-[#1e2a4a] text-xs text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
+            onClick={handleCustomerPortal}
+          >
+            <CreditCard className="h-3.5 w-3.5" />
+            Manage Payment
+          </Button>
         </div>
-        <Button
-          variant="ghost"
-          className="gap-1.5 border border-[#1e2a4a] text-xs text-[#8b9cc8] hover:bg-[#0f1d3d] hover:text-white"
-        >
-          <CreditCard className="h-3.5 w-3.5" />
-          Manage Payment
-        </Button>
-      </div>
+      )}
 
       {/* Upgrade plans */}
-      {upgradePlans.length > 0 && (
+      {(upgradePlans?.length ?? 0) > 0 && (
         <Section
           title="Upgrade Plan"
           description="Unlock more features and higher limits for your team."
@@ -313,93 +220,89 @@ export const BillingTab = () => {
             )}
           >
             {upgradePlans.map((plan) => {
-              const Icon = planIcons[plan.id] ?? Star;
+              const planId = plan?.id;
               return (
-                <div
-                  key={plan.id}
-                  className="flex flex-col gap-4 rounded-xl border border-[#1e2a4a] bg-[#07112b] p-5 transition-colors hover:border-[#8735C9]/40"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#132353]">
-                      <Icon className="h-5 w-5 text-[#8b9cc8]" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-white">{plan.name}</h3>
-                      <p className="text-sm text-[#6b7db3]">
-                        {plan.price === 0
-                          ? "Free"
-                          : `$${plan.price / 100}/seat/mo`}
-                      </p>
-                    </div>
-                  </div>
-                  <ul className="flex-1 space-y-1.5">
-                    <Feature
-                      ok
-                      text={`${plan.limits.projects === -1 ? "Unlimited" : plan.limits.projects} Projects`}
-                    />
-                    <Feature
-                      ok
-                      text={`${plan.limits.members === -1 ? "Unlimited" : plan.limits.members} Members`}
-                    />
-                    <Feature
-                      ok={plan.features.githubAutomation}
-                      text="GitHub Automation"
-                    />
-                    <Feature
-                      ok={plan.limits.customRoles > 0}
-                      text={`${plan.limits.customRoles} Custom Roles`}
-                    />
-                    <Feature ok={plan.id !== "free"} text="Priority Support" />
-                    <Feature ok={plan.id === "enterprise"} text="SSO / SAML" />
-                  </ul>
-                  <Button
-                    onClick={() => {}}
-                    className="mt-auto w-full gap-2 bg-gradient-to-r from-[#8735C9] to-[#6a29a0] text-white shadow hover:opacity-90"
-                  >
-                    Upgrade to {plan.name}
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </div>
+                <PlanCard
+                  key={planId}
+                  {...plan}
+                  actionSlot={
+                    <Button
+                      variant="dark"
+                      disabled={isUpgrading}
+                      onClick={() => handleUpgradeClick(plan)}
+                      className="w-full bg-purple font-semibold text-white transition-all hover:bg-purple/90"
+                    >
+                      {isUpgrading && selectedPlanForUpgrade?.id === plan.id
+                        ? "Redirecting..."
+                        : `Upgrade to ${plan.name}`}
+                    </Button>
+                  }
+                />
               );
             })}
           </div>
         </Section>
       )}
 
-      {/* Invoice history */}
-      <Section
-        title="Billing History"
-        description="All your past invoices and receipts."
-      >
-        <div className="-mt-2 mb-3 flex justify-end">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {}}
-            className="h-7 gap-1.5 border border-[#1e2a4a] text-xs text-[#6b7db3] hover:bg-[#0f1d3d] hover:text-white"
-          >
-            <Download className="h-3.5 w-3.5" />
-            Download All
-          </Button>
-        </div>
-        <DataTable
-          columns={columns}
-          data={paged}
-          totalCount={filtered.length}
-          pageIndex={pageIndex}
-          pageSize={PAGE_SIZE}
-          search={search}
-          sorting={sorting}
-          onPageChange={setPage}
-          onSearchChange={(s) => {
-            setSearch(s);
-            setPage(0);
-          }}
-          onSortingChange={setSorting}
+      {/* Company Details Modal for Enterprise Plan */}
+      {selectedPlanForUpgrade && (
+        <CompanyDetailsModal
+          isOpen={isCompanyModalOpen}
+          onClose={() => setIsCompanyModalOpen(false)}
+          onSubmit={handleCompanySubmit}
+          isLoading={isUpgrading}
+          planName={selectedPlanForUpgrade.name}
         />
-      </Section>
+      )}
 
-      <InvoiceModal invoice={selected} onClose={() => setSelected(null)} />
+      {/* Payment Status Feedback Modal (Success or Cancelled) */}
+      {statusModal !== null && (
+        <CustomModal
+          isOpen={statusModal !== null}
+          onClose={handleCloseStatusModal}
+          title={
+            statusModal === "success"
+              ? "Payment Successful!"
+              : "Payment Cancelled"
+          }
+          description={
+            statusModal === "success"
+              ? "Your subscription plan upgrade has been completed."
+              : "The checkout session was cancelled. No charges were made."
+          }
+          className="text-center sm:max-w-md"
+        >
+          <div className="flex flex-col items-center justify-center space-y-4 py-4">
+            {statusModal === "success" ? (
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
+                <CheckCircle2 className="h-10 w-10 text-emerald-400" />
+              </div>
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10">
+                <XCircle className="h-10 w-10 text-amber-400" />
+              </div>
+            )}
+
+            <p className="text-sm text-gray-300">
+              {statusModal === "success"
+                ? "Thank you! Your subscription has been successfully upgraded. Your new plan features and limits are now active."
+                : "You cancelled the Stripe checkout process. No payment was charged. You can upgrade whenever you are ready."}
+            </p>
+
+            <Button
+              onClick={handleCloseStatusModal}
+              className={cn(
+                "mt-2 w-full font-semibold text-white",
+                statusModal === "success"
+                  ? "bg-emerald-600 hover:bg-emerald-500"
+                  : "bg-purple hover:bg-purple/90"
+              )}
+            >
+              {statusModal === "success" ? "Great, Thanks!" : "Got it"}
+            </Button>
+          </div>
+        </CustomModal>
+      )}
     </div>
   );
 };
