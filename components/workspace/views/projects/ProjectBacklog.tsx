@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Plus,
   Search,
@@ -78,7 +78,12 @@ const STATUS_CFG: Record<
 
 const TYPE_CFG: Record<
   string,
-  { label: string; icon: React.ElementType; badgeColor: string; iconColor: string }
+  {
+    label: string;
+    icon: React.ElementType;
+    badgeColor: string;
+    iconColor: string;
+  }
 > = {
   story: {
     label: "Story",
@@ -95,15 +100,19 @@ const TYPE_CFG: Record<
 };
 
 const POINTS_COLORS = (pts: number) => {
-  if (pts >= 8) { return "text-red-400 border-red-500/30 bg-red-500/10"; }
-  if (pts >= 5) { return "text-amber-400 border-amber-500/30 bg-amber-500/10"; }
+  if (pts >= 8) {
+    return "text-red-400 border-red-500/30 bg-red-500/10";
+  }
+  if (pts >= 5) {
+    return "text-amber-400 border-amber-500/30 bg-amber-500/10";
+  }
   return "text-[#8b9cc8] border-[#1e2a4a] bg-[#07112b]";
 };
 
-export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
-  project,
-}) => {
-  const [backlogData, setBacklogData] = useState<IBackLogsDetailsDto | null>(null);
+export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({ project }) => {
+  const [backlogData, setBacklogData] = useState<IBackLogsDetailsDto | null>(
+    null
+  );
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("");
   const [typeFilter, setTypeFilter] = useState<FilterType>("");
@@ -136,7 +145,6 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
       });
 
       if (res?.success && res?.data) {
-        console.log("res backlogs", res)
         setBacklogData(res.data);
       }
     } catch (error) {
@@ -145,7 +153,14 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
         error: AxiosErrorHandler(error).message,
       });
     }
-  }, [workspaceId, projectId, execute, debouncedSearch, typeFilter, statusFilter]);
+  }, [
+    workspaceId,
+    projectId,
+    execute,
+    debouncedSearch,
+    typeFilter,
+    statusFilter,
+  ]);
 
   useEffect(() => {
     fetchBacklogs();
@@ -160,7 +175,6 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
     setTypeFilter("");
     setSearch("");
   };
-
 
   return (
     <div className="flex flex-col gap-6">
@@ -199,25 +213,33 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
         {/* Quick summary stats bar */}
         <div className="mt-5 grid grid-cols-4 gap-3 border-t border-[#1e2a4a] pt-4">
           <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b]/80 p-3 text-center">
-            <p className="text-lg font-black text-white">{backlogData?.totalCount}</p>
+            <p className="text-lg font-black text-white">
+              {backlogData?.totalCount}
+            </p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#6b7db3]">
               Total Backlog
             </p>
           </div>
           <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b]/80 p-3 text-center">
-            <p className="text-lg font-black text-[#c084fc]">{backlogData?.stories}</p>
+            <p className="text-lg font-black text-[#c084fc]">
+              {backlogData?.stories}
+            </p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#6b7db3]">
               User Stories
             </p>
           </div>
           <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b]/80 p-3 text-center">
-            <p className="text-lg font-black text-red-400">{backlogData?.bugs}</p>
+            <p className="text-lg font-black text-red-400">
+              {backlogData?.bugs}
+            </p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#6b7db3]">
               Bugs Reported
             </p>
           </div>
           <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b]/80 p-3 text-center">
-            <p className="text-lg font-black text-[#60a5fa]">{backlogData?.totalStoryPoint}</p>
+            <p className="text-lg font-black text-[#60a5fa]">
+              {backlogData?.totalStoryPoint}
+            </p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-[#6b7db3]">
               Total Points
             </p>
@@ -227,7 +249,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
 
       {/* ── Filter Toolbar ────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-3 flex-1">
+        <div className="flex flex-1 flex-wrap items-center gap-3">
           {/* Search */}
           <div className="relative min-w-[220px] max-w-sm flex-1">
             <Search className="absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#4B5578]" />
@@ -249,22 +271,28 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
 
           {/* Status filter pills */}
           <div className="flex items-center gap-1 rounded-xl border border-[#1e2a4a] bg-[#0C1635] p-1">
-            {(["all", "todo", "in_progress", "in_review", "done"] as FilterStatus[]).map(
-              (f) => (
-                <button
-                  key={f}
-                  onClick={() => setStatusFilter(f)}
-                  className={cn(
-                    "rounded-lg px-2.5 py-1 text-[11px] font-semibold capitalize transition-all",
-                    statusFilter === f
-                      ? "bg-[#8735C9] text-white shadow-sm"
-                      : "text-[#6b7db3] hover:text-white"
-                  )}
-                >
-                  {f === "" ? "All Status" : f.replace("_", " ")}
-                </button>
-              )
-            )}
+            {(
+              [
+                "all",
+                "todo",
+                "in_progress",
+                "in_review",
+                "done",
+              ] as FilterStatus[]
+            ).map((f) => (
+              <button
+                key={f}
+                onClick={() => setStatusFilter(f)}
+                className={cn(
+                  "rounded-lg px-2.5 py-1 text-[11px] font-semibold capitalize transition-all",
+                  statusFilter === f
+                    ? "bg-[#8735C9] text-white shadow-sm"
+                    : "text-[#6b7db3] hover:text-white"
+                )}
+              >
+                {f === "" ? "All Status" : f.replace("_", " ")}
+              </button>
+            ))}
           </div>
 
           {/* Type filter pills (Story and Bug ONLY) */}
@@ -302,17 +330,18 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
         </div>
 
         <span className="text-[11px] font-medium text-[#6b7db3]">
-          Showing <strong className="text-white">{issuesList.length}</strong> of {backlogData?.totalCount}
+          Showing <strong className="text-white">{issuesList.length}</strong> of{" "}
+          {backlogData?.totalCount}
         </span>
       </div>
 
       {/* ── Backlog List Container ────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-[#1e2a4a] bg-[#0C1635] overflow-hidden shadow-lg">
+      <div className="overflow-hidden rounded-2xl border border-[#1e2a4a] bg-[#0C1635] shadow-lg">
         {/* Section header bar */}
         <div className="flex items-center justify-between border-b border-[#1e2a4a] bg-[#07112b] px-5 py-3.5">
           <button
             onClick={() => setIsCollapsed((v) => !v)}
-            className="flex items-center gap-2.5 text-left group"
+            className="group flex items-center gap-2.5 text-left"
           >
             <ChevronDown
               className={cn(
@@ -320,7 +349,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
                 isCollapsed && "-rotate-90"
               )}
             />
-            <span className="text-sm font-bold text-white group-hover:text-[#c084fc] transition-colors">
+            <span className="text-sm font-bold text-white transition-colors group-hover:text-[#c084fc]">
               Backlog Work Items
             </span>
             <span className="rounded-full bg-[#1e2a4a] px-2 py-0.5 font-mono text-[11px] font-bold text-[#8b9cc8]">
@@ -330,7 +359,10 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
 
           <div className="flex items-center gap-3 text-[11px] text-[#6b7db3]">
             <span>
-              Total: <strong className="text-white">{backlogData?.totalStoryPoint} pts</strong>
+              Total:{" "}
+              <strong className="text-white">
+                {backlogData?.totalStoryPoint} pts
+              </strong>
             </span>
           </div>
         </div>
@@ -341,12 +373,16 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
             {isLoading && !backlogData ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Loader2 className="mb-2.5 h-8 w-8 animate-spin text-[#8735C9]" />
-                <p className="text-xs font-semibold text-white">Loading backlog items…</p>
+                <p className="text-xs font-semibold text-white">
+                  Loading backlog items…
+                </p>
               </div>
             ) : issuesList.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
                 <Layers className="mb-2.5 h-8 w-8 text-[#293d6b]" />
-                <p className="text-xs font-semibold text-white">No items found</p>
+                <p className="text-xs font-semibold text-white">
+                  No items found
+                </p>
                 <p className="mt-0.5 text-[11px] text-[#4B5578]">
                   Try clearing your search or status filter.
                 </p>
@@ -361,7 +397,8 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
               </div>
             ) : (
               issuesList.map((task: IIssueResDto) => {
-                const st = STATUS_CFG[task.status ?? "todo"] ?? STATUS_CFG["todo"];
+                const st =
+                  STATUS_CFG[task.status ?? "todo"] ?? STATUS_CFG["todo"];
                 const ty = TYPE_CFG[task.type ?? "story"] ?? TYPE_CFG["story"];
                 const TypeIcon = ty.icon;
 
@@ -371,7 +408,7 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
                     className="group relative flex flex-wrap items-center gap-3 px-5 py-3.5 transition-all duration-150 hover:bg-[#0f1d3d]"
                   >
                     {/* Left Accent indicator */}
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#8735C9] opacity-0 transition-opacity group-hover:opacity-100" />
+                    <div className="absolute bottom-0 left-0 top-0 w-0.5 bg-[#8735C9] opacity-0 transition-opacity group-hover:opacity-100" />
 
                     {/* Grip handle */}
                     <GripVertical className="h-3.5 w-3.5 flex-shrink-0 text-[#293d6b] transition-colors group-hover:text-[#6b7db3]" />
@@ -419,10 +456,14 @@ export const ProjectBacklog: React.FC<ProjectBacklogProps> = ({
                       <span
                         className={cn(
                           "flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold capitalize",
-                          task.priority === "urgent" && "border-red-500/30 bg-red-500/10 text-red-400",
-                          task.priority === "high" && "border-orange-500/30 bg-orange-500/10 text-orange-400",
-                          task.priority === "medium" && "border-amber-500/30 bg-amber-500/10 text-amber-400",
-                          task.priority === "low" && "border-slate-500/30 bg-slate-500/10 text-slate-400"
+                          task.priority === "urgent" &&
+                            "border-red-500/30 bg-red-500/10 text-red-400",
+                          task.priority === "high" &&
+                            "border-orange-500/30 bg-orange-500/10 text-orange-400",
+                          task.priority === "medium" &&
+                            "border-amber-500/30 bg-amber-500/10 text-amber-400",
+                          task.priority === "low" &&
+                            "border-slate-500/30 bg-slate-500/10 text-slate-400"
                         )}
                       >
                         <ArrowUp className="h-2.5 w-2.5" /> {task.priority}

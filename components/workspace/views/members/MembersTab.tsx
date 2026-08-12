@@ -61,7 +61,6 @@ export const MembersTab = ({
         },
       });
 
-
       if (res?.success) {
         setMembers(res.data.members);
         setTotalCount(res.data.totalCount);

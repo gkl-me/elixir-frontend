@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useMemo, useState, useEffect, useCallback, useTransition } from "react";
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  useTransition,
+} from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +24,6 @@ import {
   Sparkles,
   Loader2,
 } from "lucide-react";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { WorkspaceProject, initials, grad } from "./shared";
@@ -28,9 +33,6 @@ import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 import { createIssueAction } from "@/app/actions/issue.action";
 import { toastHandler } from "@/lib/toastHandler";
 import { useDebounce } from "@/hooks/useDebounce";
-import { NEXT_API_ROUTES } from "@/constants/routeHandler";
-import { IssuePriority, IssueStatus } from "@/types/IIssueType";
-import { useApi } from "@/hooks/useApi";
 import { getUniqueTeamMembersAction } from "@/app/actions/workspace.action";
 
 export interface TeamMember {
@@ -117,7 +119,9 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   }, [project.teams]);
 
   const fetchUniqueTeamMembers = useCallback(async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
 
     setIsLoadingMembers(true);
     try {
@@ -144,9 +148,10 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   }, [fetchUniqueTeamMembers]);
 
   const selectedMember = useMemo(() => {
-    return members.find((m) => m.id === formValues.assignee || m.name === formValues.assignee);
+    return members.find(
+      (m) => m.id === formValues.assignee || m.name === formValues.assignee
+    );
   }, [members, formValues.assignee]);
-
 
   const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -202,7 +207,9 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
     });
   };
 
-  const selectedPriorityObj = PRIORITIES.find((p) => p.id === formValues.priority);
+  const selectedPriorityObj = PRIORITIES.find(
+    (p) => p.id === formValues.priority
+  );
 
   return (
     <div
@@ -215,10 +222,13 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#8735C9] to-[#6a29a0] shadow-md">
             <Plus className="h-5 w-5 text-white" />
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <h3 className="text-base font-bold text-white">Create New Issue</h3>
             <p className="text-[11px] text-[#6b7db3]">
-              Step {step + 1} of {STEPS.length} — <span className="font-semibold text-[#c084fc]">{STEPS[step]}</span>
+              Step {step + 1} of {STEPS.length} —{" "}
+              <span className="font-semibold text-[#c084fc]">
+                {STEPS[step]}
+              </span>
             </p>
           </div>
           <button
@@ -236,7 +246,7 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
             <div
               key={s}
               className={cn(
-                "flex flex-1 items-center justify-center gap-2 py-3 text-xs font-semibold transition-colors border-b-2",
+                "flex flex-1 items-center justify-center gap-2 border-b-2 py-3 text-xs font-semibold transition-colors",
                 i === step
                   ? "border-[#8735C9] bg-[#8735C9]/10 text-white"
                   : i < step
@@ -271,7 +281,7 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           className="flex flex-1 flex-col overflow-hidden"
         >
           {/* ── Modal Step Body ───────────────────────────────────────────── */}
-          <div className="flex-1 space-y-5 overflow-y-auto p-6 min-h-[320px]">
+          <div className="min-h-[320px] flex-1 space-y-5 overflow-y-auto p-6">
             {/* ════════════ Step 0: Basics ═════════════════════════════════ */}
             {step === 0 && (
               <div className="space-y-5">
@@ -283,7 +293,9 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
-                      onClick={() => setValue("type", "story", { shouldValidate: true })}
+                      onClick={() =>
+                        setValue("type", "story", { shouldValidate: true })
+                      }
                       className={cn(
                         "flex items-center gap-3 rounded-xl border p-3 text-left transition-all",
                         formValues.type === "story"
@@ -294,21 +306,29 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                       <div
                         className={cn(
                           "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg",
-                          formValues.type === "story" ? "bg-[#8735C9]/30 text-[#c084fc]" : "bg-[#132353] text-[#6b7db3]"
+                          formValues.type === "story"
+                            ? "bg-[#8735C9]/30 text-[#c084fc]"
+                            : "bg-[#132353] text-[#6b7db3]"
                         )}
                       >
                         <BookOpen className="h-4 w-4" />
                       </div>
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-xs font-bold">User Story</p>
-                        <p className="text-[10px] text-[#4B5578]">Feature / Improvement</p>
+                        <p className="text-[10px] text-[#4B5578]">
+                          Feature / Improvement
+                        </p>
                       </div>
-                      {formValues.type === "story" && <Check className="h-4 w-4 text-[#c084fc]" />}
+                      {formValues.type === "story" && (
+                        <Check className="h-4 w-4 text-[#c084fc]" />
+                      )}
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => setValue("type", "bug", { shouldValidate: true })}
+                      onClick={() =>
+                        setValue("type", "bug", { shouldValidate: true })
+                      }
                       className={cn(
                         "flex items-center gap-3 rounded-xl border p-3 text-left transition-all",
                         formValues.type === "bug"
@@ -319,16 +339,22 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                       <div
                         className={cn(
                           "flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg",
-                          formValues.type === "bug" ? "bg-red-500/20 text-red-400" : "bg-[#132353] text-[#6b7db3]"
+                          formValues.type === "bug"
+                            ? "bg-red-500/20 text-red-400"
+                            : "bg-[#132353] text-[#6b7db3]"
                         )}
                       >
                         <Bug className="h-4 w-4" />
                       </div>
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-xs font-bold">Defect / Bug</p>
-                        <p className="text-[10px] text-[#4B5578]">Problem / Exception</p>
+                        <p className="text-[10px] text-[#4B5578]">
+                          Problem / Exception
+                        </p>
                       </div>
-                      {formValues.type === "bug" && <Check className="h-4 w-4 text-red-400" />}
+                      {formValues.type === "bug" && (
+                        <Check className="h-4 w-4 text-red-400" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -340,7 +366,11 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                   </label>
                   <input
                     value={formValues.title}
-                    onChange={(e) => setValue("title", e.target.value, { shouldValidate: true })}
+                    onChange={(e) =>
+                      setValue("title", e.target.value, {
+                        shouldValidate: true,
+                      })
+                    }
                     placeholder="e.g. Implement workspace authentication middleware"
                     className="w-full rounded-xl border border-[#1e2a4a] bg-[#07112b] px-4 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-[#4B5578] focus:border-[#8735C9]"
                   />
@@ -359,7 +389,11 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                   </label>
                   <textarea
                     value={formValues.description}
-                    onChange={(e) => setValue("description", e.target.value, { shouldValidate: true })}
+                    onChange={(e) =>
+                      setValue("description", e.target.value, {
+                        shouldValidate: true,
+                      })
+                    }
                     placeholder="Provide context, acceptance criteria, or reproduction steps…"
                     rows={3}
                     className="w-full resize-none rounded-xl border border-[#1e2a4a] bg-[#07112b] px-4 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-[#4B5578] focus:border-[#8735C9]"
@@ -375,18 +409,22 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                 <div>
                   <label className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-[#8b9cc8]">
                     <span>Story Points (Estimation)</span>
-                    <span className="font-mono text-xs font-bold text-[#c084fc]">{formValues.storyPoints} pts</span>
+                    <span className="font-mono text-xs font-bold text-[#c084fc]">
+                      {formValues.storyPoints} pts
+                    </span>
                   </label>
                   <div className="flex flex-wrap items-center gap-2">
                     {STORY_POINTS.map((pt) => (
                       <button
                         key={pt}
                         type="button"
-                        onClick={() => setValue("storyPoints", pt, { shouldValidate: true })}
+                        onClick={() =>
+                          setValue("storyPoints", pt, { shouldValidate: true })
+                        }
                         className={cn(
-                          "flex h-10 flex-1 min-w-[50px] items-center justify-center rounded-xl border font-mono text-xs font-bold transition-all",
+                          "flex h-10 min-w-[50px] flex-1 items-center justify-center rounded-xl border font-mono text-xs font-bold transition-all",
                           formValues.storyPoints === pt
-                            ? "border-[#8735C9] bg-[#8735C9] text-white shadow-md scale-105"
+                            ? "scale-105 border-[#8735C9] bg-[#8735C9] text-white shadow-md"
                             : "border-[#1e2a4a] bg-[#07112b] text-[#8b9cc8] hover:border-[#293d6b] hover:text-white"
                         )}
                       >
@@ -408,7 +446,9 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                         <button
                           key={p.id}
                           type="button"
-                          onClick={() => setValue("priority", p.id, { shouldValidate: true })}
+                          onClick={() =>
+                            setValue("priority", p.id, { shouldValidate: true })
+                          }
                           className={cn(
                             "flex items-center gap-2.5 rounded-xl border p-3 text-left text-xs font-medium transition-all",
                             sel
@@ -416,9 +456,16 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                               : "border-[#1e2a4a] bg-[#07112b] text-[#8b9cc8] hover:border-[#293d6b]"
                           )}
                         >
-                          <span className={cn("h-2.5 w-2.5 rounded-full flex-shrink-0", p.dot)} />
+                          <span
+                            className={cn(
+                              "h-2.5 w-2.5 flex-shrink-0 rounded-full",
+                              p.dot
+                            )}
+                          />
                           <span>{p.label} Priority</span>
-                          {sel && <Check className="ml-auto h-3.5 w-3.5 text-[#c084fc]" />}
+                          {sel && (
+                            <Check className="ml-auto h-3.5 w-3.5 text-[#c084fc]" />
+                          )}
                         </button>
                       );
                     })}
@@ -437,7 +484,9 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                         <button
                           key={s.id}
                           type="button"
-                          onClick={() => setValue("status", s.id, { shouldValidate: true })}
+                          onClick={() =>
+                            setValue("status", s.id, { shouldValidate: true })
+                          }
                           className={cn(
                             "flex items-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-medium transition-all",
                             sel
@@ -446,7 +495,9 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                           )}
                         >
                           {s.label}
-                          {sel && <Check className="ml-auto h-3 w-3 text-[#c084fc]" />}
+                          {sel && (
+                            <Check className="ml-auto h-3 w-3 text-[#c084fc]" />
+                          )}
                         </button>
                       );
                     })}
@@ -460,13 +511,16 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
               <div className="space-y-5">
                 {/* Member Search & Assignment */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2 flex items-center justify-between">
                     <label className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#8b9cc8]">
                       <Users className="h-3 w-3" />
                       Assignee
                     </label>
                     <span className="text-[10px] text-[#6b7db3]">
-                      Selected: <strong className="text-white">{selectedMember?.name || "Unassigned"}</strong>
+                      Selected:{" "}
+                      <strong className="text-white">
+                        {selectedMember?.name || "Unassigned"}
+                      </strong>
                     </span>
                   </div>
 
@@ -513,9 +567,13 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                             key={m.id || m.name}
                             type="button"
                             onClick={() =>
-                              setValue("assignee", formValues.assignee === m.id ? "" : m.id, {
-                                shouldValidate: true,
-                              })
+                              setValue(
+                                "assignee",
+                                formValues.assignee === m.id ? "" : m.id,
+                                {
+                                  shouldValidate: true,
+                                }
+                              )
                             }
                             className={cn(
                               "flex w-full items-center gap-3 rounded-xl border p-2.5 text-left transition-all",
@@ -532,13 +590,17 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                             >
                               {initials(m.name)}
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="truncate text-xs font-semibold">{m.name}</p>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-xs font-semibold">
+                                {m.name}
+                              </p>
                               <p className="truncate text-[10px] text-[#4B5578]">
                                 {m.email || m.role || "Team Member"}
                               </p>
                             </div>
-                            {sel && <Check className="h-4 w-4 text-[#c084fc]" />}
+                            {sel && (
+                              <Check className="h-4 w-4 text-[#c084fc]" />
+                            )}
                           </button>
                         );
                       })
@@ -547,7 +609,7 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                 </div>
 
                 {/* Summary Preview Card */}
-                <div className="rounded-xl border border-[#1e2a4a] bg-[#07112b] p-4 space-y-2">
+                <div className="space-y-2 rounded-xl border border-[#1e2a4a] bg-[#07112b] p-4">
                   <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-[#6b7db3]">
                     <span className="flex items-center gap-1">
                       <Sparkles className="h-3 w-3 text-[#c084fc]" /> Preview
@@ -555,7 +617,7 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                     <span>[{project.key || "ELX"}]</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-[#8735C9]/20 px-1.5 py-0.5 font-mono text-[9px] font-bold text-[#c084fc] uppercase">
+                    <span className="rounded bg-[#8735C9]/20 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase text-[#c084fc]">
                       {formValues.type}
                     </span>
                     <p className="truncate text-xs font-bold text-white">
@@ -563,14 +625,29 @@ export const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-[10px] text-[#6b7db3]">
-                    <span>Estimate: <strong className="text-white">{formValues.storyPoints} pts</strong></span>
+                    <span>
+                      Estimate:{" "}
+                      <strong className="text-white">
+                        {formValues.storyPoints} pts
+                      </strong>
+                    </span>
                     <span>·</span>
                     <span className="flex items-center gap-1">
-                      <span className={cn("h-1.5 w-1.5 rounded-full", selectedPriorityObj?.dot)} />
+                      <span
+                        className={cn(
+                          "h-1.5 w-1.5 rounded-full",
+                          selectedPriorityObj?.dot
+                        )}
+                      />
                       {selectedPriorityObj?.label} Priority
                     </span>
                     <span>·</span>
-                    <span>Assignee: <strong className="text-white">{selectedMember?.name || "Unassigned"}</strong></span>
+                    <span>
+                      Assignee:{" "}
+                      <strong className="text-white">
+                        {selectedMember?.name || "Unassigned"}
+                      </strong>
+                    </span>
                   </div>
                 </div>
               </div>

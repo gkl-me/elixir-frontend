@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useMemo, useState, useEffect, useCallback, useTransition } from "react";
+import React, {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  useTransition,
+} from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -75,15 +81,21 @@ export const CreateProjectSchema = z.object({
 
 export type CreateProjectFormValues = z.infer<typeof CreateProjectSchema>;
 
-
 const formatDateForInput = (d: Date | string | undefined): string => {
-  if (!d) return "";
+  if (!d) {
+    return "";
+  }
   const dateObj = typeof d === "string" ? new Date(d) : d;
-  if (isNaN(dateObj.getTime())) return "";
+  if (isNaN(dateObj.getTime())) {
+    return "";
+  }
   return dateObj.toISOString().split("T")[0];
 };
 
-export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalProps) => {
+export const CreateProjectModal = ({
+  onClose,
+  onSuccess,
+}: CreateProjectModalProps) => {
   const [step, setStep] = useState(0);
   const [isPending, startTransition] = useTransition();
 
@@ -121,7 +133,9 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
 
   // Fetch teams from backend workspaceService.listTeams
   const fetchTeams = useCallback(async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     setIsLoadingTeams(true);
     try {
       const res = await execute({
@@ -130,16 +144,15 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
           search: debouncedSearch,
           page: currentPage,
           limit: TEAMS_PER_PAGE,
-        }
+        },
       });
 
       if (res.success) {
         setTeams(res.data.teams);
         setTotalCount(res.data.totalCount);
       }
-
-    } catch (error) {
-      console.error("Failed to fetch teams:", error);
+    } catch {
+      // Ignore error
     } finally {
       setIsLoadingTeams(false);
     }
@@ -167,14 +180,20 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
     setValue("teams", newTeams, { shouldValidate: true });
   };
 
-  const handleNext = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault()
+  const handleNext = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
     if (step === 0) {
       const valid = await trigger(["name", "description"]);
-      if (!valid) return;
+      if (!valid) {
+        return;
+      }
     } else if (step === 1) {
       const valid = await trigger(["tags", "priority", "startDate", "dueDate"]);
-      if (!valid) return;
+      if (!valid) {
+        return;
+      }
     }
     setStep((s) => s + 1);
   };
@@ -290,7 +309,9 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                   </label>
                   <input
                     value={formValues.name}
-                    onChange={(e) => setValue("name", e.target.value, { shouldValidate: true })}
+                    onChange={(e) =>
+                      setValue("name", e.target.value, { shouldValidate: true })
+                    }
                     placeholder="e.g. Elixir Platform"
                     className="w-full rounded-xl border border-[#1e2a4a] bg-[#07112b] px-4 py-2.5 text-sm text-white outline-none transition-colors placeholder:text-[#4B5578] focus:border-[#8735C9]"
                   />
@@ -337,7 +358,9 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                     {formValues.tags.length > 0 && (
                       <button
                         type="button"
-                        onClick={() => setValue("tags", [], { shouldValidate: true })}
+                        onClick={() =>
+                          setValue("tags", [], { shouldValidate: true })
+                        }
                         className="text-[10px] font-medium normal-case tracking-normal text-[#6b7db3] hover:text-red-400"
                       >
                         Clear all
@@ -363,10 +386,10 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                           style={
                             sel
                               ? {
-                                color: swatch.color,
-                                borderColor: swatch.border,
-                                backgroundColor: swatch.bg,
-                              }
+                                  color: swatch.color,
+                                  borderColor: swatch.border,
+                                  backgroundColor: swatch.bg,
+                                }
                               : undefined
                           }
                         >
@@ -380,7 +403,9 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                   {/* Selected tags summary strip */}
                   {formValues.tags.length > 0 && (
                     <div className="mt-3 flex flex-wrap items-center gap-1.5 rounded-xl border border-[#1e2a4a] bg-[#07112b] px-3 py-2">
-                      <span className="mr-1 text-[10px] text-[#4B5578]">Selected:</span>
+                      <span className="mr-1 text-[10px] text-[#4B5578]">
+                        Selected:
+                      </span>
                       {formValues.tags.map((tag) => {
                         const swatch = tagColor(tag);
                         return (
@@ -420,7 +445,13 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                         <button
                           key={p.id}
                           type="button"
-                          onClick={() => setValue("priority", p.id as any, { shouldValidate: true })}
+                          onClick={() =>
+                            setValue(
+                              "priority",
+                              p.id as CreateProjectFormValues["priority"],
+                              { shouldValidate: true }
+                            )
+                          }
                           className={cn(
                             "flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-xs font-medium transition-all",
                             sel
@@ -430,7 +461,9 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                         >
                           <span className={cn("h-2 w-2 rounded-full", p.dot)} />
                           {p.label}
-                          {sel && <Check className="ml-auto h-3 w-3 text-[#c084fc]" />}
+                          {sel && (
+                            <Check className="ml-auto h-3 w-3 text-[#c084fc]" />
+                          )}
                         </button>
                       );
                     })}
@@ -448,9 +481,11 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                       type="date"
                       value={formatDateForInput(formValues.startDate)}
                       onChange={(e) =>
-                        setValue("startDate", new Date(e.target.value), { shouldValidate: true })
+                        setValue("startDate", new Date(e.target.value), {
+                          shouldValidate: true,
+                        })
                       }
-                      className="w-full rounded-xl border border-[#1e2a4a] bg-[#07112b] px-3 py-2.5 text-sm text-white outline-none transition-colors focus:border-[#8735C9] [color-scheme:dark]"
+                      className="w-full rounded-xl border border-[#1e2a4a] bg-[#07112b] px-3 py-2.5 text-sm text-white outline-none transition-colors [color-scheme:dark] focus:border-[#8735C9]"
                     />
                   </div>
                   <div>
@@ -462,9 +497,11 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                       type="date"
                       value={formatDateForInput(formValues.dueDate)}
                       onChange={(e) =>
-                        setValue("dueDate", new Date(e.target.value), { shouldValidate: true })
+                        setValue("dueDate", new Date(e.target.value), {
+                          shouldValidate: true,
+                        })
                       }
-                      className="w-full rounded-xl border border-[#1e2a4a] bg-[#07112b] px-3 py-2.5 text-sm text-white outline-none transition-colors focus:border-[#8735C9] [color-scheme:dark]"
+                      className="w-full rounded-xl border border-[#1e2a4a] bg-[#07112b] px-3 py-2.5 text-sm text-white outline-none transition-colors [color-scheme:dark] focus:border-[#8735C9]"
                     />
                   </div>
                 </div>
@@ -487,7 +524,9 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                     {formValues.teams.length > 0 && (
                       <button
                         type="button"
-                        onClick={() => setValue("teams", [], { shouldValidate: true })}
+                        onClick={() =>
+                          setValue("teams", [], { shouldValidate: true })
+                        }
                         className="text-[10px] font-medium normal-case tracking-normal text-[#6b7db3] hover:text-red-400"
                       >
                         Clear all
@@ -544,7 +583,9 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                                   : "border-[#293d6b]"
                               )}
                             >
-                              {sel && <Check className="h-2.5 w-2.5 text-white" />}
+                              {sel && (
+                                <Check className="h-2.5 w-2.5 text-white" />
+                              )}
                             </div>
 
                             {/* Team icon */}
@@ -573,7 +614,8 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                                 {team.name}
                               </p>
                               <p className="text-[10px] text-[#4B5578]">
-                                {team.memberCount} member{team.memberCount !== 1 ? "s" : ""}
+                                {team.memberCount} member
+                                {team.memberCount !== 1 ? "s" : ""}
                               </p>
                             </div>
                           </button>
@@ -595,7 +637,8 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                   {formValues.teams.length > 0 && (
                     <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-[#1e2a4a] bg-[#07112b] px-3 py-2">
                       <span className="mr-1 text-[10px] text-[#4B5578]">
-                        {formValues.teams.length} team{formValues.teams.length !== 1 ? "s" : ""} selected:
+                        {formValues.teams.length} team
+                        {formValues.teams.length !== 1 ? "s" : ""} selected:
                       </span>
                       {selectedTeams.map((t) => (
                         <span
@@ -646,7 +689,12 @@ export const CreateProjectModal = ({ onClose, onSuccess }: CreateProjectModalPro
                     })}
                     {selectedPriority && (
                       <span className="flex items-center gap-1 rounded-full border border-[#1e2a4a] px-2 py-0.5 text-[10px] text-[#8b9cc8]">
-                        <span className={cn("h-1.5 w-1.5 rounded-full", selectedPriority.dot)} />
+                        <span
+                          className={cn(
+                            "h-1.5 w-1.5 rounded-full",
+                            selectedPriority.dot
+                          )}
+                        />
                         {selectedPriority.label}
                       </span>
                     )}

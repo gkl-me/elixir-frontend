@@ -17,7 +17,9 @@ export function CompanyDetailsModal({
   company,
   onClose,
 }: CompanyDetailsModalProps) {
-  if (!company) {return null;}
+  if (!company) {
+    return null;
+  }
 
   return (
     <CustomModal

@@ -16,7 +16,6 @@ import { TransactionDetailsModal } from "./TransactionDetailsModal";
 import { toastHandler } from "@/lib/toastHandler";
 import { AdminTransaction } from "@/data/demoData";
 
-
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
@@ -85,7 +84,9 @@ export default function TransactionDataTable({
 
   const openDetailsModal = (id: string) => {
     const txn = data.find((t) => t.id === id);
-    if (!txn) {return;}
+    if (!txn) {
+      return;
+    }
     setSelectedTxn(txn);
     setIsModalOpen(true);
   };

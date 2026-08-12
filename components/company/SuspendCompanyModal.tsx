@@ -22,7 +22,9 @@ export function SuspendCompanyModal({
 }: SuspendCompanyModalProps) {
   const [loading, setLoading] = useState(false);
 
-  if (!company) {return null;}
+  if (!company) {
+    return null;
+  }
 
   const isSuspendedOrBlocked =
     company.status === "suspended" ||

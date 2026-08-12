@@ -22,7 +22,9 @@ export function ToggleUserBlockModal({
 }: ToggleUserBlockModalProps) {
   const [loading, setLoading] = useState(false);
 
-  if (!user) {return null;}
+  if (!user) {
+    return null;
+  }
 
   const isBlocking = !user.isBlocked; // true if target action is to block
 

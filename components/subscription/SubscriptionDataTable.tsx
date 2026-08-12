@@ -17,7 +17,6 @@ import { CancelSubscriptionModal } from "./CancelSubscriptionModal";
 import { toastHandler } from "@/lib/toastHandler";
 import { AdminSubscription } from "@/data/demoData";
 
-
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
@@ -125,7 +124,9 @@ export default function SubscriptionDataTable({
 
   const openDetailsModal = (id: string) => {
     const sub = data.find((s) => s.id === id);
-    if (!sub) {return;}
+    if (!sub) {
+      return;
+    }
     setSelectedSub(sub);
     setIsModalOpen(true);
   };
@@ -136,7 +137,9 @@ export default function SubscriptionDataTable({
   };
 
   const handleCancelToggle = async (mode: "period_end" | "immediate") => {
-    if (!subToCancel) {return;}
+    if (!subToCancel) {
+      return;
+    }
 
     try {
       const isReactivating =

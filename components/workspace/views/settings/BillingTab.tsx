@@ -2,20 +2,9 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import {
-  CreditCard,
-  Check,
-  X,
-  Zap,
-  Star,
-  Building,
-  Package,
-  CheckCircle2,
-  XCircle,
-} from "lucide-react";
+import { CreditCard, Zap, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CustomModal } from "@/components/modal/CustomModal";
-import { Invoice } from "../../../../data/demoData";
 import { Section } from "./shared";
 import { cn } from "@/lib/utils";
 import { IPlan } from "@/types/IPlanType";
@@ -38,63 +27,15 @@ import {
 const fmt = (cents: number) =>
   cents === 0 ? "$0.00" : `$${(cents / 100).toFixed(2)}`;
 
-// ─── Status badge ─────────────────────────────────────────
-const StatusBadge = ({ status }: { status: Invoice["status"] }) => {
-  const map = {
-    paid: {
-      label: "Paid",
-      cls: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25",
-    },
-    failed: {
-      label: "Failed",
-      cls: "bg-red-500/15 text-red-400 border-red-500/25",
-    },
-    refunded: {
-      label: "Refunded",
-      cls: "bg-amber-500/15 text-amber-400 border-amber-500/25",
-    },
-    pending: {
-      label: "Pending",
-      cls: "bg-sky-500/15 text-sky-400 border-sky-500/25",
-    },
-  };
-  const { label, cls } = map[status] ?? map.pending;
-  return (
-    <span
-      className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${cls}`}
-    >
-      {label}
-    </span>
-  );
-};
-
-// ─── Plan feature row ─────────────────────────────────────
-const Feature = ({ ok, text }: { ok: boolean; text: string }) => (
-  <li className="flex items-center gap-2 text-sm">
-    {ok ? (
-      <Check className="h-3.5 w-3.5 flex-shrink-0 text-emerald-400" />
-    ) : (
-      <X className="h-3.5 w-3.5 flex-shrink-0 text-[#4B5578]" />
-    )}
-    <span className={ok ? "text-[#c9d3ed]" : "text-[#4B5578]"}>{text}</span>
-  </li>
-);
-
 // ─── BillingTab ───────────────────────────────────────────
 export const BillingTab = () => {
-  const planIcons: Record<string, React.ElementType> = {
-    free: Package,
-    pro: Star,
-    enterprise: Building,
-  };
-
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
   const [currentPlan, setCurrentPlan] = useState<IPlan | undefined>();
   const [upgradePlans, setUpgradePlans] = useState<IPlan[]>([]);
-  const [subscription, setSubscription] = useState<unknown>();
+  const [, setSubscription] = useState<unknown>();
 
   // Upgrade state
   const [selectedPlanForUpgrade, setSelectedPlanForUpgrade] =
@@ -103,9 +44,9 @@ export const BillingTab = () => {
   const [isUpgrading, setIsUpgrading] = useState(false);
 
   // Status modal state (success or cancelled)
-  const [statusModal, setStatusModal] = useState<"success" | "cancelled" | null>(
-    null
-  );
+  const [statusModal, setStatusModal] = useState<
+    "success" | "cancelled" | null
+  >(null);
 
   const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
 
@@ -125,8 +66,6 @@ export const BillingTab = () => {
           workspaceId,
         },
       });
-
-      console.log(res.data);
 
       if (res?.success) {
         setCurrentPlan(res.data.currentPlan);
@@ -166,10 +105,10 @@ export const BillingTab = () => {
   };
 
   const handleCustomerPortal = async () => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     const res = await customerPortalAction({ workspaceId });
-
-    console.log("Res,", res);
 
     if (res?.success && res.data?.customerPortalUrl) {
       window.location.href = res.data.customerPortalUrl;
@@ -182,7 +121,6 @@ export const BillingTab = () => {
   const handleUpgradeClick = (plan: IPlan) => {
     setSelectedPlanForUpgrade(plan);
     const planType = plan.type.toLowerCase();
-    console.log("PLan id ", plan);
 
     if (planType === "enterprice") {
       setIsCompanyModalOpen(true);
@@ -196,7 +134,9 @@ export const BillingTab = () => {
     planId: string,
     companyData?: ICompanyDetailsForm
   ) => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      return;
+    }
     setIsUpgrading(true);
 
     try {
@@ -279,7 +219,7 @@ export const BillingTab = () => {
                 : "md:grid-cols-2"
             )}
           >
-            {upgradePlans.map((plan, index) => {
+            {upgradePlans.map((plan) => {
               const planId = plan?.id;
               return (
                 <PlanCard
@@ -290,7 +230,7 @@ export const BillingTab = () => {
                       variant="dark"
                       disabled={isUpgrading}
                       onClick={() => handleUpgradeClick(plan)}
-                      className="w-full bg-purple hover:bg-purple/90 font-semibold text-white transition-all"
+                      className="w-full bg-purple font-semibold text-white transition-all hover:bg-purple/90"
                     >
                       {isUpgrading && selectedPlanForUpgrade?.id === plan.id
                         ? "Redirecting..."
@@ -330,15 +270,15 @@ export const BillingTab = () => {
               ? "Your subscription plan upgrade has been completed."
               : "The checkout session was cancelled. No charges were made."
           }
-          className="sm:max-w-md text-center"
+          className="text-center sm:max-w-md"
         >
-          <div className="flex flex-col items-center justify-center py-4 space-y-4">
+          <div className="flex flex-col items-center justify-center space-y-4 py-4">
             {statusModal === "success" ? (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-emerald-500/30 bg-emerald-500/10">
                 <CheckCircle2 className="h-10 w-10 text-emerald-400" />
               </div>
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-500/10 border border-amber-500/30">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10">
                 <XCircle className="h-10 w-10 text-amber-400" />
               </div>
             )}
@@ -352,7 +292,7 @@ export const BillingTab = () => {
             <Button
               onClick={handleCloseStatusModal}
               className={cn(
-                "w-full font-semibold text-white mt-2",
+                "mt-2 w-full font-semibold text-white",
                 statusModal === "success"
                   ? "bg-emerald-600 hover:bg-emerald-500"
                   : "bg-purple hover:bg-purple/90"
@@ -366,5 +306,3 @@ export const BillingTab = () => {
     </div>
   );
 };
-
-

@@ -3,7 +3,6 @@
 import React from "react";
 import {
   FolderKanban,
-  Users,
   Calendar,
   CheckCircle2,
   ArrowRight,
@@ -23,22 +22,13 @@ interface ProjectCardProps {
   onView: () => void;
 }
 
-const grad = (name: string) => {
-  const gradients = [
-    "from-purple-500 to-indigo-600",
-    "from-blue-500 to-cyan-600",
-    "from-emerald-500 to-teal-600",
-    "from-amber-500 to-orange-600",
-    "from-pink-500 to-[#8735C9]",
-  ];
-  const charCode = name.charCodeAt(0) || 0;
-  return gradients[charCode % gradients.length];
-};
-
 export const ProjectCard = ({ project, onView }: ProjectCardProps) => {
   const status = STATUS_CONFIG[project.status];
   const priority = PRIORITY_CONFIG[project.priority];
-  const progress = project.totalTasks === 0 ? 0 : Math.round((project.doneTasks / project.totalTasks) * 100);
+  const progress =
+    project.totalTasks === 0
+      ? 0
+      : Math.round((project.doneTasks / project.totalTasks) * 100);
   const tags = project.tags || [];
 
   return (
@@ -49,7 +39,7 @@ export const ProjectCard = ({ project, onView }: ProjectCardProps) => {
       {/* Top accent bar */}
       <div className="h-1 w-full bg-gradient-to-r from-[#8735C9] to-[#6a29a0] opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
 
-      <div className="flex flex-1 flex-col p-5 space-y-4">
+      <div className="flex flex-1 flex-col space-y-4 p-5">
         {/* Header: Icon + title + status */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -79,7 +69,7 @@ export const ProjectCard = ({ project, onView }: ProjectCardProps) => {
         </div>
 
         {/* Description */}
-        <p className="line-clamp-2 text-xs text-[#8b9cc8] leading-relaxed">
+        <p className="line-clamp-2 text-xs leading-relaxed text-[#8b9cc8]">
           {project.description || "No description provided."}
         </p>
 
@@ -181,7 +171,10 @@ interface ProjectRowProps {
 export const ProjectRow = ({ project, onView }: ProjectRowProps) => {
   const status = STATUS_CONFIG[project.status];
   const priority = PRIORITY_CONFIG[project.priority];
-  const progress = project.totalTasks === 0 ? 0 : Math.round((project.doneTasks / project.totalTasks) * 100);
+  const progress =
+    project.totalTasks === 0
+      ? 0
+      : Math.round((project.doneTasks / project.totalTasks) * 100);
   const tags = project.tags || [];
 
   return (
@@ -229,7 +222,9 @@ export const ProjectRow = ({ project, onView }: ProjectRowProps) => {
 
       {/* Priority */}
       <div className="hidden w-28 flex-shrink-0 items-center gap-1.5 sm:flex">
-        <span className={cn("h-2 w-2 rounded-full flex-shrink-0", priority.dot)} />
+        <span
+          className={cn("h-2 w-2 flex-shrink-0 rounded-full", priority.dot)}
+        />
         <span className="text-xs text-[#8b9cc8]">{priority.label}</span>
       </div>
 
@@ -239,9 +234,7 @@ export const ProjectRow = ({ project, onView }: ProjectRowProps) => {
           <span className="text-[10px] text-[#6b7db3]">
             {project.doneTasks}/{project.totalTasks}
           </span>
-          <span className="text-[10px] font-bold text-white">
-            {progress}%
-          </span>
+          <span className="text-[10px] font-bold text-white">{progress}%</span>
         </div>
         <div className="h-1 overflow-hidden rounded-full bg-[#07112b]">
           <div

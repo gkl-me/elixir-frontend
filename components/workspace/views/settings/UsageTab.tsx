@@ -103,8 +103,6 @@ export const UsageTab = () => {
         },
       });
 
-      console.log("limits", res.data);
-
       if (res?.success) {
         setLimits(res.data.limits);
         setUsed(res.data.used);

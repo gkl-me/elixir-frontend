@@ -10,19 +10,18 @@ export interface WorkspaceProject {
   status: ProjectStatus;
   priority: ProjectPriority;
   /** Tag names — colors are derived on the frontend, never stored */
-  doneTasks: number,
-  totalTasks: number,
+  doneTasks: number;
+  totalTasks: number;
   tags: string[];
   dueDate?: string;
   createdAt: string;
   teams?: string[]; // team IDs
   key: string; // e.g. "ELX", "MKTG"
-  totalStoryPoints: number,
-  doneStoryPoints: number,
-  inProgressTasks: number,
-  inReviewTasks: number,
-  toDoTasks: number,
-
+  totalStoryPoints: number;
+  doneStoryPoints: number;
+  inProgressTasks: number;
+  inReviewTasks: number;
+  toDoTasks: number;
 }
 
 // ─── Tag colour — deterministic, frontend-only ─────────────────────────────────
@@ -42,10 +41,8 @@ const TAG_PALETTE = [
 /** Returns a stable color swatch for any tag name (no backend storage needed) */
 export const tagColor = (tag: string) =>
   TAG_PALETTE[
-  [...tag].reduce((acc, c) => acc + c.charCodeAt(0), 0) % TAG_PALETTE.length
+    [...tag].reduce((acc, c) => acc + c.charCodeAt(0), 0) % TAG_PALETTE.length
   ];
-
-
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 export const initials = (name: string) =>
@@ -108,7 +105,11 @@ export const PRIORITY_CONFIG: Record<
 
 export const daysLeft = (d: string) => {
   const diff = Math.ceil((new Date(d).getTime() - Date.now()) / 86_400_000);
-  if (diff < 0) { return "Overdue"; }
-  if (diff === 0) { return "Due today"; }
+  if (diff < 0) {
+    return "Overdue";
+  }
+  if (diff === 0) {
+    return "Due today";
+  }
   return `${diff}d left`;
 };

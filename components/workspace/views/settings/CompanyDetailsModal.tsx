@@ -203,7 +203,7 @@ export const CompanyDetailsModal: React.FC<CompanyDetailsModalProps> = ({
           <Button
             type="submit"
             disabled={isLoading}
-            className="bg-purple hover:bg-purple/90 font-semibold text-white"
+            className="bg-purple font-semibold text-white hover:bg-purple/90"
           >
             {isLoading ? "Redirecting..." : "Proceed to Payment"}
           </Button>

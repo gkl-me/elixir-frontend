@@ -46,7 +46,7 @@ export const PAYMENT_API_ROUTES = {
   RETRY_PAYMENT: "/payment/retry",
   BILLING_INFO: "/payment/billing",
   CUSTOMER_PORTAL: "/payment/customer-portal",
-  UPRGADE_CHECKOUT: "/payment/upgrade-checkout"
+  UPRGADE_CHECKOUT: "/payment/upgrade-checkout",
 };
 
 export const COMPANY_API_ROUTES = {
@@ -112,20 +112,14 @@ export const WORKSPACE_API_ROUTES = {
   GET_WORKSPACE_LIMITS: (workspaceId: string) =>
     `/workspace/${workspaceId}/limits`,
 
-
-
-  //projects 
-  CREATE_PROJECT: (workspaceId: string) =>
-    `/workspace/${workspaceId}/projects`,
-  LIST_PROJECTS: (workspaceId: string) =>
-    `/workspace/${workspaceId}/projects`,
+  //projects
+  CREATE_PROJECT: (workspaceId: string) => `/workspace/${workspaceId}/projects`,
+  LIST_PROJECTS: (workspaceId: string) => `/workspace/${workspaceId}/projects`,
   GET_PROJECT_DETAILS: (workspaceId: string, projectId: string) =>
     `/workspace/${workspaceId}/projects/${projectId}`,
-
 
   CREATE_BACKLOG_ISSUE: (workspaceId: string) =>
     `/workspace/${workspaceId}/backlog/create-issue`,
   LIST_BACKLOGS: (workspaceId: string, projectId: string) =>
-    `/workspace/${workspaceId}/projects/${projectId}/backlogs`
-
+    `/workspace/${workspaceId}/projects/${projectId}/backlogs`,
 };

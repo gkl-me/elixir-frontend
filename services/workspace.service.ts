@@ -154,6 +154,9 @@ export const workspaceService = {
   },
 
   getUniqueTeamMembers: async (data: GetUniqueTeamMembers) => {
-    return api.post(WORKSPACE_API_ROUTES.GET_UNIQUE_TEAM_MEMBERS(data?.workspaceId), data)
-  }
+    return api.post(
+      WORKSPACE_API_ROUTES.GET_UNIQUE_TEAM_MEMBERS(data?.workspaceId),
+      data
+    );
+  },
 };

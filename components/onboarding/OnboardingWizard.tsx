@@ -102,16 +102,18 @@ export default function OnboardingWizard() {
           </div>
 
           <div
-            className={`text-center ${state.currentStep >= 2 ? "text-white" : "text-gray-600"
-              }`}
+            className={`text-center ${
+              state.currentStep >= 2 ? "text-white" : "text-gray-600"
+            }`}
           >
             <span className="mb-1 block text-xs text-gray-500">STEP 2</span>
             Details
           </div>
 
           <div
-            className={`text-right ${state.currentStep >= 3 ? "text-white" : "text-gray-600"
-              }`}
+            className={`text-right ${
+              state.currentStep >= 3 ? "text-white" : "text-gray-600"
+            }`}
           >
             <span className="mb-1 block text-xs text-gray-500">STEP 3</span>
             Payment

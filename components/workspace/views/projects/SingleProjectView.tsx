@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FolderKanban, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -8,11 +8,8 @@ import {
   PRIORITY_CONFIG,
   tagColor,
   daysLeft,
-  initials,
-  grad,
   WorkspaceProject,
 } from "./shared";
-import { demoTasks, demoSprints, demoActivities, demoMembers } from "@/data/demoData";
 import { ProjectOverview } from "./ProjectOverview";
 import { ProjectBacklog } from "./ProjectBacklog";
 import { useApi } from "@/hooks/useApi";
@@ -29,7 +26,6 @@ interface SingleProjectViewProps {
 export const SingleProjectView: React.FC<SingleProjectViewProps> = ({
   activeView = "overview",
 }) => {
-
   const [project, setProject] = useState<WorkspaceProject>();
 
   const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
@@ -38,12 +34,17 @@ export const SingleProjectView: React.FC<SingleProjectViewProps> = ({
   const projectId = params?.projectId as string;
 
   const { execute, isLoading } = useApi({
-    url: NEXT_API_ROUTES.GET_PROJECT_DETAILS(workspaceId || "", projectId || ""),
+    url: NEXT_API_ROUTES.GET_PROJECT_DETAILS(
+      workspaceId || "",
+      projectId || ""
+    ),
     method: "GET",
   });
 
   const fetchProjectDetails = useCallback(async () => {
-    if (!workspaceId || !projectId) return;
+    if (!workspaceId || !projectId) {
+      return;
+    }
     try {
       const res = await execute({
         params: {
@@ -87,7 +88,7 @@ export const SingleProjectView: React.FC<SingleProjectViewProps> = ({
         <div className="relative overflow-hidden rounded-2xl border border-[#1e2a4a] bg-gradient-to-br from-[#0C1635] via-[#0e1a38] to-[#0a1020] shadow-2xl">
           {/* Decorative glows */}
           <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-[#8735C9]/15 blur-3xl" />
-          <div className="pointer-events-none absolute -left-10 bottom-0 h-32 w-32 rounded-full bg-[#60a5fa]/8 blur-2xl" />
+          <div className="bg-[#60a5fa]/8 pointer-events-none absolute -left-10 bottom-0 h-32 w-32 rounded-full blur-2xl" />
 
           <div className="relative z-10 p-6">
             {/* Top row */}
@@ -125,7 +126,12 @@ export const SingleProjectView: React.FC<SingleProjectViewProps> = ({
                     )}
                     {priority && (
                       <span className="flex items-center gap-1 rounded-full border border-[#1e2a4a] bg-[#07112b] px-2.5 py-0.5 text-[11px] font-medium text-[#8b9cc8]">
-                        <span className={cn("h-1.5 w-1.5 rounded-full", priority.dot)} />
+                        <span
+                          className={cn(
+                            "h-1.5 w-1.5 rounded-full",
+                            priority.dot
+                          )}
+                        />
                         {priority.label}
                       </span>
                     )}
@@ -170,7 +176,8 @@ export const SingleProjectView: React.FC<SingleProjectViewProps> = ({
                         : "text-[#8b9cc8]"
                     )}
                   >
-                    {project.status !== 'completed' && daysLeft(project.dueDate)}
+                    {project.status !== "completed" &&
+                      daysLeft(project.dueDate)}
                   </span>
                 )}
               </div>
@@ -200,11 +207,9 @@ export const SingleProjectView: React.FC<SingleProjectViewProps> = ({
         <ProjectOverview project={project} />
       )}
 
-      {
-        activeView === "backlogs" && project && (
-          <ProjectBacklog project={project} />
-        )
-      }
+      {activeView === "backlogs" && project && (
+        <ProjectBacklog project={project} />
+      )}
     </div>
   );
 };

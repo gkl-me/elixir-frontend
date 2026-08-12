@@ -32,7 +32,9 @@ export function CancelSubscriptionModal({
     "period_end"
   );
 
-  if (!subscription) {return null;}
+  if (!subscription) {
+    return null;
+  }
 
   const isCanceled = subscription.status === "canceled";
   const isPendingCancel =

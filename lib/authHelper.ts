@@ -19,7 +19,6 @@ export function handlerServerError(error: unknown) {
   const err = AxiosErrorHandler(error);
 
   const status = err.statusCode || 500;
-  const errorCode = err?.errorCode;
 
   // Redirect on any 401 — the backend's refresh endpoint sends 401 with no errorCode,
   // so we cannot rely on errorCode being present. Any 401 reaching a server component

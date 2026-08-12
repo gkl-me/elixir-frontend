@@ -296,18 +296,16 @@ export async function toggleWorkspaceStatusAction(
   }
 }
 
-
-
 export async function getUniqueTeamMembersAction(data: GetUniqueTeamMembers) {
   try {
-    const res = await workspaceService.getUniqueTeamMembers(data)
+    const res = await workspaceService.getUniqueTeamMembers(data);
     return {
       success: res.data.success,
       message: res.data.message,
       data: res.data.data,
-    }
+    };
   } catch (error) {
-    handlerServerError(error)
+    handlerServerError(error);
     return {
       success: false,
       error: AxiosErrorHandler(error).message,

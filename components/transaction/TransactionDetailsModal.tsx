@@ -28,7 +28,9 @@ export function TransactionDetailsModal({
   transaction,
   onClose,
 }: TransactionDetailsModalProps) {
-  if (!transaction) {return null;}
+  if (!transaction) {
+    return null;
+  }
 
   const isFailed = transaction.status === "failed";
   const isRefunded = transaction.status === "refunded";

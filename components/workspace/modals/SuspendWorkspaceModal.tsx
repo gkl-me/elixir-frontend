@@ -22,7 +22,9 @@ export function SuspendWorkspaceModal({
 }: SuspendWorkspaceModalProps) {
   const [loading, setLoading] = useState(false);
 
-  if (!workspace) {return null;}
+  if (!workspace) {
+    return null;
+  }
 
   const isSuspended =
     workspace.status === "suspended" || workspace.status === "blocked";

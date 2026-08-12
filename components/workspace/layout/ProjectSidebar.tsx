@@ -11,11 +11,10 @@ import {
   Users,
   ChevronLeft,
   Zap,
-  GitBranch,
   Layers,
   Target,
 } from "lucide-react";
-import { demoProjects, demoSprints } from "../../../data/demoData";
+import { demoProjects } from "../../../data/demoData";
 import { cn } from "@/lib/utils";
 
 interface ProjectSidebarProps {
@@ -39,12 +38,7 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
       ? pathParts[projectsIdx + 2]
       : "overview";
 
-  const project =
-    demoProjects.find((p) => p.id === currentProjectId);
-
-  const activeSprint = demoSprints.find(
-    (s) => s.projectId === currentProjectId && s.status === "active"
-  );
+  const project = demoProjects.find((p) => p.id === currentProjectId);
 
   const allProjectsUrl = workspaceSlug
     ? `/workspace/${workspaceSlug}/projects`
@@ -158,9 +152,7 @@ export const ProjectSidebar: React.FC<ProjectSidebarProps> = ({
                   ? `/workspace/${workspaceSlug}/projects/${currentProjectId}`
                   : `/demo/projects/${currentProjectId}`;
                 const targetUrl =
-                  link.id === "overview"
-                    ? baseUrl
-                    : `${baseUrl}/${link.id}`;
+                  link.id === "overview" ? baseUrl : `${baseUrl}/${link.id}`;
                 return (
                   <Link
                     key={link.id}

@@ -26,7 +26,9 @@ export function SubscriptionDetailsModal({
   subscription,
   onClose,
 }: SubscriptionDetailsModalProps) {
-  if (!subscription) {return null;}
+  if (!subscription) {
+    return null;
+  }
 
   const isCanceled = subscription.status === "canceled";
   const isPastDue = subscription.status === "past_due";

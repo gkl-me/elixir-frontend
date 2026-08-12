@@ -63,7 +63,6 @@ export const InvitesTab = ({
         },
       });
 
-
       if (res?.success) {
         setInvites(res.data.invites);
         setTotalCount(res.data.totalCount);

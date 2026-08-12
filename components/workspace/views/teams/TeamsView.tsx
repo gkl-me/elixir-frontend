@@ -49,8 +49,6 @@ export const TeamsView = () => {
         },
       });
 
-      console.log("res", res);
-
       if (res?.success) {
         setTeams(res.data.teams || []);
         setTotalCount(res.data.totalCount || 0);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import {
   FolderKanban,
@@ -12,7 +12,6 @@ import {
   X,
   CheckCircle2,
   Zap,
-  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/ui/pagination";
@@ -39,8 +38,12 @@ type FilterPriority = "" | ProjectPriority;
 
 const PROJECTS_PER_PAGE = 9;
 
-
-const STAT_CARDS = (projects: WorkspaceProject[], activeProjects: number, totalTasks: number, doneTasks: number) => [
+const STAT_CARDS = (
+  projects: WorkspaceProject[],
+  activeProjects: number,
+  totalTasks: number,
+  doneTasks: number
+) => [
   {
     label: "Total Projects",
     value: projects.length,
@@ -63,7 +66,6 @@ const STAT_CARDS = (projects: WorkspaceProject[], activeProjects: number, totalT
 
 // ─── Main View ─────────────────────────────────────────────────────────────────
 export const WorkspaceProjectsView = () => {
-
   const workspaceId = useWorkspaceStore((s) => s?.context?.workspaceId);
 
   const router = useRouter();
@@ -78,10 +80,10 @@ export const WorkspaceProjectsView = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
 
-  const [projects, setProjects] = useState([])
-  const [activeProjects, setActiveProjects] = useState(0)
-  const [totalCount, setTotalCount] = useState(0)
-  const debouncedSearch = useDebounce(search, 500)
+  const [projects, setProjects] = useState([]);
+  const [activeProjects, setActiveProjects] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const debouncedSearch = useDebounce(search, 500);
 
   const handleViewProject = (projectId: string) => {
     router.push(`/workspace/${slug}/projects/${projectId}`);
@@ -105,15 +107,13 @@ export const WorkspaceProjectsView = () => {
           limit: PROJECTS_PER_PAGE,
           search: debouncedSearch,
           status: statusFilter,
-          filter: priorityFilter
+          filter: priorityFilter,
         },
       });
 
-      console.log("res", res);
-
       if (res?.success) {
         setProjects(res.data.projects || []);
-        setActiveProjects(res.data.activeProjects)
+        setActiveProjects(res.data.activeProjects);
         setTotalCount(res.data.totalCount || 0);
       }
     } catch (error) {
@@ -122,11 +122,18 @@ export const WorkspaceProjectsView = () => {
         error: AxiosErrorHandler(error).message,
       });
     }
-  }, [workspaceId, execute, debouncedSearch, currentPage, statusFilter, priorityFilter]);
+  }, [
+    workspaceId,
+    execute,
+    debouncedSearch,
+    currentPage,
+    statusFilter,
+    priorityFilter,
+  ]);
 
   useEffect(() => {
-    fetchProjects()
-  }, [fetchProjects])
+    fetchProjects();
+  }, [fetchProjects]);
 
   const clearFilters = () => {
     setStatusFilter("");
@@ -162,12 +169,7 @@ export const WorkspaceProjectsView = () => {
 
       {/* ── Stat cards ──────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-        {STAT_CARDS(
-          projects,
-          activeProjects,
-          0,
-          0
-        ).map((s) => (
+        {STAT_CARDS(projects, activeProjects, 0, 0).map((s) => (
           <div
             key={s.label}
             className="flex items-center gap-3 rounded-xl border border-[#1e2a4a] bg-[#0C1635] px-4 py-3"
@@ -194,8 +196,8 @@ export const WorkspaceProjectsView = () => {
           <input
             value={search}
             onChange={(e) => {
-              setSearch(e.target.value)
-              setCurrentPage(1)
+              setSearch(e.target.value);
+              setCurrentPage(1);
             }}
             placeholder="Search projects…"
             className="w-full rounded-xl border border-[#1e2a4a] bg-[#0C1635] py-2 pl-9 pr-4 text-sm text-white outline-none transition-colors placeholder:text-[#4B5578] focus:border-[#8735C9]"
@@ -204,29 +206,29 @@ export const WorkspaceProjectsView = () => {
 
         {/* Status filter pills */}
         <div className="flex items-center gap-1 rounded-xl border border-[#1e2a4a] bg-[#0C1635] p-1">
-          {(["", "active", "on_hold", "completed", "archived"] as FilterStatus[]).map(
-            (f) => (
-              <button
-                key={f}
-                onClick={() => {
-                  setStatusFilter(f);
-                  setCurrentPage(1);
-                }}
-                className={cn(
-                  "rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition-all",
-                  statusFilter === f
-                    ? "bg-[#8735C9] text-white"
-                    : "text-[#6b7db3] hover:text-white"
-                )}
-              >
-                {f === ""
-                  ? "All"
-                  : f === "on_hold"
-                    ? "On Hold"
-                    : STATUS_CONFIG[f as ProjectStatus]?.label ?? f}
-              </button>
-            )
-          )}
+          {(
+            ["", "active", "on_hold", "completed", "archived"] as FilterStatus[]
+          ).map((f) => (
+            <button
+              key={f}
+              onClick={() => {
+                setStatusFilter(f);
+                setCurrentPage(1);
+              }}
+              className={cn(
+                "rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition-all",
+                statusFilter === f
+                  ? "bg-[#8735C9] text-white"
+                  : "text-[#6b7db3] hover:text-white"
+              )}
+            >
+              {f === ""
+                ? "All"
+                : f === "on_hold"
+                  ? "On Hold"
+                  : (STATUS_CONFIG[f as ProjectStatus]?.label ?? f)}
+            </button>
+          ))}
         </div>
 
         {/* Advanced filter toggle */}
@@ -281,33 +283,33 @@ export const WorkspaceProjectsView = () => {
               Priority
             </span>
             <div className="flex items-center gap-1">
-              {(["", "urgent", "high", "medium", "low"] as FilterPriority[]).map(
-                (f) => (
-                  <button
-                    key={f}
-                    onClick={() => {
-                      setPriorityFilter(f);
-                      setCurrentPage(1);
-                    }}
-                    className={cn(
-                      "flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-medium capitalize transition-all",
-                      priorityFilter === f
-                        ? "bg-[#8735C9] text-white"
-                        : "text-[#6b7db3] hover:text-white"
-                    )}
-                  >
-                    {f !== "" && (
-                      <span
-                        className={cn(
-                          "h-1.5 w-1.5 rounded-full",
-                          PRIORITY_CONFIG[f as ProjectPriority]?.dot
-                        )}
-                      />
-                    )}
-                    {f}
-                  </button>
-                )
-              )}
+              {(
+                ["", "urgent", "high", "medium", "low"] as FilterPriority[]
+              ).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => {
+                    setPriorityFilter(f);
+                    setCurrentPage(1);
+                  }}
+                  className={cn(
+                    "flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-medium capitalize transition-all",
+                    priorityFilter === f
+                      ? "bg-[#8735C9] text-white"
+                      : "text-[#6b7db3] hover:text-white"
+                  )}
+                >
+                  {f !== "" && (
+                    <span
+                      className={cn(
+                        "h-1.5 w-1.5 rounded-full",
+                        PRIORITY_CONFIG[f as ProjectPriority]?.dot
+                      )}
+                    />
+                  )}
+                  {f}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -372,7 +374,7 @@ export const WorkspaceProjectsView = () => {
           {/* List header */}
           <div className="hidden items-center gap-4 px-5 py-2 text-[10px] font-bold uppercase tracking-wider text-[#4B5578] md:flex">
             <div className="w-9 flex-shrink-0" />
-            <div className="flex-1 min-w-[180px]">Project</div>
+            <div className="min-w-[180px] flex-1">Project</div>
             <div className="hidden w-28 flex-shrink-0 sm:block">Priority</div>
             <div className="hidden w-36 flex-shrink-0 md:block">Progress</div>
             <div className="hidden w-24 flex-shrink-0 sm:block">Due</div>

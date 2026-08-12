@@ -10,7 +10,6 @@ export interface ICustomerPortalData {
   workspaceId: string;
 }
 
-
 export interface UpgradeCheckoutData {
   workspaceId: string;
   planId: string;

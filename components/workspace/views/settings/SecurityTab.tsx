@@ -15,7 +15,6 @@ import { toastHandler } from "@/lib/toastHandler";
 import { useApi } from "@/hooks/useApi";
 import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { RevokeSessionData } from "@/types/IUserType";
-import { handleLogoutAllDevicesAction } from "@/app/actions/auth.action";
 import { formatUserAgent } from "@/lib/formatAgent";
 import { SignoutAllDevicesModal } from "@/components/modal/SignoutAllDevicesModal";
 
@@ -59,12 +58,6 @@ export const SecurityTab = () => {
       if (res.success) {
         await fetchSessions();
       }
-    });
-  };
-
-  const handleLogoutAllDevices = () => {
-    startTransition(async () => {
-      const res = await handleLogoutAllDevicesAction();
     });
   };
 
@@ -129,8 +122,6 @@ export const SecurityTab = () => {
           {sessions.map((s, i) => {
             const device = formatUserAgent(s.userAgent);
             const DeviceIcon = device?.icon;
-
-            console.log("ssss", s.ip);
 
             return (
               <div key={i} className="flex items-center justify-between py-3.5">

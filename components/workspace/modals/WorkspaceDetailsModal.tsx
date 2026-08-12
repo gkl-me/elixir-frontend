@@ -27,7 +27,9 @@ export function WorkspaceDetailsModal({
   workspace,
   onClose,
 }: WorkspaceDetailsModalProps) {
-  if (!workspace) {return null;}
+  if (!workspace) {
+    return null;
+  }
 
   const isSuspended =
     workspace.status === "suspended" || workspace.status === "blocked";
