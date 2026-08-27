@@ -24,6 +24,7 @@ export type WorkspaceContext = {
   permissionDependencies?: Record<string, string[]>;
   builtinRoles?: Record<string, string[]>;
   workspaces?: WorkspaceList[];
+  hasPassword?: boolean;
 };
 
 interface WorkspaceStore {
@@ -35,6 +36,7 @@ interface WorkspaceStore {
     name?: string;
     avatarUrl?: string;
     email?: string;
+    hasPassword?: boolean;
   }) => void;
 }
 
@@ -55,6 +57,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
           name: user.name ?? state.context.name,
           email: user.email ?? state.context.email,
           avatarUrl: user.avatarUrl ?? state.context.avatarUrl,
+          hasPassword: user.hasPassword ?? state.context.hasPassword
         },
       };
     }),

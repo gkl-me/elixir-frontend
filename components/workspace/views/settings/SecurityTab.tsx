@@ -1,6 +1,6 @@
 "use client";
 
-import React, { startTransition, useEffect } from "react";
+import React, { startTransition, useEffect, useMemo } from "react";
 import { z } from "zod";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,34 +17,86 @@ import { NEXT_API_ROUTES } from "@/constants/routeHandler";
 import { RevokeSessionData } from "@/types/IUserType";
 import { formatUserAgent } from "@/lib/formatAgent";
 import { SignoutAllDevicesModal } from "@/components/modal/SignoutAllDevicesModal";
+import { useWorkspaceStore } from "@/store/useWorkspaceContext";
 
 // ─── Zod schema ───────────────────────────────────────────
-const passwordSchema = z
-  .object({
-    newPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[0-9]/, "Must contain at least one number")
-      .regex(/[^a-zA-Z0-9]/, "Must contain at least one symbol"),
-    confirmPassword: z.string().min(1, "Please confirm your new password"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const basePasswordSchema = z.object({
+  currentPassword: z.string().optional(),
+  newPassword: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[0-9]/, "Must contain at least one number")
+    .regex(/[^a-zA-Z0-9]/, "Must contain at least one symbol"),
+  confirmPassword: z.string().min(1, "Please confirm your new password"),
+});
 
-type PasswordValues = z.infer<typeof passwordSchema>;
+type PasswordValues = z.infer<typeof basePasswordSchema>;
+
+const createPasswordSchema = (hasPassword?: boolean): z.ZodType<PasswordValues> =>
+  basePasswordSchema
+    .refine(
+      (data) =>
+        !hasPassword ||
+        (Boolean(data.currentPassword) && data.currentPassword!.length > 0),
+      {
+        message: "Current password is required",
+        path: ["currentPassword"],
+      }
+    )
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
 
 // ─── SecurityTab ──────────────────────────────────────────
 export const SecurityTab = () => {
+  const hasPassword = useWorkspaceStore((s) => s.context?.hasPassword);
+  const updateUser = useWorkspaceStore((s) => s.updateUser);
+
+  const passwordSchema = useMemo(
+    () => createPasswordSchema(hasPassword),
+    [hasPassword]
+  );
+
+  const fields = useMemo(() => {
+    const list = [];
+    if (hasPassword) {
+      list.push({
+        name: "currentPassword" as const,
+        label: "Current Password",
+        placeholder: "••••••••",
+        component: PasswordInput,
+      });
+    }
+    list.push(
+      {
+        name: "newPassword" as const,
+        label: hasPassword ? "New Password" : "Password",
+        placeholder: "••••••••",
+        component: PasswordInput,
+      },
+      {
+        name: "confirmPassword" as const,
+        label: hasPassword ? "Confirm New Password" : "Confirm Password",
+        placeholder: "••••••••",
+        component: PasswordInput,
+      }
+    );
+    return list;
+  }, [hasPassword]);
+
   const handlePasswordSubmit = (values: PasswordValues) => {
     startTransition(async () => {
-      const res = await handleChangePassword(values.newPassword);
-
-      toastHandler({
-        success: res.success,
-        message: res.message,
+      const res = await handleChangePassword({
+        newPassword: values.newPassword,
+        currentPassword: values.currentPassword,
       });
+
+      toastHandler(res);
+
+      if (res.success) {
+        updateUser({ hasPassword: true });
+      }
     });
   };
 
@@ -83,32 +135,25 @@ export const SecurityTab = () => {
     <div className="space-y-6">
       {/* Change Password */}
       <Section
-        title="Change Password"
-        description="Use a strong, unique password."
+        title={hasPassword ? "Change Password" : "Set Password"}
+        description={
+          hasPassword
+            ? "Use a strong, unique password."
+            : "Create a password for your account."
+        }
       >
         <CustomForm<PasswordValues>
+          key={hasPassword ? "has-password" : "no-password"}
           schema={passwordSchema}
           defaultValues={{
+            currentPassword: "",
             newPassword: "",
             confirmPassword: "",
           }}
           onSubmit={handlePasswordSubmit}
-          submitText="Update Password"
+          submitText={hasPassword ? "Update Password" : "Set Password"}
           resetOnSubmit={true}
-          fields={[
-            {
-              name: "newPassword",
-              label: "New Password",
-              placeholder: "••••••••",
-              component: PasswordInput,
-            },
-            {
-              name: "confirmPassword",
-              label: "Confirm New Password",
-              placeholder: "••••••••",
-              component: PasswordInput,
-            },
-          ]}
+          fields={fields}
         />
       </Section>
 

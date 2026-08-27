@@ -13,6 +13,7 @@ export interface ToggleUserStatusData {
 
 export interface ChangePasswordData {
   newPassword: string;
+  currentPassword?: string
 }
 
 export interface UpdateUserProfileData {

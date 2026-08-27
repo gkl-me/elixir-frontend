@@ -5,6 +5,7 @@ import { getSession } from "./session";
 import { STATUS_CODES } from "@/constants/statusCodes";
 import { AUTH_API_ROUTES } from "@/constants/apiRoutes";
 import { setCookies } from "./cookies";
+import { AUTH_ERROR_CODE } from "@/constants/errorCode";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -29,10 +30,19 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     if (
-      error.response &&
-      error.response.status === STATUS_CODES.UNAUTHORIZED &&
-      !originalRequest._retry
+      !originalRequest ||
+      originalRequest._retry ||
+      originalRequest.url?.includes(AUTH_API_ROUTES.REFRESH) ||
+      originalRequest.url?.includes(AUTH_API_ROUTES.LOGIN)
     ) {
+      return Promise.reject(error);
+    }
+
+    const isUnauthorized =
+      error.response?.status === STATUS_CODES.UNAUTHORIZED &&
+      error.response?.data?.errorCode === AUTH_ERROR_CODE.UNAUTHORIZED;
+
+    if (isUnauthorized) {
       originalRequest._retry = true;
 
       try {

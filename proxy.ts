@@ -59,8 +59,8 @@ export async function proxy(req: NextRequest) {
       return await updateSessionAndCookies(
         req,
         session,
-        data.accessToken,
-        data.refreshToken
+        data.data.accessToken,
+        data.data.refreshToken
       );
     }
     //re verify accessToken

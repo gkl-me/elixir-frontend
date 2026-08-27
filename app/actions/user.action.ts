@@ -3,7 +3,11 @@
 import { handlerServerError } from "@/lib/authHelper";
 import { AxiosErrorHandler } from "@/lib/errorHandler";
 import { userService } from "@/services/user.service";
-import { RevokeSessionData, UpdateUserProfileData } from "@/types/IUserType";
+import {
+  ChangePasswordData,
+  RevokeSessionData,
+  UpdateUserProfileData,
+} from "@/types/IUserType";
 
 export async function toggleUserStatusAction(userId: string) {
   try {
@@ -24,11 +28,9 @@ export async function toggleUserStatusAction(userId: string) {
   }
 }
 
-export async function handleChangePassword(newPassword: string) {
+export async function handleChangePassword(data: ChangePasswordData) {
   try {
-    const res = await userService.handleChangePassword({
-      newPassword,
-    });
+    const res = await userService.handleChangePassword(data);
 
     return {
       success: res.data.success,

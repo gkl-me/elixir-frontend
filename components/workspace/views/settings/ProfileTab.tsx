@@ -80,6 +80,7 @@ export const ProfileTab = () => {
           name: res.data.name,
           avatarUrl: res.data.avatarUrl,
           email: res.data.email,
+          hasPassword: res.data.hasPassword
         });
       }
     } catch (error) {

@@ -23,13 +23,13 @@ export function handlerServerError(error: unknown) {
   // Redirect on any 401 — the backend's refresh endpoint sends 401 with no errorCode,
   // so we cannot rely on errorCode being present. Any 401 reaching a server component
   // means the session is invalid.
-  if (status === STATUS_CODES.UNAUTHORIZED) {
+  if (status === STATUS_CODES.UNAUTHORIZED && err.errorCode == AUTH_ERROR_CODE.UNAUTHORIZED) {
     return redirect(
       AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.SESSION_EXPIRED}`
     );
   }
 
-  if (status === STATUS_CODES.FORBIDDEN) {
+  if (status === STATUS_CODES.FORBIDDEN && err.errorCode === AUTH_ERROR_CODE.BLOCKED) {
     return redirect(
       AUTH_CLIENT_ROUTES.LOGIN + `?reason=${AUTH_ERROR_CODE.BLOCKED}`
     );

@@ -22,6 +22,7 @@ export const userService = {
   handleChangePassword: async (data: ChangePasswordData) => {
     return api.patch(USER_API_ROUTES.CHANGE_PASSWORD, {
       newPassword: data.newPassword,
+      currentPassword: data.currentPassword,
     });
   },
   handleListActiveSessions: async () => {
